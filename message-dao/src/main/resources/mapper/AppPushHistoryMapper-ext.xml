@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.notification.AppPushHistoryMapper">
+
+    <select id="countPushHistory"
+            parameterType="com.panshi.hujin2.message.domain.qo.getui.AppPushHistoryQO"
+            resultType="java.lang.Integer">
+        select
+        count(1)
+        from
+        app_push_history
+        <where>
+            <!--<if test="id != null">-->
+                <!--AND id = #{id}-->
+            <!--</if>-->
+
+            <if test="appId != null">
+                and app_id = #{appId}
+            </if>
+
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="businessTypeId != null">
+                AND business_type_id = #{businessTypeId}
+            </if>
+
+            <if test="title != null and title !=''">
+                AND title LIKE concat(concat('%',#{title},'%'))
+            </if>
+
+            <if test="text != null and text !=''">
+                AND text LIKE concat(concat('%',#{text},'%'))
+            </if>
+
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+
+            <if test="nextId != null">
+                <![CDATA[and id <= #{nextId}]]>
+            </if>
+
+            <if test="createDateMin != null">
+                <![CDATA[and create_time >= #{createDateMin}]]>
+            </if>
+
+            <if test="createDateMax != null">
+                <![CDATA[and create_time <= #{createDateMax}]]>
+            </if>
+
+            <if test="modifyDateMin != null">
+                <![CDATA[and modify_time >= #{modifyDateMin}]]>
+            </if>
+
+            <if test="modifyDateMax != null">
+                <![CDATA[and modify_time <= #{modifyDateMax}]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPushHistory"
+            parameterType="com.panshi.hujin2.message.domain.qo.getui.AppPushHistoryQO"
+            resultMap="BaseResultMap">
+        select
+        id,
+        app_id,
+        user_id,
+        business_type_id,
+        title,
+        text,
+        status,
+        create_time,
+        modify_time
+        from
+        app_push_history
+        <where>
+
+            <if test="appId != null">
+                and app_id = #{appId}
+            </if>
+
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="businessTypeId != null">
+                AND business_type_id = #{businessTypeId}
+            </if>
+
+            <if test="title != null and title !=''">
+                AND title LIKE concat(concat('%',#{title},'%'))
+            </if>
+
+            <if test="text != null and text !=''">
+                AND text LIKE concat(concat('%',#{text},'%'))
+            </if>
+
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+
+            <if test="nextId != null">
+                <![CDATA[and id <= #{nextId}]]>
+            </if>
+
+            <if test="createDateMin != null">
+                <![CDATA[and create_time >= #{createDateMin}]]>
+            </if>
+
+            <if test="createDateMax != null">
+                <![CDATA[and create_time <= #{createDateMax}]]>
+            </if>
+
+            <if test="modifyDateMin != null">
+                <![CDATA[and modify_time >= #{modifyDateMin}]]>
+            </if>
+
+            <if test="modifyDateMax != null">
+                <![CDATA[and modify_time <= #{modifyDateMax}]]>
+            </if>
+            order by create_time desc
+            <if test="page.dbNumber != null">
+                <if test="page.dbIndex != null">
+                    limit ${page.dbIndex}, ${page.dbNumber}
+                </if>
+                <if test="page.dbIndex == null">
+                    limit ${page.dbNumber}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateStatusReadByUid" >
+        update app_push_history
+        set status = true
+        where
+        status = false
+        and app_id = #{appId}
+        and user_id = #{userId,jdbcType=INTEGER}
+
+    </update>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into
+        app_push_history(
+        `app_id`,
+        `user_id`,
+        `business_type_id`,
+        `title`,
+        `text`,
+        `status`)
+        <foreach collection="list" item="item" open="VALUES" close=";" separator=",">
+            (#{item.appId},
+            #{item.userId},
+            #{item.businessTypeId},
+            #{item.title},
+            #{item.text},
+            #{item.status})
+        </foreach>
+    </insert>
+
+</mapper>

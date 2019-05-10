@@ -1,0 +1,29 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+#*.iml
+out
+gen
+
+
+.DS_Store
+target/
+.svn/
+*.swp
+*.iml
+.gradle
+/local.properties
+.idea/
+/build
+.project
+.settings/
+.classpath
+*.ipr
+*.iws
+*.pyc
+*.log
+catalina.home_IS_UNDEFINED/
+META-INF/

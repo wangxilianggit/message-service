@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>message</artifactId>
+        <groupId>com.panshi.hujin2</groupId>
+        <version>MESSAGE-2.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>message-service</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.panshi.hujin2</groupId>
+            <artifactId>message-facade</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.panshi.hujin2</groupId>
+            <artifactId>message-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.panshi.hujin2</groupId>
+            <artifactId>basic-project-rpc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.panshi.hujin2</groupId>
+            <artifactId>basic-project-redis</artifactId>
+        </dependency>
+
+        <!--net.sf.JSONObject对象依赖的jar包 开始-->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ezmorph</groupId>
+            <artifactId>ezmorph</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <classifier>jdk15</classifier><!-- jdk版本 -->
+        </dependency>
+        <!-- Json依赖架包下载结束 -->
+
+        <!--submil短信sdk包-->
+        <!--中国服务器sdk-->
+        <!--<dependency>-->
+            <!--<groupId>com.panshi.hujin2</groupId>-->
+            <!--<artifactId>submail-sdk</artifactId>-->
+        <!--</dependency>-->
+
+        <!--美国服务器sdk-->
+        <!--<dependency>
+            <groupId>com.panshi.hujin2</groupId>
+            <artifactId>submail-sdk-us</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>aws_utils</artifactId>
+        </dependency>
+        <!--個推-->
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>gexin-rp-sdk-template</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>gexin-rp-sdk-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>gexin-rp-sdk-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>gexin-rp-fastjson</artifactId>
+        </dependency>
+
+
+        <!-- 时间处理 -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

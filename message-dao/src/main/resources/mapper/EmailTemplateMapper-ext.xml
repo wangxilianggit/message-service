@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.email.EmailTemplateMapper">
+    <resultMap id = "templateCountryMap" type="com.panshi.hujin2.message.domain.dto.EmailTemplateDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="app_id" jdbcType="INTEGER" property="appId" />
+        <result column="template_code" jdbcType="VARCHAR" property="templateCode" />
+        <result column="business_type_id" jdbcType="INTEGER" property="businessTypeId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="text" jdbcType="VARCHAR" property="text" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="status" jdbcType="BIT" property="status" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+        <collection property="templateCountryDTOS" ofType="com.panshi.hujin2.message.domain.dto.EmailTemplateCountryDTO">
+            <id column="c_id" jdbcType="INTEGER" property="id" />
+            <result column="c_template_code" jdbcType="VARCHAR" property="templateCode" />
+            <result column="c_country_key" jdbcType="VARCHAR" property="countryKey" />
+            <result column="c_country_name" jdbcType="VARCHAR" property="countryName" />
+            <result column="c_title" jdbcType="VARCHAR" property="title" />
+            <result column="c_text" jdbcType="VARCHAR" property="text" />
+            <result column="c_text_style" jdbcType="VARCHAR" property="textStyle" />
+            <result column="c_status" jdbcType="BIT" property="status" />
+            <result column="c_creator" jdbcType="VARCHAR" property="creator" />
+            <result column="c_create_time" jdbcType="TIMESTAMP" property="createTime" />
+            <result column="c_modifier" jdbcType="VARCHAR" property="modifier" />
+            <result column="c_modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+        </collection>
+    </resultMap>
+
+    <select id="countEmailTemplate"
+            parameterType="com.panshi.hujin2.message.domain.qo.EmailTemplateQO"
+            resultType="java.lang.Integer">
+        select
+        count(1)
+        FROM
+        email_template a
+        LEFT JOIN email_template_country b on b.template_code = a.template_code
+        <where>
+            <if test="appId != null">
+                AND a.app_id = #{appId}
+            </if>
+
+            <if test="templateCode != null and templateCode != ''">
+                and b.template_code = #{templateCode}
+            </if>
+
+            <if test="countryKey != null and countryKey != ''">
+                and b.country_key = #{countryKey}
+            </if>
+
+            <if test="countryName != null and countryName != ''">
+                and b.country_name LIKE concat(concat('%',#{countryName},'%'))
+            </if>
+
+            <if test="title != null and title != ''">
+                AND b.title LIKE concat(concat('%',#{title},'%'))
+            </if>
+
+            <if test="text != null and text != ''">
+                AND b.text LIKE concat(concat('%',#{text},'%'))
+            </if>
+
+            <if test="remark != null and remark!= ''">
+                AND a.remark LIKE concat(concat('%',#{remark},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="queryEmailTemplate"
+            parameterType="com.panshi.hujin2.message.domain.qo.EmailTemplateQO"
+            resultMap="templateCountryMap">
+        select
+        a.id,
+        a.app_id,
+        a.template_code,
+        a.business_type_id,
+        a.title,
+        a.text,
+        a.remark,
+        a.status,
+        a.creator,
+        a.create_time,
+        a.modifier,
+        a.modify_time,
+
+        b.id as c_id,
+        b.template_code as c_template_code,
+        b.country_key as c_country_key,
+        b.country_name as c_country_name ,
+        b.title as c_title,
+        b.text as c_text,
+        b.text_style as c_text_style,
+        b.status as c_status,
+        b.creator as c_creator,
+        b.create_time as c_create_time,
+        b.modifier as c_modifier,
+        b.modify_time as c_modify_time
+        FROM
+        email_template a
+        LEFT JOIN email_template_country b on b.template_code = a.template_code
+        <where>
+            <if test="appId != null">
+                AND a.app_id = #{appId}
+            </if>
+
+            <if test="templateCode != null and templateCode != ''">
+                and b.template_code = #{templateCode}
+            </if>
+
+            <if test="countryKey != null and countryKey != ''">
+                and b.country_key = #{countryKey}
+            </if>
+
+            <if test="countryName != null and countryName != ''">
+                and b.country_name LIKE concat(concat('%',#{countryName},'%'))
+            </if>
+
+            <if test="title != null and title != ''">
+                AND b.title LIKE concat(concat('%',#{title},'%'))
+            </if>
+
+            <if test="text != null and text != ''">
+                AND b.text LIKE concat(concat('%',#{text},'%'))
+            </if>
+
+            <if test="remark != null and remark!= ''">
+                AND a.remark LIKE concat(concat('%',#{remark},'%'))
+            </if>
+        </where>
+
+        ORDER BY a.create_time desc
+        <if test="page.dbNumber != null">
+            <if test="page.dbIndex != null">
+                limit #{page.dbIndex}, #{page.dbNumber}
+            </if>
+            <if test="page.dbIndex == null">
+                limit #{page.dbNumber}
+            </if>
+        </if>
+    </select>
+</mapper>

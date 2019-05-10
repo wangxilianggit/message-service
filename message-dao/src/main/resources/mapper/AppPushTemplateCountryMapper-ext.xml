@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.notification.AppPushTemplateCountryMapper">
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into
+        app_push_template_country(
+        template_code,
+        country_key,
+        country_name,
+        title,
+        text,
+        text_style,
+        status,
+        creator,
+        modifier)
+        <foreach collection="list" item="item" open="VALUES" close=";" separator=",">
+            (#{item.templateCode},
+            #{item.countryKey},
+            #{item.countryName},
+            #{item.title},
+            #{item.text},
+            #{item.textStyle},
+            #{item.status},
+            #{item.creator},
+            #{item.modifier})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByTemplateCode" parameterType="java.lang.String">
+        delete from
+        app_push_template_country
+        where
+        template_code = #{templateCode}
+    </delete>
+</mapper>

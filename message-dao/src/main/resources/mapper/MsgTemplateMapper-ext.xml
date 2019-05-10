@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.message.MsgTemplateMapper">
+
+    <select id="countMsgTemplate"
+            parameterType="com.panshi.hujin2.message.domain.qo.MsgTemplateQO"
+            resultType="java.lang.Integer">
+        select
+        count(1)
+        from
+        message.msg_template
+        <where>
+            1=1
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+            <if test="appId != null">
+                and app_id = #{appId}
+            </if>
+
+            <if test="msgBusinessTypeId != null">
+                and msg_business_type_id = #{msgBusinessTypeId}
+            </if>
+
+            <!--<if test="templateCode != null and templateCode != ''">-->
+                <!--and template_code = #{templateCode}-->
+            <!--</if>-->
+
+            <!--<if test="msgText != null and msgText != ''">-->
+                <!--and msg_text LIKE concat(concat('%',#{msgText},'%'))-->
+            <!--</if>-->
+
+            <if test="remark != null and remark != ''">
+                and remark LIKE concat(concat('%',#{remark},'%'))
+            </if>
+
+            <if test="isVerifyCode != null">
+                and is_verify_code = #{isVerifyCode}
+            </if>
+
+            <if test="status != null">
+                and status = #{status}
+            </if>
+
+            <if test="creator != null and creator != ''">
+                and creator LIKE concat(concat('%',#{creator},'%'))
+            </if>
+
+            <if test="modifier != null and modifier != ''">
+                and modifier LIKE concat(concat('%',#{modifier},'%'))
+            </if>
+
+            <if test="createDateMin != null">
+                <![CDATA[and create_time >= #{createDateMin}]]>
+            </if>
+
+            <if test="createDateMax != null">
+                <![CDATA[and create_time <= #{createDateMax}]]>
+            </if>
+
+            <if test="modifyDateMin != null">
+                <![CDATA[and modify_time >= #{modifyDateMin}]]>
+            </if>
+
+            <if test="modifyDateMax != null">
+                <![CDATA[and modify_time <= #{modifyDateMax}]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryMsgTemplate"
+            parameterType="com.panshi.hujin2.message.domain.qo.MsgTemplateQO"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from
+        message.msg_template
+        <where>
+            1=1
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+            <if test="appId != null">
+                and app_id = #{appId}
+            </if>
+
+            <if test="msgBusinessTypeId != null">
+                and msg_business_type_id = #{msgBusinessTypeId}
+            </if>
+
+            <!--<if test="templateCode != null and templateCode != ''">-->
+                <!--and template_code = #{templateCode}-->
+            <!--</if>-->
+
+            <!--<if test="msgText != null and msgText != ''">-->
+                <!--and msg_text LIKE concat(concat('%',#{msgText},'%'))-->
+            <!--</if>-->
+
+            <if test="remark != null and remark != ''">
+                and remark LIKE concat(concat('%',#{remark},'%'))
+            </if>
+
+            <if test="isVerifyCode != null">
+                and is_verify_code = #{isVerifyCode}
+            </if>
+
+            <if test="status != null">
+                and status = #{status}
+            </if>
+
+            <if test="creator != null and creator != ''">
+                and creator LIKE concat(concat('%',#{creator},'%'))
+            </if>
+
+            <if test="modifier != null and modifier != ''">
+                and modifier LIKE concat(concat('%',#{modifier},'%'))
+            </if>
+
+            <if test="createDateMin != null">
+                <![CDATA[and create_time >= #{createDateMin}]]>
+            </if>
+
+            <if test="createDateMax != null">
+                <![CDATA[and create_time <= #{createDateMax}]]>
+            </if>
+
+            <if test="modifyDateMin != null">
+                <![CDATA[and modify_time >= #{modifyDateMin}]]>
+            </if>
+
+            <if test="modifyDateMax != null">
+                <![CDATA[and modify_time <= #{modifyDateMax}]]>
+            </if>
+            ORDER BY
+            create_time
+            <if test="desc">DESC</if>
+            limit #{page.dbIndex},#{page.dbNumber}
+        </where>
+    </select>
+
+
+    <resultMap id="templateCountryMap" type="com.panshi.hujin2.message.domain.dto.MsgTemplateDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="app_id" jdbcType="INTEGER" property="appId" />
+        <result column="msg_business_type_id" jdbcType="INTEGER" property="msgBusinessTypeId" />
+        <result column="template_code" jdbcType="VARCHAR" property="templateCode" />
+        <result column="msg_text" jdbcType="VARCHAR" property="msgText" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="is_verify_code" jdbcType="BIT" property="isVerifyCode" />
+        <result column="status" jdbcType="BIT" property="status" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+        <collection property="templateCountryDTOS" ofType="com.panshi.hujin2.message.domain.dto.MsgTemplateCountryDTO">
+            <id column="cId" jdbcType="INTEGER" property="id" />
+            <result column="cTemplateCode" jdbcType="VARCHAR" property="templateCode" />
+            <result column="cCountryKey" jdbcType="VARCHAR" property="countryKey" />
+            <result column="cCountryName" jdbcType="VARCHAR" property="countryName" />
+            <result column="cMsgText" jdbcType="VARCHAR" property="msgText" />
+            <result column="cStatus" jdbcType="BIT" property="status" />
+            <result column="cCreator" jdbcType="VARCHAR" property="creator" />
+            <result column="cCreateTime" jdbcType="TIMESTAMP" property="createTime" />
+            <result column="cModifier" jdbcType="VARCHAR" property="modifier" />
+            <result column="cModifyTime" jdbcType="TIMESTAMP" property="modifyTime" />
+        </collection>
+    </resultMap>
+
+    <select id="countTemplate"
+            parameterType="com.panshi.hujin2.message.domain.qo.MsgTemplateQO"
+            resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        msg_template a
+        LEFT JOIN msg_template_country b on b.template_code = a.template_code
+        <where>
+            <if test="appId != null">
+                AND a.app_id = #{appId}
+            </if>
+
+            <if test="templateCode != null and templateCode != ''">
+                AND b.template_code = #{templateCode}
+            </if>
+
+            <if test="msgText != null and msgText!= ''">
+                AND b.msg_text LIKE concat(concat('%',#{msgText},'%'))
+            </if>
+
+            <if test="remark != null and remark!= ''">
+                AND a.remark LIKE concat(concat('%',#{remark},'%'))
+            </if>
+
+        </where>
+    </select>
+
+    <select id="queryTemplate"
+        parameterType="com.panshi.hujin2.message.domain.qo.MsgTemplateQO"
+        resultMap="templateCountryMap">
+        SELECT
+        a.id,
+        a.app_id,
+        a.msg_business_type_id,
+        a.template_code,
+        a.msg_text,
+        a.remark,
+        a.is_verify_code,
+        a.`status`,
+        a.creator,
+        a.create_time,
+        a.modifier,
+        a.modify_time,
+
+        b.id as cId,
+        b.template_code as cTemplateCode,
+        b.country_key as cCountryKey,
+        b.country_name as cCountryName,
+        b.msg_text as cMsgText,
+        b.`status` as cStatus,
+        b.creator as cCreator,
+        b.create_time as cCreateTime,
+        b.modifier as cModifier,
+        b.modify_time as cModifyTime
+        FROM
+        msg_template a
+        LEFT JOIN msg_template_country b on b.template_code = a.template_code
+        <where>
+            <if test="appId != null">
+                AND a.app_id = #{appId}
+            </if>
+
+            <if test="templateCode != null and templateCode != ''">
+                AND b.template_code = #{templateCode}
+            </if>
+
+            <if test="msgText != null and msgText!= ''">
+                AND b.msg_text LIKE concat(concat('%',#{msgText},'%'))
+            </if>
+
+            <if test="remark != null and remark!= ''">
+                AND a.remark LIKE concat(concat('%',#{remark},'%'))
+            </if>
+        </where>
+        ORDER BY a.create_time desc
+        <if test="page.dbNumber != null">
+            <if test="page.dbIndex != null">
+                limit #{page.dbIndex}, #{page.dbNumber}
+            </if>
+            <if test="page.dbIndex == null">
+                limit #{page.dbNumber}
+            </if>
+        </if>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!-- classPathEntry:数据库的JDBC驱动的jar包地址-->
+    <!--<classPathEntry location="E:\jar\mysql-connector-java-5.1.39\mysql-connector-java-5.1.39\mysql-connector-java-5.1.39-bin.jar" />-->
+    <context id="MysqlTables" targetRuntime="MyBatis3">
+        <!-- 注释 -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/> <!-- 是否取消注释 -->
+            <property name="suppressDate" value="true" /> <!-- 是否生成注释代时间戳-->
+        </commentGenerator>
+        <!-- JDBC连接 -->
+        <!--实际生产数据mysql 地址：120.27.216.53 -->
+        <!--部署到jenkins上必须改成：172.16.180.52 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://192.168.24.100:3306/message?useUnicode=true&amp;characterEncoding=UTF-8"
+                        userId="root"
+                        password="8812345!@#">
+        </jdbcConnection>
+        <!-- 类型转换 -->
+        <javaTypeResolver >
+            <!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） -->
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!-- 生成实体类地址 -->
+        <javaModelGenerator targetPackage="com.panshi.hujin2.message.dao.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
+            <property name="trimStrings" value="true" /> <!-- 是否针对string类型的字段在set的时候进行trim调用 -->
+        </javaModelGenerator>
+        <!-- 生成MAPXML文件 -->
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
+        </sqlMapGenerator>
+        <!-- 生成DAO -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.panshi.hujin2.message.dao.mapper.message" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
+        </javaClientGenerator>
+        <!-- 配置表信息 -->
+        <table schema="" tableName="urgent_recall_call_log" domainObjectName="UrgentRecallCallLog"
+               enableCountByExample="true"
+               enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true" >
+
+            <!--insert返回自增主键-->
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>

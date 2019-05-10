@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.notification.UserClientRelationMapper">
+
+    <!--<select id="queryClientIdByUserIdList" resultType="java.lang.String">-->
+        <!--SELECT-->
+        <!--client_id-->
+        <!--FROM-->
+        <!--user_client_relation-->
+        <!--WHERE-->
+        <!--`status` = 1-->
+        <!--and user_id IN-->
+        <!--<foreach collection="list" item="item" open="(" close=")" separator=",">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    <!--</select >-->
+
+    <update id="updateClientIdLose" >
+        UPDATE `user_client_relation`
+        set `status` = 0
+        where
+        `status` = 1
+        and app_id = #{appId}
+        and id IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

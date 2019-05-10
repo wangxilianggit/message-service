@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="${dubbo.application.name}"/>
+    <dubbo:registry server="zkRegistry" protocol="${dubbo.registry.protocol}" address="${dubbo.registry.address}"
+                    file="${dubbo.registry.file}" check="false"/>
+    <dubbo:protocol port="${dubbo.protocol.port}"/>
+    <dubbo:provider timeout="${dubbo.provider.timeout}" retries="0"/>
+    <!--<dubbo:consumer check="true" timeout="${dubbo.consumer.timeuout}" retries="0"/>-->
+    <!--<dubbo:reference interface="cn.com.weidai.ir.facade.BaiduAiFacade" id="baiduAiFacade"/>-->
+
+    <!--LCN-->
+    <!--<dubbo:consumer  filter="transactionFilter" />-->
+
+    <!--短信发送-->
+    <dubbo:service interface="com.panshi.hujin2.message.facade.IMessageFacade" ref="messageFacadeImpl" />
+    <!--短信模板-->
+    <dubbo:service interface="com.panshi.hujin2.message.facade.IMsgTemplateFacade" ref="msgTemplateFacadeImpl" />
+    <!-- 巴西邮件发送 -->
+    <dubbo:service interface="com.panshi.hujin2.message.facade.IEmailSendFacade" ref="emailSendFacadeImpl" />
+    <!-- 个推 -->
+    <dubbo:service interface="com.panshi.hujin2.message.facade.INotificationPushFacade" ref="notificationPushFacadeImpl" />
+    <dubbo:service interface="com.panshi.hujin2.message.facade.INotificationHistoryFacade" ref="notificationHistoryFacadeImpl" />
+    <dubbo:service interface="com.panshi.hujin2.message.facade.INotificationTemplateFacade" ref="notificationTemplateFacadeImpl" />
+
+<!--    <dubbo:reference interface="com.panshi.hujin2.bmp.facade.IBMPChannelFacade" id="BMPChannelFacadeImpl" check="false" timeout="1500000"/>-->
+</beans>
