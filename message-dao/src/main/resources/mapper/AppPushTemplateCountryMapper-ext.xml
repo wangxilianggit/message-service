@@ -33,4 +33,27 @@
         where
         template_code = #{templateCode}
     </delete>
+
+    <select id="queryPushTemplateCountryByQO"
+            parameterType="com.panshi.hujin2.message.domain.qo.getui.AppPushTemplateCountryQO"
+            resultMap="BaseResultMap">
+        select
+        *
+        from
+        app_push_template_country
+        <where>
+            <if test="templateCode!=null and templateCode!=''">
+                and template_code = #{templateCode}
+            </if>
+
+            <if test="!=null and !=''">
+                and countryKey = #{country_key}
+            </if>
+
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+        </where>
+
+    </select>
 </mapper>

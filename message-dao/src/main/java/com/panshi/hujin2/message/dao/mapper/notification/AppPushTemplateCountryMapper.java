@@ -2,6 +2,8 @@ package com.panshi.hujin2.message.dao.mapper.notification;
 
 import com.panshi.hujin2.message.dao.model.AppPushTemplateCountry;
 import com.panshi.hujin2.message.dao.model.AppPushTemplateCountryExample;
+import com.panshi.hujin2.message.domain.qo.getui.AppPushTemplateCountryQO;
+import com.panshi.hujin2.message.domain.qo.getui.AppPushTemplateQO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -38,4 +40,8 @@ public interface AppPushTemplateCountryMapper {
     void insertBatch(@Param("list") List<AppPushTemplateCountry> list);
     //根据templateCode删除
     int deleteByTemplateCode(@Param("templateCode") String templateCode);
+
+    List<AppPushTemplateCountry> queryPushTemplateCountryByQO(AppPushTemplateCountryQO qo);
+
+
 }

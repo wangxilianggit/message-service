@@ -88,9 +88,11 @@ public class GeTuiUtils {
                 infoBO.setAppId(GeTuiAppConfigEnum.VI_CASH_DOG_APP_ID.getValue());
                 infoBO.setAppKey(GeTuiAppConfigEnum.VI_CASH_DOG_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_DOG_MASTER_SECRET.getValue());
+                break;
             }
             default:
                 //参数错误异常
+                System.err.println(" ======获取个推推送key错误======= ");
                 NotificationExceptionUtils.throwExceptionParamInvalid(context);
         }
         return infoBO;
