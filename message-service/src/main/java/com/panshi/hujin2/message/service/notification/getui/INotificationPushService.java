@@ -97,6 +97,15 @@ public interface INotificationPushService {
                              String text,
                              Context context);
 
+    void pushMessageToSingle(
+            ApplicationEnmu appEnmu,
+            Integer userId,
+            Integer businessTypeId,
+            String title,
+            String text,
+            Boolean send,
+            Boolean recordHistory,
+            Context context);
     /**
      * @description:            根据用户id、模板code推送消息(单个推送)  (分模板，安卓：点击通知打开应用模板。ios：透传模板 )
      * @param appEnmu
@@ -128,11 +137,31 @@ public interface INotificationPushService {
      * @Author shenjiankang
      * @Date 2018/6/27 14:48
      */
-    void pushMessageToList(ApplicationEnmu appEnum,
+    String pushMessageToList(ApplicationEnmu appEnum,
                            List<Integer> userIdList,
                            String title,
                            String text,
                            Context context);
+
+    /**
+     * @description:        根据用户list批量发送
+     * @param appEnum       app
+     * @param userIdList    userid list
+     * @param title         推送标题
+     * @param text          推送内容
+     * @param send          是否推送
+     * @param recordHistory 是否在消息中心历史记录表记录
+     * @param context       国际化
+     * @Author shenjiankang
+     * @Date 2019/3/8 21:45
+     */
+    String pushMessageToList(ApplicationEnmu appEnum,
+                             List<Integer> userIdList,
+                             String title,
+                             String text,
+                             Boolean send,
+                             Boolean recordHistory,
+                             Context context);
 
     /**
      * @description:            根据用户id列表、模板code推送消息(列表推送)  (分模板，安卓：点击通知打开应用模板。ios：透传模板 )
