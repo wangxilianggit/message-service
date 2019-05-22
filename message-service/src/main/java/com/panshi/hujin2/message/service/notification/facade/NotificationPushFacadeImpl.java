@@ -78,6 +78,31 @@ public class NotificationPushFacadeImpl implements INotificationPushFacade {
     }
 
     @Override
+    public BasicResult<Void> pushMessageToSingle(ApplicationEnmu appEnmu,
+                                                 Integer userId,
+                                                 Integer businessTypeId,
+                                                 String title,
+                                                 String text,
+                                                 Boolean send,
+                                                 Boolean recordHistory,
+                                                 Context context) {
+        try {
+            notificationPushService.pushMessageToSingle(appEnmu,
+                    userId,
+                    businessTypeId,
+                    title,
+                    text,
+                    send,
+                    recordHistory,
+                    context);
+            return BasicResult.ok();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return NotificationExceptionUtils.throwDefinedException(e, context);
+        }
+    }
+
+    @Override
     public BasicResult<Void> pushMessageToList(ApplicationEnmu appEnmu,
                                                List<Integer> userIdList,
                                                String pushTemplateCode,
@@ -115,6 +140,24 @@ public class NotificationPushFacadeImpl implements INotificationPushFacade {
                     recordHistory,
                     context);
             return BasicResult.ok();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return NotificationExceptionUtils.throwDefinedException(e, context);
+        }
+    }
+
+    @Override
+    public BasicResult<String> pushMessageToList(ApplicationEnmu appEnum, List<Integer> userIdList, String pushTitle, String pushContent, Boolean send, Boolean recordHistory, Context context) {
+        try {
+            String res = notificationPushService.pushMessageToList(
+                    appEnum,
+                    userIdList,
+                    pushTitle,
+                    pushContent,
+                    send,
+                    recordHistory,
+                    context);
+            return BasicResult.ok(res);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return NotificationExceptionUtils.throwDefinedException(e, context);

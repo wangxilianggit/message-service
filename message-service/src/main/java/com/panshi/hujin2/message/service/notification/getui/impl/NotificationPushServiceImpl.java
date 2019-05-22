@@ -503,6 +503,45 @@ public class NotificationPushServiceImpl implements INotificationPushService {
     }
 
     @Override
+    public void pushMessageToSingle(ApplicationEnmu appEnmu, Integer userId, Integer businessTypeId, String title, String text, Boolean send, Boolean recordHistory, Context context) {
+        try {
+            NotificationExceptionUtils.verifyObjectIsNull(context,userId,appEnmu);
+            NotificationExceptionUtils.verifyStringIsBlank(context,text);
+
+            //默认个推不发送通知
+            if(send == null){
+                send = Boolean.FALSE;
+            }
+
+            //默认消息中心记录发送历史
+            if(recordHistory == null){
+                recordHistory = Boolean.TRUE;
+            }
+
+            if(recordHistory){
+                //通过参数校验后，不管发送是否成功失败，都要在消息中心记录
+                AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                historyInputBo.setAppId(appEnmu.getCode());
+                historyInputBo.setUserId(userId);
+                historyInputBo.setBusinessTypeId(businessTypeId);
+                historyInputBo.setTitle(title);
+                historyInputBo.setText(text);
+                historyInputBo.setStatus(false);//未读
+                int resCount = notificationHistoryService.addPushHistory(historyInputBo,context);
+                if(resCount == 0){
+                    NotificationExceptionUtils.throwExceptionAddFail(context);
+                }
+            }
+            if(send){
+                pushMessageToSingle(appEnmu,userId,businessTypeId,title,text,context);
+            }
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    @Override
     public void pushMessageToSingle(ApplicationEnmu appEnmu,
                                     Integer userId,
                                     String pushTemplateCode,
@@ -616,12 +655,13 @@ public class NotificationPushServiceImpl implements INotificationPushService {
 
 
     @Override
-    public void pushMessageToList(ApplicationEnmu appEnum,
+    public String pushMessageToList(ApplicationEnmu appEnum,
                                   List<Integer> userIdList,
                                   String title,
                                   String text,
                                   Context context) {
         //列表推送需要分推送模板，安卓:NotificationTemplate  ios:TransmissionTemplate
+        String res = "";
         try {
             NotificationExceptionUtils.verifyObjectIsNull(context, userIdList);
 
@@ -686,6 +726,7 @@ public class NotificationPushServiceImpl implements INotificationPushService {
                 // taskId用于在推送时去查找对应的message
                 String androidTaskId = push.getContentId(androidMessage);
                 IPushResult ret = push.pushMessageToList(androidTaskId, androidTargetList);
+                res = ret.getResponse().toString();
                 LOGGER.debug("消息群推 Android: [{}]",ret.getResponse().toString());
             }else{
                 LOGGER.debug("消息群推:  无Android用户");
@@ -713,6 +754,7 @@ public class NotificationPushServiceImpl implements INotificationPushService {
                 // taskId用于在推送时去查找对应的message
                 String iosTaskId = push.getContentId(iosMessage);
                 IPushResult ret = push.pushMessageToList(iosTaskId, iosTargetList);
+                res = ret.toString();
                 LOGGER.debug("消息群推 ios:  [{}]",ret.getResponse().toString());
             }else{
                 LOGGER.debug("消息群推:  无ios用户");
@@ -721,6 +763,65 @@ public class NotificationPushServiceImpl implements INotificationPushService {
             LOGGER.error(e.getMessage(), e);
             throw e;
         }
+        return res;
+    }
+
+    @Override
+    public String pushMessageToList(ApplicationEnmu appEnum, List<Integer> userIdList, String title, String text, Boolean send, Boolean recordHistory, Context context) {
+        String res = "";
+        try {
+            NotificationExceptionUtils.verifyObjectIsNull(context,userIdList,appEnum);
+            NotificationExceptionUtils.verifyStringIsBlank(context,text);
+
+            //默认个推不发送通知
+            if(send == null){
+                send = Boolean.FALSE;
+            }
+
+            //默认消息中心记录发送历史
+            if(recordHistory == null){
+                recordHistory = Boolean.TRUE;
+            }
+
+            List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+            for(Integer uid :userIdList){
+                if(uid != null){
+                    //todo 看情况不需要的话删除该插入操作  insertAppPushRecord(inputBO);//推送消息记录表
+                    AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
+                    inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
+                    inputBO.setTemplateType(4);
+                    inputBO.setUserId(uid);
+//                        inputBO.setClientId(clientId);
+//                    inputBO.setBusinessTypeId(businessTypeId);
+                    inputBO.setTitle(title);
+                    inputBO.setText(text);
+                    inputBO.setTransmissionContent("");
+//                        inputBO.setPushResponse(ret.getResponse().toString());
+                    //推送消息记录表
+                    addPushRecord(inputBO,context);
+
+                    if(recordHistory){
+                        //不管发送是否成功失败，都要在消息中心记录
+                        AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                        historyInputBo.setAppId(appEnum.getCode());
+                        historyInputBo.setUserId(uid);
+//                        historyInputBo.setBusinessTypeId(businessTypeId);
+                        historyInputBo.setTitle(title);
+                        historyInputBo.setText(text);
+                        historyInputBo.setStatus(false);
+                        insertList.add(historyInputBo);
+                    }
+                }
+            }
+            notificationHistoryService.insertBatch(insertList, context);
+            if(send){
+                res = pushMessageToList(appEnum,userIdList,title,text,context);
+            }
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
+        return res;
     }
 
     @Override

@@ -57,6 +57,27 @@ public interface INotificationPushFacade {
 
 
     /**
+     * @description:            单个推送，直接入参 传入 标题和发送内容
+     * @param appEnmu
+     * @param userId
+     * @param businessTypeId
+     * @param title
+     * @param text
+     * @param send
+     * @param recordHistory
+     * @param context
+     * @Author shenjiankang
+     * @Date 2019/3/8 22:35
+     */
+    BasicResult<Void> pushMessageToSingle(ApplicationEnmu appEnmu,
+                                          Integer userId,
+                                          Integer businessTypeId,
+                                          String title,
+                                          String text,
+                                          Boolean send,
+                                          Boolean recordHistory,
+                                          Context context);
+    /**
      * @description:            默认个推发送，消息入库，根据用户id列表、模板code推送消息(列表推送)  (分模板，安卓：点击通知打开应用模板。ios：透传模板 )
      * @param appEnmu
      * @param userIdList        用户id列表
@@ -92,6 +113,27 @@ public interface INotificationPushFacade {
                                         Boolean send,
                                         Boolean recordHistory,
                                         Context context);
+
+
+    /**
+     * @description:            根据用户id list 批量推送（入参title，text不需要再查询出来）
+     * @param appEnum
+     * @param userIdList
+     * @param pushTitle
+     * @param pushContent
+     * @param send
+     * @param recordHistory
+     * @param context
+     * @Author shenjiankang
+     * @Date 2019/3/8 21:52
+     */
+    BasicResult<String> pushMessageToList(ApplicationEnmu appEnum,
+                                          List<Integer> userIdList,
+                                          String pushTitle,
+                                          String pushContent,
+                                          Boolean send,
+                                          Boolean recordHistory,
+                                          Context context);
 
     /**
      * @description:            批量单推,消息中心会记录该数据(场景：多个用户推送，同一个模板，不同参数，时使用该接口)
