@@ -84,12 +84,17 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.MX_HILOAN_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.MX_HILOAN_MASTER_SECRET.getValue());
                 break;
-            case VI_CASH_DOG:{
+            case VI_CASH_DOG:
                 infoBO.setAppId(GeTuiAppConfigEnum.VI_CASH_DOG_APP_ID.getValue());
                 infoBO.setAppKey(GeTuiAppConfigEnum.VI_CASH_DOG_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_DOG_MASTER_SECRET.getValue());
                 break;
-            }
+            case INA_CASH_KANGAROO:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_CASH_KANGAROO_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_CASH_KANGAROO_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_CASH_KANGAROO_MASTER_SECRET.getValue());
+                break;
+
             default:
                 //参数错误异常
                 System.err.println(" ======获取个推推送key错误======= ");
