@@ -100,10 +100,16 @@ public enum GeTuiAppConfigEnum {
 
 
     //越南貸超
-    VI_CASH_DOG_APP_ID("rAH1ndFMqN8jmsJzpfJq41"),
-    VI_CASH_DOG_APP_SECRET("ZjJWNug8B99u69nOCsNwJ1"),
-    VI_CASH_DOG_APP_KEY("g7iDXpLwAU7B8de29hLlZ6"),
-    VI_CASH_DOG_MASTER_SECRET("XmyxhQ9jzq9pLwk3D6GIB2"),
+    //旧包被下架了
+//    VI_CASH_DOG_APP_ID("rAH1ndFMqN8jmsJzpfJq41"),
+//    VI_CASH_DOG_APP_SECRET("ZjJWNug8B99u69nOCsNwJ1"),
+//    VI_CASH_DOG_APP_KEY("g7iDXpLwAU7B8de29hLlZ6"),
+//    VI_CASH_DOG_MASTER_SECRET("XmyxhQ9jzq9pLwk3D6GIB2"),
+    //新包    com.cashdog1.newbeginning
+    VI_CASH_DOG_APP_ID("HubnrkuybK9KjnwCzxdgE"),
+    VI_CASH_DOG_APP_SECRET("JsASUIgCjx7X0GOsfFHW54"),
+    VI_CASH_DOG_APP_KEY("BrWuv0dL7pA8xEkQqbhnU2"),
+    VI_CASH_DOG_MASTER_SECRET("DYDqX10fxM6Nrh5J9iUQp3"),
 
     //印尼貸超
     INA_CASH_KANGAROO_APP_ID("mL5vYGD8CR74SWgnDrHO63"),
