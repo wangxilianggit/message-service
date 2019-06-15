@@ -28,6 +28,7 @@ import java.util.*;
 @RestController
 //@Scope(value = WebApplicationContext.SCOPE_REQUEST)
 //@Scope("prototype")
+@RequestMapping("test")
 public class TestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
@@ -78,6 +79,45 @@ public class TestController {
     private final String zzhPhoneNumber = "8613937368224";
     private final String ycgPhoneNumber = "8613989801412";
     private final String zccPhoneNumber = "8615268576785";
+
+
+    //// TODO: 2019/6/14 shenjiankang  測試天一弘發送
+//    @RequestMapping("/shentianyihong")
+    public void testSend_tian_yi_hong(){
+        //tianyihong
+        //您这边测试的话带senderID:VietID   ; 没有ID可能发不出去
+        //您的访问码是，，，，有效时间是，，  ;建议第一个和第三个,因为说OTP用户可能不知道
+        String text1 = "Mã xác minh của bạn là 1111, mã xác minh này chỉ có hiệu lực trong 5 phút senderID:VietID";
+//        String text2 = "Mã OTP của bạn là 2222, mã OTP này có hiệu lực trong ... phútMã OTP của bạn là ..., mã OTP này có hiệu lực trong ... phút senderID:VietID";
+        String text2 = "Mã OTP của bạn là 2222, mã OTP này có hiệu lực trong 5 phút senderID:VietID";
+        String text3 = "Mã xác thực của bạn là 3333, mã xác thực này có hiệu lực trong 5 phút senderID:VietID";
+        String text4 = "Mã xác minh của bạn là 4444, mã xác minh này chỉ có hiệu lực trong 5 phút ID:VietID";
+        String text5 = "Mã xác minh của bạn là 5555, mã xác minh này chỉ có hiệu lực trong 5 phút \n" +
+                "ID:VietID";
+
+        String text6 = "Mã xác thực của bạn là 6666, mã xác thực này có hiệu lực trong 5 phút";
+        String text7 = "Mã xác thực của bạn là 7777, mã xác thực này có hiệu lực trong 5 phút";
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        String phoneNumber = "0789635440";
+        String phoneNumber = "84789635440";
+        String phoneNumber1 = "84586942918";
+//        boolean subRes3 = tianyihongService.sendInternationalMsg(ApplicationEnmu.VI_CASH_DOG,
+//                phoneNumber,
+//                text6,
+//                context);
+
+        boolean subRes4 = tianyihongService.sendInternationalMsg(ApplicationEnmu.VI_CASH_DOG,
+                phoneNumber1,
+                text7,
+                context);
+//        System.out.println("tianyiHong发送结果： " + text1+"RES: "+subRes3 );
+//        System.out.println("===============================================");
+    }
+
 
 
     //测试如果没有对应的国际化模板 ，获取默认模板

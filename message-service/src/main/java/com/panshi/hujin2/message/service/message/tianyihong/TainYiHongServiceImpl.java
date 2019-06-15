@@ -122,6 +122,9 @@ public class TainYiHongServiceImpl extends SendMsg {
             paramsMap.put("sign",signMd5);
             paramsMap.put("datetime",currentDateStr);
 
+            //非必填， 越南短信发送需要 这个参数
+            paramsMap.put("senderid","VietID");
+
             String sendRes = HttpUtil.get(sendUrl,paramsMap);
             //如果换成post请求,需要全都拼在url里
 //            String sendRes = HttpUtil.post(sendUrl+"?account="+account+"&password="+pwd+"&numbers="+phoneNumber+"&content="+smsText,paramsMap);
