@@ -99,6 +99,15 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.INA_CASH_KANGAROO_2_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_CASH_KANGAROO_2_MASTER_SECRET.getValue());
                 break;
+            case INA_CASH_KANGAROO_DEXTER:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_CASH_KANGAROO_DEXTER_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_CASH_KANGAROO_DEXTER_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_CASH_KANGAROO_DEXTER_MASTER_SECRET.getValue());
+                break;
+            case VI_CASH_DOG_NEVWESOLDOUT:
+                infoBO.setAppId(GeTuiAppConfigEnum.VI_CASH_DOG_NEVWESOLDOUT_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.VI_CASH_DOG_NEVWESOLDOUT_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_DOG_NEVWESOLDOUT_MASTER_SECRET.getValue());
 
             default:
                 //参数错误异常
