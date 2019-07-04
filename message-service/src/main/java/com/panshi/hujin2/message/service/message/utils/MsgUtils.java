@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 public class MsgUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MsgUtils.class);
 
+
+    //有效时间参数，毫秒级别
     public static ExpiryMap expiryMap = new ExpiryMap();
 
     /**

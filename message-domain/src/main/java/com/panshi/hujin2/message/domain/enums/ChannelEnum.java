@@ -12,7 +12,9 @@ public enum ChannelEnum {
     INFOBIP(3,"infobip"),
     TIANYIHONG(4,"tianyihong"),
     PAASOO(5,"paasoo"),
-    YIMEIRUANTONG(6,"yimeiruantong");
+    YIMEIRUANTONG(6,"yimeiruantong"),
+    KMI(7,"KMI"),
+    ;
 
     private int code;
     private String text;

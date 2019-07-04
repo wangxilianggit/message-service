@@ -1,16 +1,20 @@
 package com.panshi.hujin2.message.controller;
 
+import com.gexin.fastjson.JSON;
+import com.gexin.fastjson.JSONObject;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.base.service.utils.ContextUtils;
 import com.panshi.hujin2.message.common.utils.HttpUtil;
+import com.panshi.hujin2.message.common.utils.MD5Util;
 import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.BatchSendDiffTemplateParamBO;
 import com.panshi.hujin2.message.service.message.IMsgDBService;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
 import com.panshi.hujin2.message.service.message.infobip.impl.InfobipServiceImpl;
+import com.panshi.hujin2.message.service.message.submail.sdk.utils.StringUtil;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -92,8 +96,8 @@ public class TestController {
     @Value("${kmi.token.url}")
     private String KmiTokenUrl;
 
-    @Value("${kmi.send.msg.url}")
-    private String kmiSendMsgUrl;
+    @Value("${kmi.send.msg.otp.url}")
+    private String kmiSendOtpMsgUrl;
 
     private final String TOKEN_KEY = "KMI_TOKEN";
     private final long VALID_TIME = 60 * 60 * 1000 * 2;
@@ -106,30 +110,69 @@ public class TestController {
     private final String zccPhoneNumber = "8615268576785";
 
     //印尼号码
-    private final String inaPhoneNumber_1 = "085211728995";
+    private final String inaPhoneNumber_1 = "85211728995";
+    private final String inaPhoneNumber_2 = "87877664066";
+    private final String inaPhoneNumber_3 = "81905091102";
+    private final String inaPhoneNumber_4 = "81818777085";//liuzongkui_1
+    private final String inaPhoneNumber_5 = "87784736868";//liuzongkui_2
+
+
+
+    @RequestMapping("/put")
+    public String put(){
+        MsgUtils.expiryMap.put("123","666 啊",60 * 1000);
+        return "put";
+    }
+
+    @RequestMapping("/get")
+    public String get(){
+        Object obj = MsgUtils.expiryMap.get("123");
+        return String.valueOf(obj);
+    }
+
 
     private String getToken() throws Exception{
         Object tokenObj = MsgUtils.expiryMap.get(TOKEN_KEY);
         String token = null;
         if(tokenObj == null){
-            token = HttpUtil.get(KmiTokenUrl);
-            if(StringUtils.isBlank(token)){
+            String pwd = MD5Util.MD5(kmiPwd);
+            KmiTokenUrl = KmiTokenUrl + pwd;
+            String result = HttpUtil.get(KmiTokenUrl);
+            if(StringUtils.isNotBlank(result)){
+                //解析result
+                //{"data":{"token":"440E8E87F36D52E60631F892689D62E14A19623FE9147EC2FC1947E2D4AF5285","balance":"0.00"},"result":{"code":0,"desc":"SUCCESS"}}
+                JSONObject jsonObject = JSON.parseObject(result);
+                JSONObject res = jsonObject.getJSONObject("result");
+                if(res != null){
+                    String code = res.getString("code");
+                    if("0".equals(code)){
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        if(data != null){
+                            token = data.getString("token");
+                            if(StringUtils.isNotBlank(token)){
+                                return token;
+                            }
+                        }
+                    }
+                }
+            }else {
+                //重试
                 boolean flag = true;
                 int num = 0;
                 //重试
-                while (flag && num<5){
-                    try {
-                        Thread.sleep(2000);
-                        token = HttpUtil.get(KmiTokenUrl);
-                        num ++;
-                        if(StringUtils.isNotBlank(token)){
-                            flag = false;
-                        }
-                    }catch (Exception e){
-                        LOGGER.error(e.getMessage(),e);
-                        throw e;
-                    }
-                }
+//                while (flag && num<5){
+//                    try {
+//                        Thread.sleep(2000);
+//                        result = HttpUtil.get(KmiTokenUrl);
+//                        num ++;
+//                        if(StringUtils.isNotBlank(result)){
+//
+//                        }
+//                    }catch (Exception e){
+//                        LOGGER.error(e.getMessage(),e);
+//                        throw e;
+//                    }
+//                }
             }
         }else {
             token = String.valueOf(tokenObj);
@@ -142,16 +185,27 @@ public class TestController {
         return token;
     }
 
-    @RequestMapping("/kmisend")
+//    @RequestMapping("/kmisend")
     public String sendKmiMsg(){
         try {
             String token = getToken();
-            Map<String, Object> map = new HashMap<>();
-            map.put("token",token);
-            map.put("sendType",1);//发送类型 1.LongNumber
-            map.put("msisdn","62"+inaPhoneNumber_1);//短信接收方号码，格式为62xxxx如：6281210506807 （只支持印尼号码）
-            map.put("message","hello cashdog");//短信内容
-            String res = HttpUtil.post(kmiSendMsgUrl, map);
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("token",token);
+//            map.put("sendType",1);//发送类型 1.LongNumber
+//            map.put("msisdn","62"+inaPhoneNumber_1);//短信接收方号码，格式为62xxxx如：6281210506807 （只支持印尼号码）
+//            map.put("message","hello cashdog");//短信内容
+//            String res = HttpUtil.post(kmiSendMsgUrl, map);
+
+            com.alibaba.fastjson.JSONObject jsonObj = new com.alibaba.fastjson.JSONObject();
+            jsonObj.put("token", token);
+            jsonObj.put("from", "AFT");
+            jsonObj.put("to", "62"+inaPhoneNumber_5);
+            String messagetest = "Anda mendaftar cashKangaroo, kode verifikasi adalah 7777777. [cashKangaroo]";
+            jsonObj.put("message", messagetest);
+            String params = jsonObj.toString();
+            String res = HttpUtil.post(kmiSendOtpMsgUrl, params);
+            //{"result":{"code":-113,"desc":"SMS Gateway Error"}}
+            //{"data":{"trxid":"15622242966551293","trxdate":"20190704151136"},"result":{"code":0,"desc":"SUCCESS"}}
             return res;
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);

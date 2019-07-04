@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.panshi.hujin2.base.common.enmu.ApplicationEnmu.*;
+
 /**
  * create by shenjiankang on 2018/6/20 11:44
  */
@@ -75,6 +77,10 @@ public class MessageFacadeImpl implements IMessageFacade {
     private ISendMsgService paasooService;
 
     @Autowired
+    @Qualifier("KMIService")
+    private ISendMsgService KMIService;
+
+    @Autowired
     private UrgentRecallMsgLogMapper urgentRecallMsgLogMapper;
     @Autowired
     private UrgentRecallCallLogMapper callLogMapper;
@@ -92,9 +98,25 @@ public class MessageFacadeImpl implements IMessageFacade {
             ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
             ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,templateCode);
 
+            ISendMsgService sendMsgService = null;
+            if(applicationEnmu == VI_CASH_DOG
+                    || applicationEnmu == VI_CASH_DOG_NEVERSOLDOUT
+                    || applicationEnmu == VI_CASH_DOG_GOODDAY
+                    || applicationEnmu == VI_CASH_CAT){
+                //越南
+                phoneNumber = 84 +phoneNumber;
+                sendMsgService = tianyihongService;
 
-            //todo  根据app枚举判断是 天一弘ih还是 KMI
-            boolean res = tianyihongService.sendInternationalMsg(applicationEnmu,
+            }else if(applicationEnmu == INA_WEB_GAME
+                    || applicationEnmu == INA_CASH_KANGAROO
+                    || applicationEnmu == INA_CASH_KANGAROO_2
+                    || applicationEnmu == INA_CASH_KANGAROO_DEXTER){
+                //印尼
+                phoneNumber = 62 +phoneNumber;
+                sendMsgService = KMIService;
+            }
+
+            boolean res = sendMsgService.sendInternationalMsg(applicationEnmu,
                         phoneNumber,
                         templateCode,
                         paramList,
