@@ -93,6 +93,7 @@ public class MessageFacadeImpl implements IMessageFacade {
             ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,templateCode);
 
 
+            //todo  根据app枚举判断是 天一弘ih还是 KMI
             boolean res = tianyihongService.sendInternationalMsg(applicationEnmu,
                         phoneNumber,
                         templateCode,

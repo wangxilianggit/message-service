@@ -4,15 +4,20 @@ import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.base.service.utils.ContextUtils;
+import com.panshi.hujin2.message.common.utils.HttpUtil;
+import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.BatchSendDiffTemplateParamBO;
 import com.panshi.hujin2.message.service.message.IMsgDBService;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
 import com.panshi.hujin2.message.service.message.infobip.impl.InfobipServiceImpl;
+import com.panshi.hujin2.message.service.message.utils.MsgUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,6 +70,11 @@ public class TestController {
     private ISendMsgService yimeiruantongService;
 
 
+    @Autowired
+    @Qualifier("KMIService")
+    private ISendMsgService KMIService;
+
+
 
 
 //    @Autowired
@@ -73,12 +83,83 @@ public class TestController {
     @Autowired
     private InfobipServiceImpl infobipServiceImpl;
 
+    @Value("${kmi.account}")
+    private String kmiAccount;
+
+    @Value("${kmi.pwd}")
+    private String kmiPwd;
+
+    @Value("${kmi.token.url}")
+    private String KmiTokenUrl;
+
+    @Value("${kmi.send.msg.url}")
+    private String kmiSendMsgUrl;
+
+    private final String TOKEN_KEY = "KMI_TOKEN";
+    private final long VALID_TIME = 60 * 60 * 1000 * 2;
+
     private Context context = new Context();
 
     private final String myPhoneNumber = "8613777400292";
     private final String zzhPhoneNumber = "8613937368224";
     private final String ycgPhoneNumber = "8613989801412";
     private final String zccPhoneNumber = "8615268576785";
+
+    //印尼号码
+    private final String inaPhoneNumber_1 = "085211728995";
+
+    private String getToken() throws Exception{
+        Object tokenObj = MsgUtils.expiryMap.get(TOKEN_KEY);
+        String token = null;
+        if(tokenObj == null){
+            token = HttpUtil.get(KmiTokenUrl);
+            if(StringUtils.isBlank(token)){
+                boolean flag = true;
+                int num = 0;
+                //重试
+                while (flag && num<5){
+                    try {
+                        Thread.sleep(2000);
+                        token = HttpUtil.get(KmiTokenUrl);
+                        num ++;
+                        if(StringUtils.isNotBlank(token)){
+                            flag = false;
+                        }
+                    }catch (Exception e){
+                        LOGGER.error(e.getMessage(),e);
+                        throw e;
+                    }
+                }
+            }
+        }else {
+            token = String.valueOf(tokenObj);
+        }
+        if(StringUtils.isBlank(token)){
+            LOGGER.error(" ======== KMI TOKEN 获取失败！");
+            throw new MessageException("KMI TOKEN 获取失败！");
+        }
+        MsgUtils.expiryMap.put(TOKEN_KEY,token, VALID_TIME);
+        return token;
+    }
+
+    @RequestMapping("/kmisend")
+    public String sendKmiMsg(){
+        try {
+            String token = getToken();
+            Map<String, Object> map = new HashMap<>();
+            map.put("token",token);
+            map.put("sendType",1);//发送类型 1.LongNumber
+            map.put("msisdn","62"+inaPhoneNumber_1);//短信接收方号码，格式为62xxxx如：6281210506807 （只支持印尼号码）
+            map.put("message","hello cashdog");//短信内容
+            String res = HttpUtil.post(kmiSendMsgUrl, map);
+            return res;
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+        }
+        return "失败";
+    }
+
+
 
 
     //// TODO: 2019/6/14 shenjiankang  測試天一弘發送
