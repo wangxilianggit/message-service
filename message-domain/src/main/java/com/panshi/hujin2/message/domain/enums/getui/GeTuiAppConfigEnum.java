@@ -148,11 +148,17 @@ public enum GeTuiAppConfigEnum {
     VI_CASH_DOG_GOODDAY_APP_KEY("YbznJMZZou86Nhlu0FEWL4"),
     VI_CASH_DOG_GOODDAY_MASTER_SECRET("dhyUAGHwAA95KIoG2JMgj4"),
 
-    //越南马甲包
+    //越南马甲包28
     VI_CASH_CAT_APP_ID("9oPxNj76ck8npcBPfn04L9"),
     VI_CASH_CAT_APP_SECRET("2k18dOmSWX5ldOfvx4bW5A"),
     VI_CASH_CAT_APP_KEY("F2QamQeHpb9gAvtSIKIeT6"),
     VI_CASH_CAT_MASTER_SECRET("7IQhtxQTB87bj3AGnsjLz"),
+
+    //越南马甲包29
+    VI_IN_CASHCAT_APP_ID("NNAbIemMtI9zDxOp2ZDek3"),
+    VI_IN_CASHCAT_APP_SECRET("Lxt3ndfyq19GY7w2xl3au9"),
+    VI_IN_CASHCAT_APP_KEY("PpPgV3xT3GAy9Rcrb1kwF3"),
+    VI_IN_CASHCAT_MASTER_SECRET("sm8PWPcIfT8EGAwEOv6gR5"),
             ;
 
 
