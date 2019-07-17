@@ -13,8 +13,11 @@ import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.BatchSendDiffTemplateParamBO;
 import com.panshi.hujin2.message.service.message.IMsgDBService;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
+import com.panshi.hujin2.message.service.message.infobip.entity.InfobipParam2;
 import com.panshi.hujin2.message.service.message.infobip.impl.InfobipServiceImpl;
+import com.panshi.hujin2.message.service.message.sms.bo.SMSSendBO;
 import com.panshi.hujin2.message.service.message.submail.sdk.utils.StringUtil;
+import com.panshi.hujin2.message.service.message.utils.HttpUtils;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -116,6 +119,43 @@ public class TestController {
     private final String inaPhoneNumber_4 = "81818777085";//liuzongkui_1
     private final String inaPhoneNumber_5 = "87784736868";//liuzongkui_2
 
+
+//    @RequestMapping("/sms")
+    public String sms(){
+
+        String  url = "https://sms.net1.co.id/sendsms/otp ";
+        String phoneNumber = "";
+
+
+        SMSSendBO smsSendBO = new SMSSendBO();
+        smsSendBO.setFrom("Shen JK");
+        smsSendBO.setTo(phoneNumber);
+        smsSendBO.setBody("Gunakan 570266 sebagai kode verifikasi nomor telepon Anda untuk login");
+
+        String requestParam = com.alibaba.fastjson.JSON.toJSONString(smsSendBO);
+
+
+        //infobip API 约定的请求头参数
+        Map<String, String> map = new HashMap<>();
+        map.put("Authorization", "WS19-Mobi-C001");
+        map.put("Content-Type", "application/json");
+        map.put("Content-Length", "168");
+
+        String sendRes = "";
+        try {
+             sendRes = HttpUtils.postGeneralUrl(
+                            url,
+                            "application/json",
+                            requestParam,
+                            "UTF-8",
+                            map);
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            System.err.println("e.getMessage(),e = " + e.getMessage());
+        }
+
+        return sendRes;
+    }
 
 
     @RequestMapping("/put")
