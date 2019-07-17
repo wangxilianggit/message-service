@@ -124,6 +124,11 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.VI_IN_CASHCAT_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_IN_CASHCAT_MASTER_SECRET.getValue());
                 break;
+            case INA_ATTRACTIVE_KANGAROOCASH:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_ATTRACTIVE_KANGAROOCASH_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_ATTRACTIVE_KANGAROOCASH_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_ATTRACTIVE_KANGAROOCASH_MASTER_SECRET.getValue());
+                break;
             default:
                 //参数错误异常
                 System.err.println(" ======获取个推推送key错误======= ");
