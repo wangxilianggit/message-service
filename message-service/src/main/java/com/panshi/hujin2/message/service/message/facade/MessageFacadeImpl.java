@@ -7,6 +7,7 @@ import com.panshi.hujin2.base.domain.page.Page;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.domain.result.BasicResultCode;
 import com.panshi.hujin2.base.service.Context;
+import com.panshi.hujin2.base.service.utils.ContextUtils;
 import com.panshi.hujin2.message.common.utils.SuccessivelySendMap;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallCallLogMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallMsgLogMapper;
@@ -35,10 +36,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.panshi.hujin2.base.common.enmu.ApplicationEnmu.*;
 
@@ -86,7 +84,11 @@ public class MessageFacadeImpl implements IMessageFacade {
     private UrgentRecallCallLogMapper callLogMapper;
 
 
-
+    public static void main(String[] args) {
+        Context context = ContextUtils.getDefaultContext();
+        System.out.println("context.getLocale() = " + context.getLocale());
+    }
+    
     @Override
     public BasicResult<Void> sendInternationalMsg(ApplicationEnmu applicationEnmu,
                                                   String phoneNumber,
@@ -99,22 +101,35 @@ public class MessageFacadeImpl implements IMessageFacade {
             ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,templateCode);
 
             ISendMsgService sendMsgService = null;
-            if(applicationEnmu == VI_CASH_DOG
-                    || applicationEnmu == VI_CASH_DOG_NEVERSOLDOUT
-                    || applicationEnmu == VI_CASH_DOG_GOODDAY
-                    || applicationEnmu == VI_CASH_CAT){
+
+            String locale = String.valueOf(context.getLocale());
+            LOGGER.info("==========> 发送短信，获取到的 local ：[{}]",locale);
+            if("vi".equals(locale)){
                 //越南
                 phoneNumber = 84 +phoneNumber;
                 sendMsgService = tianyihongService;
-
-            }else if(applicationEnmu == INA_WEB_GAME
-                    || applicationEnmu == INA_CASH_KANGAROO
-                    || applicationEnmu == INA_CASH_KANGAROO_2
-                    || applicationEnmu == INA_CASH_KANGAROO_DEXTER){
+            }else {
                 //印尼
                 phoneNumber = 62 +phoneNumber;
                 sendMsgService = KMIService;
             }
+//            if(applicationEnmu == VI_CASH_DOG
+//                    || applicationEnmu == VI_CASH_DOG_NEVERSOLDOUT
+//                    || applicationEnmu == VI_CASH_DOG_GOODDAY
+//                    || applicationEnmu == VI_CASH_CAT
+//                    || applicationEnmu == VI_IN_CASHCAT){
+//                //越南
+//                phoneNumber = 84 +phoneNumber;
+//                sendMsgService = tianyihongService;
+//
+//            }else if(applicationEnmu == INA_WEB_GAME
+//                    || applicationEnmu == INA_CASH_KANGAROO
+//                    || applicationEnmu == INA_CASH_KANGAROO_2
+//                    || applicationEnmu == INA_CASH_KANGAROO_DEXTER){
+//                //印尼
+//                phoneNumber = 62 +phoneNumber;
+//                sendMsgService = KMIService;
+//            }
 
             boolean res = sendMsgService.sendInternationalMsg(applicationEnmu,
                         phoneNumber,

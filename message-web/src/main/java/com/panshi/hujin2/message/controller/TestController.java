@@ -8,6 +8,7 @@ import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.base.service.utils.ContextUtils;
 import com.panshi.hujin2.message.common.utils.HttpUtil;
 import com.panshi.hujin2.message.common.utils.MD5Util;
+import com.panshi.hujin2.message.common.utils.gethttps.HttpsGet;
 import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.BatchSendDiffTemplateParamBO;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -119,11 +121,66 @@ public class TestController {
     private final String inaPhoneNumber_4 = "81818777085";//liuzongkui_1
     private final String inaPhoneNumber_5 = "87784736868";//liuzongkui_2
 
+    private final String inaPhoneNumber_6 = "6281285290562";//自己这的 印尼测试手机号
 
+
+
+    @RequestMapping("/sms222")
+    public String sms222(){
+        String url= "https://203.166.197.162/ApiLongNumber/receive.php";
+        String uid = "userHorizon";
+        String owd="Q21u1h3oq";
+
+        String phoneNumber = inaPhoneNumber_6;
+        String sendText = "Your verification code is 6789";
+        try {
+            sendText = URLEncoder.encode(sendText,"UTF-8");
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            return e.getMessage();
+        }
+
+        String requestUrl = url +"?uid="+uid+"&pwd="+owd+"&serviceid=1000&msisdn="+phoneNumber+"&sms="+sendText+"&transid=1234567&smstype=0&sc=ABC";
+
+        String res = HttpUtil.get(requestUrl);
+        System.out.println("res = " + res);
+        return res;
+    }
+
+    @RequestMapping("/sms333")
+    public String sms333(){
+        //todo https
+        try {
+            String url= "https://203.166.197.162/ApiLongNumber/receive.php";
+            String uid = "userHorizon";
+            String owd="Q21u1h3oq";
+
+            String phoneNumber = inaPhoneNumber_6;
+            String sendText = "Your verification code is 9999";
+
+            String requestParam = "?uid="+uid+"&pwd="+owd+"&serviceid=1000&msisdn="+phoneNumber+"&sms="+sendText+"&transid=1234567&smstype=0&sc=ABC";
+
+
+            requestParam = URLEncoder.encode(requestParam,"UTF-8");
+
+//        String res = HttpUtil.get(url + requestParam);
+//            String res = HttpUtil.post(url ,requestParam);
+
+            String res = HttpsGet.httpsRequest(url+requestParam,"POST",null);
+            System.out.println("res = " + res);
+            return res;
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            return e.getMessage();
+        }
+    }
+
+
+    //todo  没有详细文档，没请求通
 //    @RequestMapping("/sms")
     public String sms(){
 
-        String  url = "https://sms.net1.co.id/sendsms/otp ";
+        String  url = "https://sms.net1.co.id/sendsms/otp";
         String phoneNumber = "";
 
 
