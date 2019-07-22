@@ -102,9 +102,10 @@ public class MessageFacadeImpl implements IMessageFacade {
 
             ISendMsgService sendMsgService = null;
 
-            String locale = String.valueOf(context.getLocale());
-            LOGGER.info("==========> 发送短信，获取到的 local ：[{}]",locale);
-            if("vi".equals(locale)){
+            //String locale = String.valueOf(context.getLocale());
+            String i18n = applicationEnmu.getI18n();
+            LOGGER.info("==========> 发送短信，获取到的 i18n ：[{}]",i18n);
+            if("vi".equals(i18n)){
                 //越南
                 phoneNumber = 84 +phoneNumber;
                 sendMsgService = tianyihongService;
