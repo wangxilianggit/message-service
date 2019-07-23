@@ -134,6 +134,12 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.INA_KAS_KANGAROO_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_KAS_KANGAROO_MASTER_SECRET.getValue());
                 break;
+
+            case VI_CASH_CAT_32:
+                infoBO.setAppId(GeTuiAppConfigEnum.VI_IN_CASHCAT_ENDORPHIN_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.VI_IN_CASHCAT_ENDORPHIN_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_IN_CASHCAT_ENDORPHIN_MASTER_SECRET.getValue());
+                break;
             default:
                 //参数错误异常
                 System.err.println(" ======获取个推推送key错误======= ");

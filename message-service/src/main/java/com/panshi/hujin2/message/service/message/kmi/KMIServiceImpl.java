@@ -6,6 +6,8 @@ import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.common.utils.HttpUtil;
 import com.panshi.hujin2.message.common.utils.MD5Util;
+import com.panshi.hujin2.message.dao.mapper.message.KmiTokenLogMapper;
+import com.panshi.hujin2.message.dao.model.KmiTokenLogDO;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
 import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
@@ -14,6 +16,7 @@ import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +42,9 @@ public class KMIServiceImpl extends SendMsg {
     @Value("${kmi.send.msg.otp.url}")
     private String kmiSendOtpMsgUrl;
 
+    @Autowired
+    private KmiTokenLogMapper kmiTokenLogMapper;
+
     private final String TOKEN_KEY = "KMI_TOKEN";
     private final long VALID_TIME = 59 * 60 * 1000 * 2;//kmi token有效期两小时，这里设置成不到两小时过期，-1分钟
 
@@ -54,6 +60,18 @@ public class KMIServiceImpl extends SendMsg {
         return false;
     }
 
+
+    /**
+     *@Description:     保存获取token的日志
+     *@Param:  * @param result
+     *@Author: shenJianKang
+     *@date: 2019/7/23 11:19
+     */
+    private Integer saveReqTokenLog(String result){
+        KmiTokenLogDO tokenLogDO = new KmiTokenLogDO();
+        tokenLogDO.setResult(result);
+        return kmiTokenLogMapper.insertSelective(tokenLogDO);
+    }
     /**
      *@Description:     获取请求KMI需要的token
      *@Param:  * @param
@@ -66,8 +84,9 @@ public class KMIServiceImpl extends SendMsg {
         if(tokenObj == null){
             String pwd = MD5Util.MD5(kmiPwd);
             KmiTokenUrl = KmiTokenUrl + pwd;
-            //// TODO: 2019/7/4 token获取记录 需要不需要入库 
+
             String result = HttpUtil.get(KmiTokenUrl);
+            saveReqTokenLog(result);
 
             if(StringUtils.isNotBlank(result)){
                 //解析result
@@ -88,22 +107,36 @@ public class KMIServiceImpl extends SendMsg {
                 }
             }else {
                 //重试机制
-//                boolean flag = true;
-//                int num = 0;
-//                //重试
-//                while (flag && num<5){
-//                    try {
-//                        Thread.sleep(2000);
-//                        result = HttpUtil.get(KmiTokenUrl);
-//                        num ++;
-//                        if(StringUtils.isNotBlank(result)){
-//
-//                        }
-//                    }catch (Exception e){
-//                        LOGGER.error(e.getMessage(),e);
-//                        throw e;
-//                    }
-//                }
+                boolean flag = true;
+                int num = 0;
+                //重试
+                while (flag && num<10){
+                    try {
+                        Thread.sleep(1000);
+                        result = HttpUtil.get(KmiTokenUrl);
+                        saveReqTokenLog(result);
+
+                        num ++;
+                        if(StringUtils.isNotBlank(result)){
+                            JSONObject jsonObject = JSON.parseObject(result);
+                            JSONObject res = jsonObject.getJSONObject("result");
+                            if(res != null){
+                                String code = res.getString("code");
+                                if("0".equals(code)){
+                                    JSONObject data = jsonObject.getJSONObject("data");
+                                    if(data != null){
+                                        token = data.getString("token");
+                                        //结束重试
+                                        flag = false;
+                                    }
+                                }
+                            }
+                        }
+                    }catch (Exception e){
+                        LOGGER.error(e.getMessage(),e);
+                        throw e;
+                    }
+                }
             }
         }else {
             token = String.valueOf(tokenObj);

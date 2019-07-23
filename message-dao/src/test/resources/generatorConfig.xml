@@ -14,10 +14,15 @@
         <!-- JDBC连接 -->
         <!--实际生产数据mysql 地址：120.27.216.53 -->
         <!--部署到jenkins上必须改成：172.16.180.52 -->
+<!--        <jdbcConnection driverClass="com.mysql.jdbc.Driver"-->
+<!--                        connectionURL="jdbc:mysql://192.168.24.100:3306/message?useUnicode=true&amp;characterEncoding=UTF-8"-->
+<!--                        userId="root"-->
+<!--                        password="8812345!@#">-->
+<!--        </jdbcConnection>-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.24.100:3306/message?useUnicode=true&amp;characterEncoding=UTF-8"
+                        connectionURL="jdbc:mysql://47.98.62.0:3306/vi_cash_dog?useUnicode=true&amp;characterEncoding=UTF-8"
                         userId="root"
-                        password="8812345!@#">
+                        password="Dolphin0408+">
         </jdbcConnection>
         <!-- 类型转换 -->
         <javaTypeResolver >
@@ -38,7 +43,7 @@
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
         </javaClientGenerator>
         <!-- 配置表信息 -->
-        <table schema="" tableName="urgent_recall_call_log" domainObjectName="UrgentRecallCallLog"
+        <table schema="" tableName="kmi_token_log" domainObjectName="KmiTokenLog"
                enableCountByExample="true"
                enableUpdateByExample="true"
                enableDeleteByExample="true"
