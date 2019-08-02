@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -119,5 +120,58 @@ public class NotificationHistoryServiceImpl implements INotificationHistoryServi
     public Integer updateStatusReadByUid(ApplicationEnmu appEnmu,Integer uid, Context context) {
         NotificationExceptionUtils.verifyObjectIsNull(context , uid,appEnmu);
         return historyMapper.updateStatusReadByUid(uid,appEnmu.getCode());
+    }
+
+    @Override
+    public void batchInsertMsgHistory(ApplicationEnmu appEnum, List<Integer> userIdList, String title, String text, Boolean recordHistory, Context context) {
+        try {
+            Integer executeNum = 1000;//单次批量处理的数据量
+            if(userIdList.size() > executeNum){
+                //分批
+                for(int i = 0;i<userIdList.size();i += executeNum){
+                    List<Integer> uidList = new ArrayList();
+                    Integer limit = i+executeNum;
+                    uidList = userIdList.subList(i,limit);
+                    List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+                    for(Integer uid :uidList){
+                        if(uid != null){
+                            if(recordHistory){
+                                //不管发送是否成功失败，都要在消息中心记录
+                                AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                                historyInputBo.setAppId(appEnum.getCode());
+                                historyInputBo.setUserId(uid);
+//                        historyInputBo.setBusinessTypeId(businessTypeId);
+                                historyInputBo.setTitle(title);
+                                historyInputBo.setText(text);
+                                historyInputBo.setStatus(false);
+                                insertList.add(historyInputBo);
+                            }
+                        }
+                    }
+                    insertBatch(insertList, context);
+                }
+            }else {
+                List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+                for(Integer uid :userIdList){
+                    if(uid != null){
+                        if(recordHistory){
+                            //不管发送是否成功失败，都要在消息中心记录
+                            AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                            historyInputBo.setAppId(appEnum.getCode());
+                            historyInputBo.setUserId(uid);
+//                        historyInputBo.setBusinessTypeId(businessTypeId);
+                            historyInputBo.setTitle(title);
+                            historyInputBo.setText(text);
+                            historyInputBo.setStatus(false);
+                            insertList.add(historyInputBo);
+                        }
+                    }
+                }
+                insertBatch(insertList, context);
+            }
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            throw e;
+        }
     }
 }

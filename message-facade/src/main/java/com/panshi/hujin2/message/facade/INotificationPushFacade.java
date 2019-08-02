@@ -4,6 +4,7 @@ import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.enmu.ClientType;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
+import com.panshi.hujin2.message.domain.enums.getui.GeTuiPushTemplateEnum;
 import com.panshi.hujin2.message.facade.bo.BatchPushToSingleBO;
 
 import java.util.List;
@@ -234,4 +235,35 @@ public interface INotificationPushFacade {
                               Boolean send,
                               Boolean recordHistory,
                               Context context);
+
+
+    /**
+     *@Description:                 根据app群推
+     * @param appEnmu	            对应的app
+     * @param templateEnum          推送模板类型
+     * @param transmissionContent   透传参数
+     * @param title                 标题
+     * @param text                  内容
+     * @param sendTime              定时发送的时间 格式：201710261050 (sendTime 参数需要开通个推VIP， 暂时不支持)
+     * @param taskGroupName         任务别名
+     * @param send                  是否push
+     * @param recordHistory         是否在用户消息中心记录
+     * @param context               国际化对象
+     *@Author: shenJianKang
+     *@date: 2019/8/1 11:50
+     */
+    BasicResult<Void> pushAllByTemplate(
+                              ApplicationEnmu appEnmu,
+                              GeTuiPushTemplateEnum templateEnum,
+                              String transmissionContent,
+                              String title,
+                              String text,
+                              String sendTime,
+                              String taskGroupName,
+                              Boolean send,
+                              Boolean recordHistory,
+                              Context context);
+
+
+
 }

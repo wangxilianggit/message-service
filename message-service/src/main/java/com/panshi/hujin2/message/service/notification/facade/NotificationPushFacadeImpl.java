@@ -5,7 +5,11 @@ import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.enmu.ClientType;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
+import com.panshi.hujin2.message.domain.enums.getui.GeTuiPushTemplateEnum;
+import com.panshi.hujin2.message.domain.enums.getui.PushTypeEnum;
 import com.panshi.hujin2.message.facade.INotificationPushFacade;
+import com.panshi.hujin2.message.facade.bo.AppPushHistoryInputBo;
+import com.panshi.hujin2.message.facade.bo.AppPushRecordInputBO;
 import com.panshi.hujin2.message.facade.bo.BatchPushToSingleBO;
 import com.panshi.hujin2.message.service.notification.getui.INotificationPushService;
 import com.panshi.hujin2.message.service.notification.utils.NotificationExceptionUtils;
@@ -15,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * create by shenjiankang on 2018/6/25 21:00
@@ -277,4 +278,35 @@ public class NotificationPushFacadeImpl implements INotificationPushFacade {
             return NotificationExceptionUtils.throwDefinedException(e, context);
         }
     }
+
+    @Override
+    public BasicResult<Void> pushAllByTemplate(ApplicationEnmu appEnmu,
+                                               GeTuiPushTemplateEnum templateEnum,
+                                               String transmissionContent,
+                                               String title,
+                                               String text,
+                                               String sendTime,
+                                               String taskGroupName,
+                                               Boolean send,
+                                               Boolean recordHistory,
+                                               Context context) {
+        try {
+            notificationPushService.pushAllByTemplate(appEnmu,
+                                                    templateEnum,
+                                                    transmissionContent,
+                                                    title,
+                                                    text,
+                                                    sendTime,
+                                                    taskGroupName,
+                                                    send,
+                                                    recordHistory,
+                                                    context);
+            return BasicResult.ok();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return NotificationExceptionUtils.throwDefinedException(e, context);
+        }
+    }
+
+
 }

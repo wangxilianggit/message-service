@@ -61,4 +61,23 @@ public interface INotificationHistoryService {
      * @Date 2018/7/7 10:50
      */
     Integer updateStatusReadByUid(ApplicationEnmu appEnmu, Integer uid, Context context);
+
+
+    /**
+     *@Description:         消息中心批量插入
+     * @param appEnum
+     * @param userIdList
+     * @param title
+     * @param text
+     * @param recordHistory
+     * @param context
+     *@Author: shenJianKang
+     *@date: 2019/8/1 15:02
+     */
+    void batchInsertMsgHistory(ApplicationEnmu appEnum,
+                               List<Integer> userIdList,
+                               String title,
+                               String text,
+                               Boolean recordHistory,
+                               Context context);
 }

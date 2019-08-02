@@ -5,6 +5,8 @@ import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.facade.bo.AppPushHistoryPagingOutputBO;
 
+import java.util.List;
+
 /**
  * create by shenjiankang on 2018/7/6 11:29
  *
@@ -48,6 +50,25 @@ public interface INotificationHistoryFacade {
      * @Date 2018/7/7 10:50
      */
     BasicResult<Integer> updateStatusReadByUid(ApplicationEnmu appEnmu, Integer uid, Context context);
+
+
+    /**
+     *@Description:         消息中心批量插入
+     * @param appEnum
+     * @param userIdList
+     * @param title
+     * @param text
+     * @param recordHistory
+     * @param context
+     *@Author: shenJianKang
+     *@date: 2019/8/1 15:02
+     */
+    BasicResult<Void> batchInsertMsgHistory(ApplicationEnmu appEnum,
+                                            List<Integer> userIdList,
+                                            String title,
+                                            String text,
+                                            Boolean recordHistory,
+                                            Context context);
 
 
 }

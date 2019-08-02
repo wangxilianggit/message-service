@@ -12,6 +12,7 @@ import com.gexin.rp.sdk.exceptions.RequestException;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.LinkTemplate;
 import com.gexin.rp.sdk.template.NotificationTemplate;
+import com.gexin.rp.sdk.template.NotyPopLoadTemplate;
 import com.gexin.rp.sdk.template.TransmissionTemplate;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.enmu.ClientType;
@@ -26,6 +27,7 @@ import com.panshi.hujin2.message.dao.model.AppPushRecord;
 import com.panshi.hujin2.message.domain.enums.getui.GeTuiPushTemplateEnum;
 import com.panshi.hujin2.message.domain.enums.getui.GeTuiResponseEnum;
 import com.panshi.hujin2.message.domain.enums.getui.PushTypeEnum;
+import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.domain.exception.NotificationException;
 import com.panshi.hujin2.message.facade.bo.AppPushHistoryInputBo;
 import com.panshi.hujin2.message.facade.bo.AppPushRecordInputBO;
@@ -40,6 +42,7 @@ import com.panshi.hujin2.message.service.notification.getui.bo.GeTuiPushConfigIn
 import com.panshi.hujin2.message.service.notification.getui.utils.GeTuiTemplate;
 import com.panshi.hujin2.message.service.notification.getui.utils.GeTuiUtils;
 import com.panshi.hujin2.message.service.notification.utils.NotificationExceptionUtils;
+import org.apache.commons.beanutils.locale.converters.BigIntegerLocaleConverter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -783,45 +786,107 @@ public class NotificationPushServiceImpl implements INotificationPushService {
                 recordHistory = Boolean.TRUE;
             }
 
-            List<AppPushHistoryInputBo> insertList = new ArrayList<>();
-            for(Integer uid :userIdList){
-                if(uid != null){
-                    //todo 看情况不需要的话删除该插入操作  insertAppPushRecord(inputBO);//推送消息记录表
-                    AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
-                    inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
-                    inputBO.setTemplateType(4);
-                    inputBO.setUserId(uid);
+
+            Integer executeNum = 1000;//单次批量处理的数据量
+            if(userIdList.size() > executeNum){
+                //分批
+                for(int i = 0;i<userIdList.size();i += executeNum){
+                    List<Integer> uidList = new ArrayList();
+                    Integer limit = i+executeNum;
+                    uidList = userIdList.subList(i,limit);
+                    List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+                    for(Integer uid :uidList){
+                        if(uid != null){
+                            AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
+                            inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
+                            inputBO.setTemplateType(4);
+                            inputBO.setUserId(uid);
 //                        inputBO.setClientId(clientId);
 //                    inputBO.setBusinessTypeId(businessTypeId);
-                    inputBO.setTitle(title);
-                    inputBO.setText(text);
-                    inputBO.setTransmissionContent("");
+                            inputBO.setTitle(title);
+                            inputBO.setText(text);
+                            inputBO.setTransmissionContent("");
 //                        inputBO.setPushResponse(ret.getResponse().toString());
-                    //推送消息记录表
-                    addPushRecord(inputBO,context);
+                            //推送消息记录表
+                            addPushRecord(inputBO,context);
 
-                    if(recordHistory){
-                        //不管发送是否成功失败，都要在消息中心记录
-                        AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
-                        historyInputBo.setAppId(appEnum.getCode());
-                        historyInputBo.setUserId(uid);
+                            if(recordHistory){
+                                //不管发送是否成功失败，都要在消息中心记录
+                                AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                                historyInputBo.setAppId(appEnum.getCode());
+                                historyInputBo.setUserId(uid);
 //                        historyInputBo.setBusinessTypeId(businessTypeId);
-                        historyInputBo.setTitle(title);
-                        historyInputBo.setText(text);
-                        historyInputBo.setStatus(false);
-                        insertList.add(historyInputBo);
+                                historyInputBo.setTitle(title);
+                                historyInputBo.setText(text);
+                                historyInputBo.setStatus(false);
+                                insertList.add(historyInputBo);
+                            }
+                        }
+                    }
+                    notificationHistoryService.insertBatch(insertList, context);
+                    if(send){
+                        res = pushMessageToList(appEnum, uidList ,title,text,context);
                     }
                 }
-            }
-            notificationHistoryService.insertBatch(insertList, context);
-            if(send){
-                res = pushMessageToList(appEnum,userIdList,title,text,context);
+            }else {
+                List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+                for(Integer uid :userIdList){
+                    if(uid != null){
+                        //todo 看情况不需要的话删除该插入操作  insertAppPushRecord(inputBO);//推送消息记录表
+                        AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
+                        inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
+                        inputBO.setTemplateType(4);
+                        inputBO.setUserId(uid);
+//                        inputBO.setClientId(clientId);
+//                    inputBO.setBusinessTypeId(businessTypeId);
+                        inputBO.setTitle(title);
+                        inputBO.setText(text);
+                        inputBO.setTransmissionContent("");
+//                        inputBO.setPushResponse(ret.getResponse().toString());
+                        //推送消息记录表
+                        addPushRecord(inputBO,context);
+
+                        if(recordHistory){
+                            //不管发送是否成功失败，都要在消息中心记录
+                            AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                            historyInputBo.setAppId(appEnum.getCode());
+                            historyInputBo.setUserId(uid);
+//                        historyInputBo.setBusinessTypeId(businessTypeId);
+                            historyInputBo.setTitle(title);
+                            historyInputBo.setText(text);
+                            historyInputBo.setStatus(false);
+                            insertList.add(historyInputBo);
+                        }
+                    }
+                }
+                notificationHistoryService.insertBatch(insertList, context);
+                if(send){
+                    res = pushMessageToList(appEnum,userIdList,title,text,context);
+                }
             }
         }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
             throw e;
         }
         return res;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> alist = new ArrayList<>();
+        for(int i=1;i<=19;i++){
+            alist.add(i);
+        }
+
+        //分批
+        for(int i = 0;i<alist.size();i+=20){
+            System.out.println("i = " + i);
+            List blist = new ArrayList();
+
+            Integer limit = i+20;
+            System.out.println("limit = " + limit);
+            blist = alist.subList(i,limit);
+            System.out.println("blist = " + blist);
+        }
     }
 
     @Override
@@ -1178,6 +1243,116 @@ public class NotificationPushServiceImpl implements INotificationPushService {
             throw e;
         }
     }
+
+    @Override
+    public void pushAllByTemplate(ApplicationEnmu appEnmu,
+                                  GeTuiPushTemplateEnum templateEnum,
+                                  String transmissionContent,
+                                  String title,
+                                  String text,
+                                  String sendTime,
+                                  String taskGroupName,
+                                  Boolean send,
+                                  Boolean recordHistory,
+                                  Context context) {
+        try {
+            GeTuiPushConfigInfoBO configInfoBO = GeTuiUtils.getGeTuiPushConfigInfo(appEnmu,context);
+            String getuiAppId = configInfoBO.getAppId();
+            String getuiAppKey = configInfoBO.getAppKey();
+            String getuiMasterSecret = configInfoBO.getMasterSecret();
+            NotificationExceptionUtils.verifyStringIsBlank(context,getuiAppId,getuiAppKey,getuiMasterSecret);
+
+            //默认个推不发送通知
+            if(send == null){
+                send = Boolean.FALSE;
+            }
+
+            //默认消息中心记录发送历史
+            if(recordHistory == null){
+                recordHistory = Boolean.FALSE;
+            }
+            if(recordHistory){
+                //todo  如果需要在消息中心记录，那就要对所有用户 的push histroy新增一条记录
+                //// TODO: 2019/8/1  这里按照app推送，但是现在有多个马甲，所以消息中心记录 不在这里处理
+            }
+            if(send){
+                //要打开的url页面
+                String openUrl = "";
+                IGtPush push = new IGtPush(requestUrl, getuiAppKey, getuiMasterSecret);
+
+                AppMessage message = new AppMessage();
+
+                switch (templateEnum){
+                    case NOTIFICATION_TEMPLATE:
+                        NotificationTemplate notificationTemplate = GeTuiTemplate.getNotificationTemplate(getuiAppId,getuiAppKey,transmissionContent,title,text);
+                        message.setData(notificationTemplate);
+                        break;
+                    case LINK_TEMPLATE:
+                        LinkTemplate template = GeTuiTemplate.getLinkTemplate(getuiAppId,getuiAppKey,title,text,openUrl);
+                        message.setData(template);
+                        break;
+                    case NOTYPOPLOAD_TEMPLATE:
+                        NotyPopLoadTemplate notyPopLoadTemplate = GeTuiTemplate.getNotyPopLoadTemplate(getuiAppId,getuiAppKey,title,text);
+                        message.setData(notyPopLoadTemplate);
+                        break;
+                    case TRANSMISSION_TEMPLATE:
+                        TransmissionTemplate transmissionTemplate = GeTuiTemplate.getTransmissionTemplate(getuiAppId,getuiAppKey,title,text, transmissionContent);
+                        message.setData(transmissionTemplate);
+                        break;
+
+                        default:
+                            throw new MessageException("无效推送模版枚举");
+                }
+//                if(GeTuiPushTemplateEnum.NOTIFICATION_TEMPLATE.equals(templateEnum)){
+//                    NotificationTemplate notificationTemplate = GeTuiTemplate.getNotificationTemplate(getuiAppId,getuiAppKey,transmissionContent,title,text);
+//                    message.setData(notificationTemplate);
+//                }else if(GeTuiPushTemplateEnum.LINK_TEMPLATE.equals(templateEnum)){
+//                    LinkTemplate template = GeTuiTemplate.getLinkTemplate(getuiAppId,getuiAppKey,title,text,openUrl);
+//                    message.setData(template);
+//                }else if(GeTuiPushTemplateEnum.NOTYPOPLOAD_TEMPLATE.equals(templateEnum)){
+//                    NotyPopLoadTemplate notyPopLoadTemplate = GeTuiTemplate.getNotyPopLoadTemplate(getuiAppId,getuiAppKey,title,text);
+//                    message.setData(notyPopLoadTemplate);
+//                }else if(GeTuiPushTemplateEnum.TRANSMISSION_TEMPLATE.equals(templateEnum)){
+//                    TransmissionTemplate transmissionTemplate = GeTuiTemplate.getTransmissionTemplate(getuiAppId,getuiAppKey,title,text, transmissionContent);
+//                    message.setData(transmissionTemplate);
+//                }
+
+
+                message.setOffline(true);
+                //离线有效时间，单位为毫秒，可选
+                message.setOfflineExpireTime(24 * 1000 * 3600);
+                //设置推送时间
+                //message.setPushTime("201710261050");//// TODO: 2018/11/24    设置定时推送的时间，需要开通个推VIP
+                //推送给App的目标用户需要满足的条件
+                AppConditions cdt = new AppConditions();
+                List<String> appIdList = new ArrayList<String>();
+                appIdList.add(getuiAppId);
+                message.setAppIdList(appIdList);
+                //手机类型
+                List<String> phoneTypeList = new ArrayList<String>();
+                //省份
+                List<String> provinceList = new ArrayList<String>();
+                //自定义tag
+                List<String> tagList = new ArrayList<String>();
+                cdt.addCondition(AppConditions.PHONE_TYPE, phoneTypeList);
+                cdt.addCondition(AppConditions.REGION, provinceList);
+                cdt.addCondition(AppConditions.TAG, tagList);
+                message.setConditions(cdt);
+
+                IPushResult ret = push.pushMessageToApp(message, taskGroupName);
+                try {
+                    LOGGER.info(appEnmu.getDesc()+" APP群推结果:[{}]",ret.getResponse().toString());
+                }catch (Exception e){
+                    LOGGER.error(e.getMessage());
+                }
+            }
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            throw e;
+        }
+    }
+
+
 
 
     //todo 参数列表中的参数格式化 统一在这里做

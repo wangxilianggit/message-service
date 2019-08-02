@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * create by shenjiankang on 2018/7/6 11:38
  */
@@ -60,4 +62,26 @@ public class NotificationHistoryFacadeImpl implements INotificationHistoryFacade
             return NotificationExceptionUtils.throwDefinedException(e, context);
         }
     }
+
+    @Override
+    public BasicResult<Void> batchInsertMsgHistory(ApplicationEnmu appEnum,
+                                                   List<Integer> userIdList,
+                                                   String title,
+                                                   String text,
+                                                   Boolean recordHistory,
+                                                   Context context) {
+        try {
+            notificationHistoryService.batchInsertMsgHistory(appEnum,
+                    userIdList,
+                    title,
+                    text,
+                    recordHistory,
+                    context);
+            return BasicResult.ok();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return NotificationExceptionUtils.throwDefinedException(e, context);
+        }
+    }
+
 }
