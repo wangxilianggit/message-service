@@ -245,7 +245,7 @@ public interface INotificationPushFacade {
      * @param title                 标题
      * @param text                  内容
      * @param sendTime              定时发送的时间 格式：201710261050 (sendTime 参数需要开通个推VIP， 暂时不支持)
-     * @param taskGroupName         任务别名
+     * @param taskGroupName         任务别名   (任务组 命名规范：taskGroupName的规则是只能传数字，字母，下划线和中文taskGroupName的utf8最大字节为40)
      * @param send                  是否push
      * @param recordHistory         是否在用户消息中心记录
      * @param context               国际化对象
