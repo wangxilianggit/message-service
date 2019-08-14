@@ -70,7 +70,7 @@ public class MsgDBServiceImpl implements IMsgDBService {
     @Override
     public int addMsgSendRecord(MessageSendRecordInputBO inputBO,Context context) {
         ExceptionMessageUtils.verifyObjectIsNull(context,inputBO);
-        MessageSendRecord record = DozerUtils.convert(inputBO,MessageSendRecord.class);
+        MessageSendRecordDO record = DozerUtils.convert(inputBO, MessageSendRecordDO.class);
         return messageSendRecordMapper.insertSelective(record);
     }
 

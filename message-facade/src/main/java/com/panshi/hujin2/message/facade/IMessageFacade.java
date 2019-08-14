@@ -3,7 +3,7 @@ package com.panshi.hujin2.message.facade;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
-import com.panshi.hujin2.base.service.utils.ContextUtils;
+import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallCallLogQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
 import com.panshi.hujin2.message.facade.bo.*;
@@ -48,6 +48,7 @@ public interface IMessageFacade {
                                            String templateCode,
                                            Context context);
 
+
     //同一个模板，相同参数 的群发
     /**
      * @description:        批量推送，同一个模板，相同参数
@@ -64,6 +65,29 @@ public interface IMessageFacade {
                                                 String templateCode,
                                                 List paramList,
                                                 Context context);
+
+
+
+    /**
+     *@Description:             根据手机号列表 ，和发送内容 批量发送
+     *@param applicationEnmu	appid
+     * @param queueId           发送队列id
+     * @param consumerId        商户id
+     * @param fee               单条发送费用
+     * @param phoneNumberList   手机号list
+     * @param sendText          发送内容
+     * @param context           国际化对象
+     *@Author: shenJianKang
+     *@date: 2019/8/13 18:17
+     */
+    //// TODO: 2019/8/13 暂时只支持印尼运营商短信 群发
+    BasicResult<Void> batchSendSameTemplateSameParam(ApplicationEnmu applicationEnmu,
+                                                     Integer queueId,
+                                                     Integer consumerId,
+                                                     Double fee,
+                                                     List phoneNumberList,
+                                                     String sendText,
+                                                     Context context );
 
     /**
      * @description:      批量推送， 不同模板
@@ -132,6 +156,17 @@ public interface IMessageFacade {
      * @Date 2019/1/31 9:50
      */
     BasicResult<List<UrgentRecallCallLogOutputBO>> getCallRecordByParam(UrgentRecallCallLogQO qo, Context context);
+
+
+
+
+    //按全部手机号码统计发送结果
+    BasicResult<List<MsgSendStatisticsBO>> querySendStatistics(MsgSendStatisticsQO qo, Context context);
+
+    //按队列id查询发送结果
+    BasicResult<MsgSendResultBO> querySendResult(MsgSendStatisticsQO qo, Context context);
+
+
 
 
 

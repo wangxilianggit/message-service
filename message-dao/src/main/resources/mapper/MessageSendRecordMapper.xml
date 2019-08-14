@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.panshi.hujin2.message.dao.mapper.message.MessageSendRecordMapper">
-  <resultMap id="BaseResultMap" type="com.panshi.hujin2.message.dao.model.MessageSendRecord">
+  <resultMap id="BaseResultMap" type="com.panshi.hujin2.message.dao.model.MessageSendRecordDO">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="consumer_id" jdbcType="INTEGER" property="consumerId" />
+    <result column="queue_id" jdbcType="INTEGER" property="queueId" />
+    <result column="fee" jdbcType="DOUBLE" property="fee" />
     <result column="app_id" jdbcType="INTEGER" property="appId" />
     <result column="country_id" jdbcType="INTEGER" property="countryId" />
     <result column="channel_id" jdbcType="INTEGER" property="channelId" />
@@ -74,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, app_id, country_id, channel_id, phone_number, msg_text, msg_id, res_code, res_explain, 
-    return_value, create_time, modify_time
+    id, consumer_id, queue_id, fee, app_id, country_id, channel_id, phone_number, msg_text, 
+    msg_id, res_code, res_explain, return_value, create_time, modify_time
   </sql>
   <select id="selectByExample" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecordExample" resultMap="BaseResultMap">
     select
@@ -108,25 +111,36 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecord">
+  <insert id="insert" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecordDO">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into message_send_record (app_id, country_id, channel_id, 
+    insert into message_send_record (consumer_id, queue_id, fee, 
+      app_id, country_id, channel_id, 
       phone_number, msg_text, msg_id, 
       res_code, res_explain, return_value, 
       create_time, modify_time)
-    values (#{appId,jdbcType=INTEGER}, #{countryId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, 
+    values (#{consumerId,jdbcType=INTEGER}, #{queueId,jdbcType=INTEGER}, #{fee,jdbcType=DOUBLE}, 
+      #{appId,jdbcType=INTEGER}, #{countryId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, 
       #{phoneNumber,jdbcType=VARCHAR}, #{msgText,jdbcType=VARCHAR}, #{msgId,jdbcType=VARCHAR}, 
       #{resCode,jdbcType=INTEGER}, #{resExplain,jdbcType=VARCHAR}, #{returnValue,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecord">
+  <insert id="insertSelective" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecordDO">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into message_send_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="consumerId != null">
+        consumer_id,
+      </if>
+      <if test="queueId != null">
+        queue_id,
+      </if>
+      <if test="fee != null">
+        fee,
+      </if>
       <if test="appId != null">
         app_id,
       </if>
@@ -162,6 +176,15 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="consumerId != null">
+        #{consumerId,jdbcType=INTEGER},
+      </if>
+      <if test="queueId != null">
+        #{queueId,jdbcType=INTEGER},
+      </if>
+      <if test="fee != null">
+        #{fee,jdbcType=DOUBLE},
+      </if>
       <if test="appId != null">
         #{appId,jdbcType=INTEGER},
       </if>
@@ -209,6 +232,15 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.consumerId != null">
+        consumer_id = #{record.consumerId,jdbcType=INTEGER},
+      </if>
+      <if test="record.queueId != null">
+        queue_id = #{record.queueId,jdbcType=INTEGER},
+      </if>
+      <if test="record.fee != null">
+        fee = #{record.fee,jdbcType=DOUBLE},
+      </if>
       <if test="record.appId != null">
         app_id = #{record.appId,jdbcType=INTEGER},
       </if>
@@ -250,6 +282,9 @@
   <update id="updateByExample" parameterType="map">
     update message_send_record
     set id = #{record.id,jdbcType=BIGINT},
+      consumer_id = #{record.consumerId,jdbcType=INTEGER},
+      queue_id = #{record.queueId,jdbcType=INTEGER},
+      fee = #{record.fee,jdbcType=DOUBLE},
       app_id = #{record.appId,jdbcType=INTEGER},
       country_id = #{record.countryId,jdbcType=INTEGER},
       channel_id = #{record.channelId,jdbcType=INTEGER},
@@ -265,9 +300,18 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecord">
+  <update id="updateByPrimaryKeySelective" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecordDO">
     update message_send_record
     <set>
+      <if test="consumerId != null">
+        consumer_id = #{consumerId,jdbcType=INTEGER},
+      </if>
+      <if test="queueId != null">
+        queue_id = #{queueId,jdbcType=INTEGER},
+      </if>
+      <if test="fee != null">
+        fee = #{fee,jdbcType=DOUBLE},
+      </if>
       <if test="appId != null">
         app_id = #{appId,jdbcType=INTEGER},
       </if>
@@ -304,9 +348,12 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecord">
+  <update id="updateByPrimaryKey" parameterType="com.panshi.hujin2.message.dao.model.MessageSendRecordDO">
     update message_send_record
-    set app_id = #{appId,jdbcType=INTEGER},
+    set consumer_id = #{consumerId,jdbcType=INTEGER},
+      queue_id = #{queueId,jdbcType=INTEGER},
+      fee = #{fee,jdbcType=DOUBLE},
+      app_id = #{appId,jdbcType=INTEGER},
       country_id = #{countryId,jdbcType=INTEGER},
       channel_id = #{channelId,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=VARCHAR},
@@ -319,4 +366,26 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+
+
+  <!--自定义方法-->
+  <select id="querySendStatistics" parameterType="com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO" resultMap="BaseResultMap">
+    select
+    *
+    from
+    message_send_record
+    <where>
+      <if test="consumerId != null">
+        and consumer_id = #{consumerId}
+      </if>
+
+      <if test="queueId != null">
+        and queue_id = #{queueId}
+      </if>
+    </where>
+  </select>
+
+
 </mapper>

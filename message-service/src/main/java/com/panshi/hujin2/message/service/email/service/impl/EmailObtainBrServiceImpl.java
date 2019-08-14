@@ -29,12 +29,12 @@ import java.util.List;
 @Service
 public class EmailObtainBrServiceImpl implements EmailObtainBrService {
     private static Logger LOGGER = LoggerFactory.getLogger(EmailObtainBrServiceImpl.class);
-    @Autowired
-    private AWSS3FileFactory awss3FileFactory;
+//    @Autowired
+//    private AWSS3FileFactory awss3FileFactory;
 //    @Autowired
 //    private IBMPChannelFacade ibmpChannelFacade;
-    @Autowired
-    private EmailBoletoRecordMapper emailBoletoRecordMapper;
+//    @Autowired
+//    private EmailBoletoRecordMapper emailBoletoRecordMapper;
 
 //    @Override
 //    public BasicResult<HtmlTemplateEntity> emailObtainBrHtmlTemplate(BrEmailSendBO brEmailSendBO) {

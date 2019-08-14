@@ -20,7 +20,7 @@
 <!--                        password="8812345!@#">-->
 <!--        </jdbcConnection>-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://47.98.62.0:3306/vi_cash_dog?useUnicode=true&amp;characterEncoding=UTF-8"
+                        connectionURL="jdbc:mysql://47.98.62.0:3306/super_sms?useUnicode=true&amp;characterEncoding=UTF-8"
                         userId="root"
                         password="Dolphin0408+">
         </jdbcConnection>
@@ -43,7 +43,7 @@
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
         </javaClientGenerator>
         <!-- 配置表信息 -->
-        <table schema="" tableName="kmi_token_log" domainObjectName="KmiTokenLog"
+        <table schema="" tableName="message_send_record" domainObjectName="MessageSendRecord"
                enableCountByExample="true"
                enableUpdateByExample="true"
                enableDeleteByExample="true"

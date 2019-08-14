@@ -8,37 +8,28 @@ import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.domain.result.BasicResultCode;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.base.service.utils.ContextUtils;
-import com.panshi.hujin2.message.common.utils.SuccessivelySendMap;
+import com.panshi.hujin2.message.dao.mapper.message.MessageSendRecordMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallCallLogMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallMsgLogMapper;
-import com.panshi.hujin2.message.dao.model.UrgentRecallCallLog;
-import com.panshi.hujin2.message.dao.model.UrgentRecallCallLogExample;
-import com.panshi.hujin2.message.dao.model.UrgentRecallMsgLog;
-import com.panshi.hujin2.message.dao.model.UrgentRecallMsgLogExample;
+import com.panshi.hujin2.message.dao.model.*;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
-import com.panshi.hujin2.message.domain.exception.MessageException;
+import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallCallLogQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.*;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
-import com.panshi.hujin2.message.service.message.chuanglan.impl.ChuanlanServiceImpl;
-import com.panshi.hujin2.message.service.message.infobip.impl.InfobipServiceImpl;
-import com.panshi.hujin2.message.service.message.impl.PaasooServiceImpl;
-import com.panshi.hujin2.message.service.message.submail.impl.SubmailServiceImpl;
-import com.panshi.hujin2.message.service.message.tianyihong.TainYiHongServiceImpl;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
-
-import static com.panshi.hujin2.base.common.enmu.ApplicationEnmu.*;
 
 /**
  * create by shenjiankang on 2018/6/20 11:44
@@ -48,8 +39,8 @@ public class MessageFacadeImpl implements IMessageFacade {
 
     private static Logger LOGGER = LoggerFactory.getLogger(MessageFacadeImpl.class);
 
-    @Value("${send.msg.channel}")
-    private String sendMsgChannel;
+//    @Value("${send.msg.channel}")
+//    private String sendMsgChannel;
 
     @Autowired
     private List<ISendMsgService> messageService;
@@ -79,9 +70,16 @@ public class MessageFacadeImpl implements IMessageFacade {
     private ISendMsgService KMIService;
 
     @Autowired
+    @Qualifier("inaSMSService")
+    private ISendMsgService inaSMSService;
+
+    @Autowired
     private UrgentRecallMsgLogMapper urgentRecallMsgLogMapper;
     @Autowired
     private UrgentRecallCallLogMapper callLogMapper;
+
+    @Autowired
+    private MessageSendRecordMapper messageSendRecordMapper;
 
 
     public static void main(String[] args) {
@@ -256,12 +254,21 @@ public class MessageFacadeImpl implements IMessageFacade {
                                                                Context context) {
         //国际短信 批量单推（相同模板，不同参数）
         try {
-            ISendMsgService sendMsgService = getMsgSendInstance(sendMsgChannel);
-            sendMsgService.batchSendSameTemplateDiffParam(applicationEnmu,
-                    paramMap,
-                    templateCode,
-                    context);
-            return BasicResult.ok();
+            ISendMsgService sendMsgService = null;
+            String i18n = applicationEnmu.getI18n();
+            if("id_ID".equals(i18n)){
+                //sendMsgService = KMIService;
+            }else if("vi".equals(i18n)){
+                sendMsgService = tianyihongService;
+            }
+            if(sendMsgService != null){
+                sendMsgService.batchSendSameTemplateDiffParam(applicationEnmu,
+                        paramMap,
+                        templateCode,
+                        context);
+                return BasicResult.ok();
+            }
+            return BasicResult.error(BasicResultCode.ERROR.getCode(),"暂不支持批量发送");
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
             return BasicResult.error(BasicResultCode.ERROR.getCode(),
@@ -277,12 +284,45 @@ public class MessageFacadeImpl implements IMessageFacade {
                                                                   Context context) {
         //国际短信 批量发送（相同模板，相同参数）
         try {
-            ISendMsgService sendMsgService = getMsgSendInstance(sendMsgChannel);
-            sendMsgService.batchSendSameTemplateSameParam(applicationEnmu,
-                                                                phoneNumberList,
-                                                                templateCode,
-                                                                paramList,
-                                                                context);
+            ISendMsgService sendMsgService = null;
+            String i18n = applicationEnmu.getI18n();
+            if("id_ID".equals(i18n)){
+                //sendMsgService = KMIService;
+            }else if("vi".equals(i18n)){
+                sendMsgService = tianyihongService;
+            }
+            if(sendMsgService != null){
+                sendMsgService.batchSendSameTemplateSameParam(applicationEnmu,
+                        phoneNumberList,
+                        templateCode,
+                        paramList,
+                        context);
+                return BasicResult.ok();
+            }
+            return BasicResult.error(BasicResultCode.ERROR.getCode(),"暂不支持批量发送");
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            return ExceptionMessageUtils.throwDefinedException(e,context);
+        }
+    }
+
+    @Override
+    public BasicResult<Void> batchSendSameTemplateSameParam(ApplicationEnmu applicationEnmu,
+                                                            Integer queueId,
+                                                            Integer consumerId,
+                                                            Double fee,
+                                                            List phoneNumberList,
+                                                            String sendText,
+                                                            Context context) {
+        //国际短信 批量发送（相同模板，相同参数） 直接输入发送内容
+        try {
+            inaSMSService.batchSendSameTemplateSameParam(applicationEnmu,
+                    queueId,
+                    consumerId,
+                    fee,
+                    phoneNumberList,
+                    sendText,
+                    context);
             return BasicResult.ok();
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
@@ -296,11 +336,20 @@ public class MessageFacadeImpl implements IMessageFacade {
                                                    Context context) {
         //国际短信 批量发送（批量推送， 不同模板）
         try {
-            ISendMsgService sendMsgService = getMsgSendInstance(sendMsgChannel);
-            sendMsgService.batchSendDiffTemplate(applicationEnmu,
-                    paramList,
-                    context);
-            return BasicResult.ok();
+            ISendMsgService sendMsgService = null;
+            String i18n = applicationEnmu.getI18n();
+            if("id_ID".equals(i18n)){
+                //sendMsgService = KMIService;
+            }else if("vi".equals(i18n)){
+                sendMsgService = tianyihongService;
+            }
+            if(sendMsgService != null){
+                sendMsgService.batchSendDiffTemplate(applicationEnmu,
+                        paramList,
+                        context);
+                return BasicResult.ok();
+            }
+            return BasicResult.error(BasicResultCode.ERROR.getCode(),"暂不支持批量发送");
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
             return ExceptionMessageUtils.throwDefinedException(e,context);
@@ -440,6 +489,88 @@ public class MessageFacadeImpl implements IMessageFacade {
             return BasicResult.ok(DozerUtils.convertList(res,UrgentRecallCallLogOutputBO.class), qo.getPage());
         }
         return BasicResult.ok(Collections.EMPTY_LIST);
+    }
+
+    @Override
+    public BasicResult<List<MsgSendStatisticsBO>> querySendStatistics(MsgSendStatisticsQO qo, Context context) {
+        try {
+            List<MessageSendRecordDO> doList = messageSendRecordMapper.querySendStatistics(qo);
+            if(CollectionUtils.isNotEmpty(doList)){
+                Map<String,List<MessageSendRecordDO>> map = new HashMap<>();
+                for (MessageSendRecordDO recordDO:doList){
+                    String phoneNumber = recordDO.getPhoneNumber();
+                    if(map.containsKey(phoneNumber)){
+                        List<MessageSendRecordDO> recordDOS = map.get(phoneNumber);
+                        recordDOS.add(recordDO);
+                    }else {
+                        List<MessageSendRecordDO> recordDOS = new ArrayList<>();
+                        recordDOS.add(recordDO);
+                        map.put(phoneNumber, recordDOS);
+                    }
+                }
+
+                List<MsgSendStatisticsBO> boList = new ArrayList<>();
+                for (Iterator<String> iterator = map.keySet().iterator();iterator.hasNext();){
+                    String phoneNumer = iterator.next();
+                    List<MessageSendRecordDO> list = map.get(phoneNumer);
+
+                    MsgSendStatisticsBO sendStatisticsBO = new MsgSendStatisticsBO();
+                    sendStatisticsBO.setPhoneNumber(phoneNumer);
+                    sendStatisticsBO.setTotalSendCount(list.size());
+                    Integer successCount = 0;
+                    Integer failCount = 0;
+                    for(MessageSendRecordDO recordDO:list){
+                        Integer code = recordDO.getResCode();
+                        if(code!=null && code==0){
+                            successCount ++;
+                        }else {
+                            failCount++;
+                        }
+                    }
+                    sendStatisticsBO.setSuccessSendCount(successCount);
+                    sendStatisticsBO.setFailSendCount(failCount);
+                    boList.add(sendStatisticsBO);
+                }
+                return BasicResult.ok(boList);
+            }
+            return BasicResult.ok(Collections.emptyList());
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(),"querySendStatistics error");
+        }
+    }
+
+    @Override
+    public BasicResult<MsgSendResultBO> querySendResult(MsgSendStatisticsQO qo, Context context) {
+        try {
+            MsgSendResultBO resultBO = new MsgSendResultBO();
+            List<MessageSendRecordDO> doList = messageSendRecordMapper.querySendStatistics(qo);
+            if(CollectionUtils.isNotEmpty(doList)){
+                //Integer totalSendCount =0;
+                Integer successSendCount=0;
+                Integer failSendCount=0;
+                //Double totalFee = 0D;
+                BigDecimal feeBigDecimal = BigDecimal.ZERO;
+                for(MessageSendRecordDO recordDO:doList){
+                    Integer resCode = recordDO.getResCode();
+                    if(resCode == 0){
+                        successSendCount ++;
+                    }else {
+                        failSendCount ++;
+                    }
+                    Double fee = recordDO.getFee();
+                    feeBigDecimal = feeBigDecimal.add(new BigDecimal(fee));
+                }
+                resultBO.setTotalSendCount(doList.size());
+                resultBO.setSuccessSendCount(successSendCount);
+                resultBO.setFailSendCount(failSendCount);
+                resultBO.setFee(feeBigDecimal.doubleValue());
+            }
+            return BasicResult.ok(resultBO);
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(),"querySendResult error");
+        }
     }
 
 

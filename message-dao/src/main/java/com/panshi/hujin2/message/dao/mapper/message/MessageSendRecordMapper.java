@@ -1,8 +1,10 @@
 package com.panshi.hujin2.message.dao.mapper.message;
 
-import com.panshi.hujin2.message.dao.model.MessageSendRecord;
+import com.panshi.hujin2.message.dao.model.MessageSendRecordDO;
 import com.panshi.hujin2.message.dao.model.MessageSendRecordExample;
 import java.util.List;
+
+import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import org.apache.ibatis.annotations.Param;
 
 public interface MessageSendRecordMapper {
@@ -12,19 +14,26 @@ public interface MessageSendRecordMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(MessageSendRecord record);
+    int insert(MessageSendRecordDO record);
 
-    int insertSelective(MessageSendRecord record);
+    int insertSelective(MessageSendRecordDO record);
 
-    List<MessageSendRecord> selectByExample(MessageSendRecordExample example);
+    List<MessageSendRecordDO> selectByExample(MessageSendRecordExample example);
 
-    MessageSendRecord selectByPrimaryKey(Long id);
+    MessageSendRecordDO selectByPrimaryKey(Long id);
 
-    int updateByExampleSelective(@Param("record") MessageSendRecord record, @Param("example") MessageSendRecordExample example);
+    int updateByExampleSelective(@Param("record") MessageSendRecordDO record, @Param("example") MessageSendRecordExample example);
 
-    int updateByExample(@Param("record") MessageSendRecord record, @Param("example") MessageSendRecordExample example);
+    int updateByExample(@Param("record") MessageSendRecordDO record, @Param("example") MessageSendRecordExample example);
 
-    int updateByPrimaryKeySelective(MessageSendRecord record);
+    int updateByPrimaryKeySelective(MessageSendRecordDO record);
 
-    int updateByPrimaryKey(MessageSendRecord record);
+    int updateByPrimaryKey(MessageSendRecordDO record);
+
+
+    /**
+     *  自定义方法
+     */
+    //todo 优化 分页
+    List<MessageSendRecordDO> querySendStatistics(MsgSendStatisticsQO qo);
 }

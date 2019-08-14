@@ -70,6 +70,23 @@ public interface ISendMsgService {
                                                 Context context);
 
     /**
+     *@Description:     根据手机号列表 ，和发送内容 批量发送
+     *@Param:  * @param applicationEnmu
+     * @param phoneNumberList
+     * @param sendText
+     * @param context
+     *@Author: shenJianKang
+     *@date: 2019/8/13 10:35
+     */
+    void batchSendSameTemplateSameParam(ApplicationEnmu applicationEnmu,
+                                        Integer queueId,
+                                        Integer consumerId,
+                                        Double fee,
+                                        List phoneNumberList,
+                                        String sendText,
+                                        Context context );
+
+    /**
      * @description:        批量推送，同一个模板，不同参数;
      * @param applicationEnmu
      * @param paramMap

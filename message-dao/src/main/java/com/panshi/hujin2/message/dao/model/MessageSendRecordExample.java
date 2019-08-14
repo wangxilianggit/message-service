@@ -165,6 +165,186 @@ public class MessageSendRecordExample {
             return (Criteria) this;
         }
 
+        public Criteria andConsumerIdIsNull() {
+            addCriterion("consumer_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdIsNotNull() {
+            addCriterion("consumer_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdEqualTo(Integer value) {
+            addCriterion("consumer_id =", value, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdNotEqualTo(Integer value) {
+            addCriterion("consumer_id <>", value, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdGreaterThan(Integer value) {
+            addCriterion("consumer_id >", value, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("consumer_id >=", value, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdLessThan(Integer value) {
+            addCriterion("consumer_id <", value, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdLessThanOrEqualTo(Integer value) {
+            addCriterion("consumer_id <=", value, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdIn(List<Integer> values) {
+            addCriterion("consumer_id in", values, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdNotIn(List<Integer> values) {
+            addCriterion("consumer_id not in", values, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdBetween(Integer value1, Integer value2) {
+            addCriterion("consumer_id between", value1, value2, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConsumerIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("consumer_id not between", value1, value2, "consumerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdIsNull() {
+            addCriterion("queue_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdIsNotNull() {
+            addCriterion("queue_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdEqualTo(Integer value) {
+            addCriterion("queue_id =", value, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdNotEqualTo(Integer value) {
+            addCriterion("queue_id <>", value, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdGreaterThan(Integer value) {
+            addCriterion("queue_id >", value, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("queue_id >=", value, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdLessThan(Integer value) {
+            addCriterion("queue_id <", value, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdLessThanOrEqualTo(Integer value) {
+            addCriterion("queue_id <=", value, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdIn(List<Integer> values) {
+            addCriterion("queue_id in", values, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdNotIn(List<Integer> values) {
+            addCriterion("queue_id not in", values, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdBetween(Integer value1, Integer value2) {
+            addCriterion("queue_id between", value1, value2, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQueueIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("queue_id not between", value1, value2, "queueId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIsNull() {
+            addCriterion("fee is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIsNotNull() {
+            addCriterion("fee is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEqualTo(Double value) {
+            addCriterion("fee =", value, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeNotEqualTo(Double value) {
+            addCriterion("fee <>", value, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeGreaterThan(Double value) {
+            addCriterion("fee >", value, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeGreaterThanOrEqualTo(Double value) {
+            addCriterion("fee >=", value, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeLessThan(Double value) {
+            addCriterion("fee <", value, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeLessThanOrEqualTo(Double value) {
+            addCriterion("fee <=", value, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIn(List<Double> values) {
+            addCriterion("fee in", values, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeNotIn(List<Double> values) {
+            addCriterion("fee not in", values, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeBetween(Double value1, Double value2) {
+            addCriterion("fee between", value1, value2, "fee");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeNotBetween(Double value1, Double value2) {
+            addCriterion("fee not between", value1, value2, "fee");
+            return (Criteria) this;
+        }
+
         public Criteria andAppIdIsNull() {
             addCriterion("app_id is null");
             return (Criteria) this;

@@ -113,6 +113,17 @@ public abstract class SendMsg implements ISendMsgService {
     }
 
     @Override
+    public void batchSendSameTemplateSameParam(ApplicationEnmu applicationEnmu,
+                                               Integer queueId,
+                                               Integer consumerId,
+                                               Double fee,
+                                               List phoneNumberList,
+                                               String sendText,
+                                               Context context) {
+        //由底层具体短信通道实现
+    }
+
+    @Override
     public void batchSendDiffTemplate(ApplicationEnmu applicationEnmu,
                                       List<BatchSendDiffTemplateParamBO> paramList,
                                       Context context) {

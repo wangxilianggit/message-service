@@ -19,6 +19,21 @@
             <artifactId>qrcode</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.core/org.eclipse.core.resources -->
+<!--        <dependency>-->
+<!--            <groupId>org.eclipse.core</groupId>-->
+<!--            <artifactId>org.eclipse.core.resources</artifactId>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
+
+
+
+
     </dependencies>
 
 
