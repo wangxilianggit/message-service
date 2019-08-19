@@ -124,6 +124,12 @@ public class InaSMSServiceImpl extends SendMsg {
                                                List phoneNumberList,
                                                String sendText,
                                                Context context) {
+//        try {
+//
+//        }catch (Exception e){
+//            LOGGER.error(e.getMessage(), e);
+//            throw e;
+//        }
         //同模板同参数， 根据sendText 发送
         if(CollectionUtils.isEmpty(phoneNumberList)
             ||applicationEnmu == null
@@ -139,7 +145,12 @@ public class InaSMSServiceImpl extends SendMsg {
             for(int i=0; i<phoneNumberList.size();i+=10){
                 List<String> phoneNumbers = new ArrayList();
                 String phoneNumbersStr = "";
-                phoneNumbers  = phoneNumberList.subList(i,limit);
+                if(limit <= phoneNumberList.size()){
+                    phoneNumbers  = phoneNumberList.subList(i,limit);
+                }else {
+                    phoneNumbers  = phoneNumberList.subList(i,phoneNumberList.size());
+                }
+
                 limit +=10;
 
                 for (String phoneNumber:phoneNumbers){
@@ -147,6 +158,7 @@ public class InaSMSServiceImpl extends SendMsg {
                 }
                 //最后一个“;”去掉
                 phoneNumbersStr = phoneNumbersStr.substring(0, phoneNumbersStr.length() - 1);
+
                 batchSend(applicationEnmu,queueId,consumerId,fee,phoneNumbersStr, sendText, 1);
             }
         }else {
@@ -179,17 +191,24 @@ public class InaSMSServiceImpl extends SendMsg {
      *@Author: shenJianKang
      *@date: 2019/8/12 14:45
      */
-    private void batchSend(ApplicationEnmu applicationEnmu,
+    public void batchSend(ApplicationEnmu applicationEnmu,
                            Integer queueId,
                            Integer consumerId,
                            Double fee,
                            String phoneNumbers,
                            String msgText,
-                           Integer bulk){
+                           Integer bulk)  {
+
+        //todo sleep
+//        try {
+//            LOGGER.error("开始睡眠");
+//            Thread.sleep(60*1000*1);//1分钟，为了测试暂停功能
+//        }catch (Exception e){
+//            LOGGER.error("批量发送短信睡眠异常");
+//        }
 
         try {
             //只对短信文本 编码。
-//            phoneNumbers = URLEncoder.encode(phoneNumbers,"UTF-8");
             msgText = URLEncoder.encode(msgText,"UTF-8");
         }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
@@ -220,6 +239,7 @@ public class InaSMSServiceImpl extends SendMsg {
         HttpUtilv2 http = new HttpUtilv2();
         try {
             BasicHttpResponse res = http.executeHttpsGet(requestUrl);
+            LOGGER.error("发送结果: [{}]",res);
             int statusCode = res.getStatusCode();
             String htmlContent = res.getHtmlContent();
             if(statusCode!=200 || StringUtils.isBlank(htmlContent)){
@@ -241,7 +261,16 @@ public class InaSMSServiceImpl extends SendMsg {
             // <MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG>
             // </PUSH>
 
-            //todo  发送记录数据入库
+
+            //// TODO: 2019/8/15 返回的transid 变了
+//            <?xml version='1.0' encoding='UTF-8'?>
+//            <PUSH>
+//            <STATUS>0</STATUS>
+//            <TRANSID>36f8a823-d18d-4673-90f5-72f24df90ea7</TRANSID>
+//            <MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG>
+//            </PUSH>
+
+                    //todo  发送记录数据入库
             String resultStr = htmlContent.replace("<?xml version='1.0' encoding='UTF-8'?>",",");
             String[] arr = resultStr.split(",");
             for(int i=0;i<arr.length;i++){
@@ -253,13 +282,21 @@ public class InaSMSServiceImpl extends SendMsg {
                     inputBO.setConsumerId(consumerId);
                     inputBO.setQueueId(queueId);
                     inputBO.setChannelId(ChannelEnum.INA_HORIZON_SMS.getCode());
-                    String transId = xmlPushBO.getTransId();
-                    if(StringUtils.isNotBlank(transId)){
-                        inputBO.setMsgId(transId);
 
-                        String phoneNumber = transId.substring(10);
-                        inputBO.setPhoneNumber(phoneNumber);
+                    //bulk=0 for send 1 phone number
+                    //bulk=1 for send more than 1 phone numbers
+                    if(bulk == 0){
+                        inputBO.setPhoneNumber(phoneNumbers);
+                    }else {
+                        String transId = xmlPushBO.getTransId();
+                        if(StringUtils.isNotBlank(transId)){
+                            inputBO.setMsgId(transId);
+
+                            String phoneNumber = transId.substring(10);
+                            inputBO.setPhoneNumber(phoneNumber);
+                        }
                     }
+
                     Integer resCode = Integer.valueOf(xmlPushBO.getStatus());
                     if(resCode == 0){
                         // 发送成功
@@ -278,6 +315,7 @@ public class InaSMSServiceImpl extends SendMsg {
 
         }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
+            throw new MessageException("ina sms 發送失敗："+e.getMessage());
         }
     }
 
@@ -304,6 +342,15 @@ public class InaSMSServiceImpl extends SendMsg {
 //        String result = "<?xml version='1.0' encoding='UTF-8'?><PUSH>";
 //        String[] arr = result.split("<");//?xml version='1.0' encoding='UTF-8'?>
 //        System.out.println("arr = " + arr);
+
+
+        System.out.println("111 = " + 111);
+        try {
+            Thread.sleep(5000);
+        }catch (Exception e){
+
+        }
+        System.out.println("222 = " + 222);
     }
 
 

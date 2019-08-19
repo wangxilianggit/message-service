@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -105,7 +106,7 @@ public class TestController {
     private String kmiSendOtpMsgUrl;
 
     private final String TOKEN_KEY = "KMI_TOKEN";
-    private final long VALID_TIME = 60 * 60 * 1000 * 2;
+    //private final long VALID_TIME = 60 * 60 * 1000 * 2;
 
     private Context context = new Context();
 
@@ -123,6 +124,26 @@ public class TestController {
 
     private final String inaPhoneNumber_6 = "6281285290562";//自己这的 印尼测试手机号
 
+
+    //測試KMI
+
+    @RequestMapping("/kmitest")
+   public void testKmi(){
+        KMIService.sendInternationalMsg(ApplicationEnmu.VI_CASH_DOG,
+                "6213777400262",
+                "test sms",
+                ContextUtils.getDefaultContext());
+   }
+
+
+    @RequestMapping("/fcm")
+    public String fcm(){
+        String postUrl = "https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send";
+
+
+
+        return "success";
+    }
 
 
     @RequestMapping("/sms222")
@@ -215,15 +236,25 @@ public class TestController {
     }
 
 
+    private final long  VALID_TIME = 60 * 1000;
     @RequestMapping("/put")
     public String put(){
-        MsgUtils.expiryMap.put("123","666 啊",60 * 1000);
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+        System.out.println("sdf.format(now) = " + sdf.format(now));
+        MsgUtils.expiryMap.put("123","666 啊",VALID_TIME);
         return "put";
     }
 
     @RequestMapping("/get")
     public String get(){
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+        System.out.println("sdf.format(now) = " + sdf.format(now));
         Object obj = MsgUtils.expiryMap.get("123");
+
+        System.out.println("j = " + (obj == null));
+
         return String.valueOf(obj);
     }
 
