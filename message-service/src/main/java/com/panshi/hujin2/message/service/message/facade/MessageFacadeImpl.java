@@ -13,6 +13,7 @@ import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallCallLogMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallMsgLogMapper;
 import com.panshi.hujin2.message.dao.model.*;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
+import com.panshi.hujin2.message.domain.qo.MessageSendRecordQO;
 import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallCallLogQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
@@ -571,6 +572,22 @@ public class MessageFacadeImpl implements IMessageFacade {
             LOGGER.error(e.getMessage(),e);
             return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(),"querySendResult error");
         }
+    }
+
+    @Override
+    public BasicResult<List<MessageSendRecordBO>> querySendRecordByParam(MessageSendRecordQO qo) {
+        if(qo == null){
+            qo = new MessageSendRecordQO();
+        }
+        Integer count = messageSendRecordMapper.countByParam(qo);
+        Page page = qo.getPage();
+        page.setTotalNumber(count);
+        List<MessageSendRecordDO> doList = messageSendRecordMapper.queryByParam(qo);
+        if(CollectionUtils.isNotEmpty(doList)){
+            List<MessageSendRecordBO> boList =  DozerUtils.convertList(doList, MessageSendRecordBO.class);
+            return BasicResult.ok(boList);
+        }
+        return BasicResult.ok(Collections.emptyList());
     }
 
 

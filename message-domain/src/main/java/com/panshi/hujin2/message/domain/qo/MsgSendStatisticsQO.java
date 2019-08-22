@@ -22,7 +22,7 @@ public class MsgSendStatisticsQO  extends BaseQO{
     /**
      *  手机号
      */
-    private String phoenNumber;
+    private String phoneNumber;
 
     /**
      *  发送失败次数

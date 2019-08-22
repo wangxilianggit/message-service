@@ -3,6 +3,7 @@ package com.panshi.hujin2.message.facade;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
+import com.panshi.hujin2.message.domain.qo.MessageSendRecordQO;
 import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallCallLogQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
@@ -165,6 +166,14 @@ public interface IMessageFacade {
 
     //按队列id查询发送结果
     BasicResult<MsgSendResultBO> querySendResult(MsgSendStatisticsQO qo, Context context);
+
+    /**
+     *@Description:     查詢短信發送記錄
+     *@Param:  * @param qo
+     *@Author: shenJianKang
+     *@date: 2019/8/21 16:28
+     */
+    BasicResult<List<MessageSendRecordBO>> querySendRecordByParam(MessageSendRecordQO qo);
 
 
 

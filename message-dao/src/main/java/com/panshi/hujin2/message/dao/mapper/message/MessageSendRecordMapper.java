@@ -4,6 +4,7 @@ import com.panshi.hujin2.message.dao.model.MessageSendRecordDO;
 import com.panshi.hujin2.message.dao.model.MessageSendRecordExample;
 import java.util.List;
 
+import com.panshi.hujin2.message.domain.qo.MessageSendRecordQO;
 import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,4 +37,8 @@ public interface MessageSendRecordMapper {
      */
     //todo 优化 分页
     List<MessageSendRecordDO> querySendStatistics(MsgSendStatisticsQO qo);
+
+
+    Integer countByParam(MessageSendRecordQO qo);
+    List<MessageSendRecordDO> queryByParam(MessageSendRecordQO qo);
 }
