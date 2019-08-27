@@ -35,9 +35,6 @@ public abstract class SendMsg implements ISendMsgService {
     @Autowired
     protected IMsgDBService msgDBService;
 
-    @Autowired
-    private RedisUtils redisUtils;
-
 
 
 
