@@ -1,5 +1,9 @@
 package com.panshi.hujin2.message.service.fcm.facade;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
@@ -10,8 +14,13 @@ import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.facade.IFCMFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,7 +31,12 @@ import java.util.List;
 public class FCMFacadeImpl implements IFCMFacade {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+
+    @Value("${fcm.request.json.path}")
+    private String fcmRequestJsonPath;
+
     String postUrl = "https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send";
+    String SCOPES = "https://www.googleapis.com/auth/firebase.messaging";
 
 
 //    FileInputStream serviceAccount =
@@ -60,6 +74,14 @@ public class FCMFacadeImpl implements IFCMFacade {
             // Response is a message ID string.
             System.out.println("Successfully sent message: " + response);
 
+
+
+
+
+
+
+
+
             return BasicResult.ok();
         } catch (Exception e){
             LOGGER.debug(e.getMessage(),e);
@@ -67,4 +89,40 @@ public class FCMFacadeImpl implements IFCMFacade {
             return BasicResult.error(BasicResultCode.ERROR.getCode(), MessageFactory.getMsg("G19770108", context.getLocale()));
         }
     }
+
+    /**
+     *@Description:     获取访问凭据
+     *@Param:  * @param
+     *@Author: shenJianKang
+     *@date: 2019/8/22 18:29
+     */
+    private String getAccessToken() throws IOException {
+        GoogleCredential googleCredential = GoogleCredential
+                .fromStream(new FileInputStream(fcmRequestJsonPath))
+                .createScoped(Arrays.asList(SCOPES));
+        googleCredential.refreshToken();
+        return googleCredential.getAccessToken();
+    }
+
+    public static void main(String[] args) {
+//        FileInputStream serviceAccount =  new FileInputStream("path/to/serviceAccountKey.json");
+//        FileInputStream serviceAccount =  new FileInputStream(fcmRequestJsonPath);
+//
+//        FirebaseOptions options = new FirebaseOptions.Builder()
+//                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+//                .setDatabaseUrl("https://comauldlangsynecashcat-10afc.firebaseio.com")
+//                .build();
+//
+//        FirebaseApp.initializeApp(options);
+    }
+
+
+
+//    public static void main(String[] args) {
+//        String aa = "[BasicHttpResponse(statusCode=200, htmlContent=<?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366287851993929</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366287741245680</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366289676162843</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366289627806458</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>1566470436628569964027</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366281310466357</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366285888665684</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366282122421864</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH><?xml version='1.0' encoding='UTF-8'?><PUSH><STATUS>0</STATUS><TRANSID>15664704366282114853568</TRANSID><MSG>Success Quota : -1.0 Valid Period : 31/12/2020</MSG></PUSH>\n" +
+//                ")]";
+//
+//        System.out.println("aa.length() = " + aa.length());
+//    }
+
 }

@@ -354,4 +354,84 @@ public class InaSMSServiceImpl extends SendMsg {
     }
 
 
+    //TODO 测试读写入库 专用
+//    /**
+//     *@Description:
+//     *  @param phoneNumbers
+//     * @param msgText
+//     * @param bulk              超过一个手机号设置1， 只有一个手机号设置0
+//     *@Author: shenJianKang
+//     *@date: 2019/8/12 14:45
+//     */
+//    public void batchSend_BAK(ApplicationEnmu applicationEnmu,
+//                          Integer queueId,
+//                          Integer consumerId,
+//                          Double fee,
+//                          String phoneNumbers,
+//                          String msgText,
+//                          Integer bulk)  {
+//
+//        //todo sleep
+////        try {
+////            LOGGER.error("开始睡眠");
+////            Thread.sleep(60*1000*1);//1分钟，为了测试暂停功能
+////        }catch (Exception e){
+////            LOGGER.error("批量发送短信睡眠异常");
+////        }
+//
+//        try {
+//            //只对短信文本 编码。
+//            msgText = URLEncoder.encode(msgText,"UTF-8");
+//        }catch (Exception e){
+//            LOGGER.error(e.getMessage(), e);
+//            //return e.getMessage();
+//        }
+//
+//        String transid = UUID.randomUUID().toString();
+//        try {
+//
+//            //// TODO: 2019/8/19 测试写库效率
+//            String[] phoneArr = phoneNumbers.split(";");
+//            for(int i=0;i<phoneArr.length;i++){
+//                MessageSendRecordInputBO inputBO = new MessageSendRecordInputBO();
+//                inputBO.setAppId(applicationEnmu.getCode());
+//                inputBO.setConsumerId(consumerId);
+//                inputBO.setQueueId(queueId);
+//                inputBO.setChannelId(ChannelEnum.INA_HORIZON_SMS.getCode());
+//
+//                //bulk=0 for send 1 phone number
+//                //bulk=1 for send more than 1 phone numbers
+//                if(bulk == 0){
+//                    inputBO.setPhoneNumber(phoneArr[i]);
+//                }else {
+//                    String transId = "999";
+//                    inputBO.setPhoneNumber(phoneArr[i]);
+//                }
+//
+//                Integer resCode = Integer.valueOf(888);
+//                if(resCode == 0){
+//                    // 发送成功
+//                    inputBO.setFee(fee);
+//                }else {
+//                    inputBO.setFee(0d);
+//                }
+//                inputBO.setResCode(resCode);
+//                inputBO.setMsgText(msgText);
+//                inputBO.setReturnValue("测试读写");
+//
+//                //todo 批量插入
+//                msgDBService.addMsgSendRecord(inputBO, ContextUtils.getDefaultContext());
+//            }
+//        }catch (Exception e){
+//            LOGGER.error(e.getMessage(), e);
+//            throw new MessageException("ina sms 發送失敗："+e.getMessage());
+//        }
+//    }
+    //TODO 测试读写入库 专用
+
+
+
+
+
+
 }
