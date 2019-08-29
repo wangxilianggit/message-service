@@ -14,6 +14,8 @@ import com.panshi.hujin2.base.domain.result.BasicResultCode;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.dao.mapper.fcm.UserFcmRelationMapper;
 import com.panshi.hujin2.message.facade.IFCMFacade;
+import com.panshi.hujin2.message.service.notification.fcm.FCMPushService;
+import com.panshi.hujin2.message.service.notification.utils.NotificationExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class FCMFacadeImpl implements IFCMFacade {
 
     @Autowired
     private UserFcmRelationMapper userFcmRelationMapper;
+    @Autowired
+    private FCMPushService fCMPushService;
 
 
     @Value("${fcm.request.json.path}")
@@ -137,15 +141,31 @@ public class FCMFacadeImpl implements IFCMFacade {
 
     @Override
     public BasicResult<Void> bindUidAndCid(ApplicationEnmu appEnmu, Integer userId, String clientToken, ClientType clientType, Context context) {
-        return null;
+        try {
+           fCMPushService.insertUserClientRelation(appEnmu,userId,clientToken,clientType,context);
+            return BasicResult.ok();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return NotificationExceptionUtils.throwDefinedException(e, context);
+//            throw e;
+        }
+
     }
 
     @Override
     public BasicResult<Void> unbindUidAndCid(ApplicationEnmu appEnmu, Integer userId, String clientToken, ClientType clientType, Context context) {
-        return null;
+        try {
+            fCMPushService.unbindClientRelation(appEnmu,userId,clientToken,clientType,context);
+            return BasicResult.ok();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return NotificationExceptionUtils.throwDefinedException(e, context);
+//            throw e;
+
     }
 
 
 
 
+    }
 }

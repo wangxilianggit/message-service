@@ -256,4 +256,15 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <update id="updateClientTokenLose" >
+    UPDATE `user_fcm_relation`
+    set `status` = 0
+    where
+    `status` = 1
+    and app_id = #{appId}
+    and id IN
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+  </update>
 </mapper>

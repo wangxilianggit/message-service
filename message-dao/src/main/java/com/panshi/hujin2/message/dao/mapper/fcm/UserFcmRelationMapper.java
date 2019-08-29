@@ -27,4 +27,6 @@ public interface UserFcmRelationMapper {
     int updateByPrimaryKeySelective(UserFcmRelationDO record);
 
     int updateByPrimaryKey(UserFcmRelationDO record);
+
+    int updateClientTokenLose(@Param("list")List<Integer> idList,  @Param("appId")Integer code);
 }

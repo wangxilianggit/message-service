@@ -32,7 +32,7 @@ public interface IFCMFacade {
      * @Description:        绑定用户id和app客户端的clientId
      * @param appEnmu       app应用枚举
      * @param userId        用户id
-     * @param clientId      app客户端id
+     * @param clientToken  app客户端Token
      * @param clientType     手机操作系统类型：2-ios 3-android
      * @Author: shenJianKang
      * @Date: 2018/7/6 10:27
@@ -47,7 +47,7 @@ public interface IFCMFacade {
      * @description         用户退出时解绑userid和clisnetid
      * @param appEnmu       app应用枚举
      * @param userId        用户id
-     * @param clientId      app客户端id
+     * @param clientToken   app客户端Token
      * @param clientType    （枚举）手机操作系统类型 2--ios  3--android
      * @Author shenjiankang
      * @Date 2018/7/6 20:50
