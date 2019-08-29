@@ -7,10 +7,12 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
+import com.panshi.hujin2.base.common.enmu.ClientType;
 import com.panshi.hujin2.base.common.factory.MessageFactory;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.domain.result.BasicResultCode;
 import com.panshi.hujin2.base.service.Context;
+import com.panshi.hujin2.message.dao.mapper.fcm.UserFcmRelationMapper;
 import com.panshi.hujin2.message.facade.IFCMFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,10 @@ import java.util.List;
 @Service
 public class FCMFacadeImpl implements IFCMFacade {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+
+    @Autowired
+    private UserFcmRelationMapper userFcmRelationMapper;
 
 
     @Value("${fcm.request.json.path}")
@@ -124,5 +130,22 @@ public class FCMFacadeImpl implements IFCMFacade {
 //
 //        System.out.println("aa.length() = " + aa.length());
 //    }
+
+
+
+
+
+    @Override
+    public BasicResult<Void> bindUidAndCid(ApplicationEnmu appEnmu, Integer userId, String clientToken, ClientType clientType, Context context) {
+        return null;
+    }
+
+    @Override
+    public BasicResult<Void> unbindUidAndCid(ApplicationEnmu appEnmu, Integer userId, String clientToken, ClientType clientType, Context context) {
+        return null;
+    }
+
+
+
 
 }

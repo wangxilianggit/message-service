@@ -5,6 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.panshi.hujin2.base.common.enmu.ClientType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -83,6 +84,11 @@ public class FCMController {
         return token;
     }
 
+
+    public static void main(String[] args) {
+        String clientToken111 = "fTynYFtXRUI:APA91bGMfdZkpnAbJnRa5iOv4zWh_VcDcd6pCc4Gx8w2KSK7DgzpBfD245hQHp_pa-F0jNGXxV3qievbp1ct6iEc4LX0D4_KGMo6jnA3exbbjp-5kogFS8o8TpA8p7LRPJi9BOQCjTtx";
+        System.out.println("\"\" = " + clientToken111.length());
+    }
 
 
 

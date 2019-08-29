@@ -4,6 +4,7 @@ package com.panshi.hujin2.message.facade;/**
  */
 
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
+import com.panshi.hujin2.base.common.enmu.ClientType;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
 
@@ -25,5 +26,41 @@ public interface IFCMFacade {
                                           Boolean send,
                                           Boolean recordHistory,
                                           Context context);
+
+
+    /**
+     * @Description:        绑定用户id和app客户端的clientId
+     * @param appEnmu       app应用枚举
+     * @param userId        用户id
+     * @param clientId      app客户端id
+     * @param clientType     手机操作系统类型：2-ios 3-android
+     * @Author: shenJianKang
+     * @Date: 2018/7/6 10:27
+     */
+    BasicResult<Void> bindUidAndCid(ApplicationEnmu appEnmu,
+                                    Integer userId,
+                                    String clientToken,
+                                    ClientType clientType,
+                                    Context context);
+
+    /**
+     * @description         用户退出时解绑userid和clisnetid
+     * @param appEnmu       app应用枚举
+     * @param userId        用户id
+     * @param clientId      app客户端id
+     * @param clientType    （枚举）手机操作系统类型 2--ios  3--android
+     * @Author shenjiankang
+     * @Date 2018/7/6 20:50
+     */
+    BasicResult<Void> unbindUidAndCid(ApplicationEnmu appEnmu,
+                                      Integer userId,
+                                      String clientToken,
+                                      ClientType clientType,
+                                      Context context);
+
+    //todo  绑定
+
+
+    //todo  解绑
 
 }
