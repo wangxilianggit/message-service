@@ -9,7 +9,12 @@ public enum GeTuiPushTemplateEnum {
     NOTIFICATION_TEMPLATE(1,"点击通知打开应用模板"),
     LINK_TEMPLATE(2,"点击通知打开网页模板"),
     NOTYPOPLOAD_TEMPLATE(3,"点击通知弹框下载模板"),
-    TRANSMISSION_TEMPLATE(4,"透传消息模版");
+    TRANSMISSION_TEMPLATE(4,"透传消息模版"),
+
+
+    FCM(11,"FIREBASE FCM"),
+
+    ;
 
     private int code;
     private String text;

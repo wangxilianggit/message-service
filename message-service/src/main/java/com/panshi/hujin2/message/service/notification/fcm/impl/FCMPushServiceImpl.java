@@ -1,6 +1,6 @@
 package com.panshi.hujin2.message.service.notification.fcm.impl;
 
-import com.alibaba.dubbo.config.annotation.Service;
+
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.enmu.ClientType;
 import com.panshi.hujin2.base.service.Context;
@@ -13,6 +13,7 @@ import com.panshi.hujin2.message.service.notification.utils.NotificationExceptio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 @Service
 public class FCMPushServiceImpl implements FCMPushService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationPushServiceImpl.class);
- @Autowired
+    @Autowired
     UserFcmRelationMapper userFcmRelationMapper;
     @Override
     public int insertUserClientRelation(ApplicationEnmu appEnmu, Integer userId, String clientToken, ClientType clientType, Context context) {

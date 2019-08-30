@@ -53,7 +53,7 @@ public class FCMController2 {
     @RequestMapping("/aaa")
     public void  fcm1(){
         try {
-            push(clientToken, "sjk_title","sjk_body","0",null,null);    
+            //push(clientToken, "sjk_title","sjk_body","0",null,null);
         }catch (Exception e){
             System.out.println("e.getMessage() = " + e.getMessage());
         }
@@ -71,65 +71,65 @@ public class FCMController2 {
 //        return httpURLConnection;
     }
 
-    /**
-     * 消息推送，推送的消息用于提示，并且点击提示消息将会跳转链接至指定页面
-     * A: Captain&D
-     * W: https://www.cnblogs.com/captainad/
-     * @param deviceToken
-     * @param title
-     * @param body
-     * @param route
-     * @throws Exception
-     */
-//    @Async
-    public void push(final String deviceToken, final String title, final String body,
-                     final String route, final Integer dataType, final String dataMsg)
-            throws Exception {
-        log.info("[START]开始推送FCM消息");
-        // 请求标头
-        Map<String, String> requestHeader = new HashMap<>();
-        requestHeader.put("Content-Type", "application/json; UTF-8");
-//        requestHeader.put("Authorization", "Bearer " + getAccessToken());
-        requestHeader.put("Authorization", "Bearer " + getToken());
-
-        // 请求体
-        JSONObject json = new JSONObject();
-
-        JSONObject message = new JSONObject();
-        message.put("token", deviceToken);
-        JSONObject jsonObject = new JSONObject();
-
-        // 发送弹窗提示信息
-        if(!StringUtils.isEmpty(title) && !StringUtils.isEmpty(body)) {
-            JSONObject notification = new JSONObject();
-            notification.put("title", title);
-            notification.put("body", body);
-            message.put("notification", notification);
-
-            jsonObject.put("route", route);
-            // flag: 0-无需跳转，1-需要跳转
-            jsonObject.put("routeFlag", StringUtils.isEmpty(route) ? "0" : "1");
-        }
-
-        // 发送数据
-        if(!StringUtils.isEmpty(dataMsg)) {
-            jsonObject.put("dataType", String.valueOf(dataType));
-            jsonObject.put("params", dataMsg);
-        }
-
-        message.put("data", jsonObject);
-        json.put("message", message);
-
-        log.info("请求json内容===> {}", json.toString());
-        // https://fcm.googleapis.com/v1/projects/bluepay-tesla/messages:send
-//        String fcmApiUrl = getSetCacheService.getConfigValue("fcm_api_path");
-//        HttpResponse httpResponse = httpAskInterface.synSendPost(fcmApiUrl, json.toString(), requestHeader);
-
-        String httpResponse = HttpUtils.postGeneralUrl(postUrl,"application/json",json.toString(),"UTF-8",requestHeader);
-
-        log.info("fcm响应内容===> {}", httpResponse);
-        log.info("[END]推送FCM消息结束");
-    }
+//    /**
+//     * 消息推送，推送的消息用于提示，并且点击提示消息将会跳转链接至指定页面
+//     * A: Captain&D
+//     * W: https://www.cnblogs.com/captainad/
+//     * @param deviceToken
+//     * @param title
+//     * @param body
+//     * @param route
+//     * @throws Exception
+//     */
+////    @Async
+//    public void push(final String deviceToken, final String title, final String body,
+//                     final String route, final Integer dataType, final String dataMsg)
+//            throws Exception {
+//        log.info("[START]开始推送FCM消息");
+//        // 请求标头
+//        Map<String, String> requestHeader = new HashMap<>();
+//        requestHeader.put("Content-Type", "application/json; UTF-8");
+////        requestHeader.put("Authorization", "Bearer " + getAccessToken());
+//        requestHeader.put("Authorization", "Bearer " + getToken());
+//
+//        // 请求体
+//        JSONObject json = new JSONObject();
+//
+//        JSONObject message = new JSONObject();
+//        message.put("token", deviceToken);
+//        JSONObject jsonObject = new JSONObject();
+//
+//        // 发送弹窗提示信息
+//        if(!StringUtils.isEmpty(title) && !StringUtils.isEmpty(body)) {
+//            JSONObject notification = new JSONObject();
+//            notification.put("title", title);
+//            notification.put("body", body);
+//            message.put("notification", notification);
+//
+//            jsonObject.put("route", route);
+//            // flag: 0-无需跳转，1-需要跳转
+//            jsonObject.put("routeFlag", StringUtils.isEmpty(route) ? "0" : "1");
+//        }
+//
+//        // 发送数据
+//        if(!StringUtils.isEmpty(dataMsg)) {
+//            jsonObject.put("dataType", String.valueOf(dataType));
+//            jsonObject.put("params", dataMsg);
+//        }
+//
+//        message.put("data", jsonObject);
+//        json.put("message", message);
+//
+//        log.info("请求json内容===> {}", json.toString());
+//        // https://fcm.googleapis.com/v1/projects/bluepay-tesla/messages:send
+////        String fcmApiUrl = getSetCacheService.getConfigValue("fcm_api_path");
+////        HttpResponse httpResponse = httpAskInterface.synSendPost(fcmApiUrl, json.toString(), requestHeader);
+//
+//        String httpResponse = HttpUtils.postGeneralUrl(postUrl,"application/json",json.toString(),"UTF-8",requestHeader);
+//
+//        log.info("fcm响应内容===> {}", httpResponse);
+//        log.info("[END]推送FCM消息结束");
+//    }
 
     /**
      * 获取定时刷新的令牌
@@ -155,21 +155,21 @@ public class FCMController2 {
     }
 
 
-    private String getToken (){
-        //獲取憑證
-        String token = null;
-        try {
-            GoogleCredential googleCredential = GoogleCredential
-                    .fromStream(new FileInputStream(fcmRequestJsonPath))
-                    .createScoped(Arrays.asList(SCOPES));
-            googleCredential.refreshToken();
-            token = googleCredential.getAccessToken();
-        }catch (Exception e){
-            LOGGER.error(e.getMessage(),e);
-        }
-        LOGGER.info("======> FCM token : [{}]",token);
-        return token;
-    }
+//    private String getToken (){
+//        //獲取憑證
+//        String token = null;
+//        try {
+//            GoogleCredential googleCredential = GoogleCredential
+//                    .fromStream(new FileInputStream(fcmRequestJsonPath))
+//                    .createScoped(Arrays.asList(SCOPES));
+//            googleCredential.refreshToken();
+//            token = googleCredential.getAccessToken();
+//        }catch (Exception e){
+//            LOGGER.error(e.getMessage(),e);
+//        }
+//        LOGGER.info("======> FCM token : [{}]",token);
+//        return token;
+//    }
 
 
 

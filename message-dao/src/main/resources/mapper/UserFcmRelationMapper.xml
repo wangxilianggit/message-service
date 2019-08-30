@@ -256,6 +256,15 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+
+
+
+
+
+
+  <!--自定义方法-->
   <update id="updateClientTokenLose" >
     UPDATE `user_fcm_relation`
     set `status` = 0
@@ -267,4 +276,28 @@
       #{item}
     </foreach>
   </update>
+
+
+
+
+
+
+
+  <select id="queryLastRecordByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    *
+    from
+    user_fcm_relation
+    where
+    status = 1
+    and
+    app_id = #{appId}
+    and
+    user_id = #{userId}
+    order by create_time desc
+    limit 1
+  </select>
+
+
+
 </mapper>

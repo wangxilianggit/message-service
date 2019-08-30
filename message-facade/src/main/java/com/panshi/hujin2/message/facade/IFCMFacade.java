@@ -26,6 +26,8 @@ public interface IFCMFacade {
                                           Boolean send,
                                           Boolean recordHistory,
                                           Context context);
+    
+    //// TODO: 2019/8/29  对接像多个设备发送 
 
 
     /**
@@ -58,9 +60,6 @@ public interface IFCMFacade {
                                       ClientType clientType,
                                       Context context);
 
-    //todo  绑定
 
-
-    //todo  解绑
 
 }

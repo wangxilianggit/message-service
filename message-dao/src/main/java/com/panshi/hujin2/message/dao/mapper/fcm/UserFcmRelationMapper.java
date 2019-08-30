@@ -28,5 +28,17 @@ public interface UserFcmRelationMapper {
 
     int updateByPrimaryKey(UserFcmRelationDO record);
 
+
+
+
+
+
+    /**
+     *  自定义方法
+     */
     int updateClientTokenLose(@Param("list")List<Integer> idList,  @Param("appId")Integer code);
+
+
+    UserFcmRelationDO queryLastRecordByUserId(@Param("appId")Integer appId, @Param("userId")Integer userId);
+
 }

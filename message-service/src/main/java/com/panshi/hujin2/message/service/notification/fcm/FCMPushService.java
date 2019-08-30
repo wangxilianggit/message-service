@@ -15,10 +15,6 @@ import java.util.Map;
  */
 public interface FCMPushService {
 
-    //todo 关于个推提供的 别名绑定映射
-
-
-
 
     /**
      * @description:        绑定设备APP的clientId和userId

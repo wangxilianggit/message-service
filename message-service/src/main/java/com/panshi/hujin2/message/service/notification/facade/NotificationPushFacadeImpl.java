@@ -7,6 +7,7 @@ import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.domain.enums.getui.GeTuiPushTemplateEnum;
 import com.panshi.hujin2.message.domain.enums.getui.PushTypeEnum;
+import com.panshi.hujin2.message.facade.IFCMFacade;
 import com.panshi.hujin2.message.facade.INotificationPushFacade;
 import com.panshi.hujin2.message.facade.bo.AppPushHistoryInputBo;
 import com.panshi.hujin2.message.facade.bo.AppPushRecordInputBO;
@@ -29,6 +30,8 @@ public class NotificationPushFacadeImpl implements INotificationPushFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationPushFacadeImpl.class);
 
 
+    @Autowired
+    private IFCMFacade fcmFacade;
     @Autowired
     private INotificationPushService notificationPushService;
 
@@ -63,6 +66,27 @@ public class NotificationPushFacadeImpl implements INotificationPushFacade {
                                                  Boolean send,
                                                  Boolean recordHistory,
                                                  Context context) {
+
+//        if(ApplicationEnmu.INA_KAS_KANGAROO.equals(appEnmu)){
+//            //fcm 发送
+//            fcmFacade.pushMessageToSingle(appEnmu,
+//                    userId,
+//                    pushTemplateCode,
+//                    paramList,
+//                    send,
+//                    recordHistory,
+//                    context);
+//        }else {
+//            notificationPushService.pushMessageToSingle(appEnmu,
+//                    userId,
+//                    pushTemplateCode,
+//                    paramList,
+//                    send,
+//                    recordHistory,
+//                    context);
+//        }
+
+
         try {
             notificationPushService.pushMessageToSingle(appEnmu,
                     userId,
