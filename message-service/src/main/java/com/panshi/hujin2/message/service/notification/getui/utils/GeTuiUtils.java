@@ -140,6 +140,24 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.VI_IN_CASHCAT_ENDORPHIN_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_IN_CASHCAT_ENDORPHIN_MASTER_SECRET.getValue());
                 break;
+
+            case INA_KAS_INS:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_KAS_INS_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_KAS_INS_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_KAS_INS_MASTER_SECRET.getValue());
+                break;
+
+            case NEW_INA_CASH_KLICK:
+                infoBO.setAppId(GeTuiAppConfigEnum.NEW_INA_CASH_KLICK_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_KLICK_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_KLICK_MASTER_SECRET.getValue());
+                break;
+
+            case NEW_INA_CASH_MAS:
+                infoBO.setAppId(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_MASTER_SECRET.getValue());
+                break;
             default:
                 //参数错误异常
                 System.err.println(" ======获取个推推送key错误======= ");
