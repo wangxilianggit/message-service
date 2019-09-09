@@ -49,6 +49,9 @@ public class InaSMSServiceImpl extends SendMsg {
     @Value("${ina.sms.sc}")
     private String smsSc;
 
+    @Value("${ina.sms.balance.url}")
+    private String balanceUrl;
+
     @Override
     public String key() {
         return null;
@@ -58,6 +61,26 @@ public class InaSMSServiceImpl extends SendMsg {
     public boolean isDefault() {
         return false;
     }
+
+
+
+    /**
+     *@Description:     查询余额
+     ** @param
+     *@Author: shenJianKang
+     *@date: 2019/9/9 18:26
+     */
+    public void getBalance(){
+        HttpUtilv2 http = new HttpUtilv2();
+        try {
+            BasicHttpResponse res = http.executeHttpsGet(balanceUrl);
+            LOGGER.info(String.valueOf(res));
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+        }
+
+    }
+
 
     @Override
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
