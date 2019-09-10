@@ -159,7 +159,7 @@ public class GeTuiUtils {
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_MASTER_SECRET.getValue());
                 break;
             default:
-                //参数错误异常
+                //参数错误异
                 System.err.println(" ======获取个推推送key错误======= ");
                 NotificationExceptionUtils.throwExceptionParamInvalid(context);
         }
