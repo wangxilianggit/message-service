@@ -199,7 +199,10 @@ public enum GeTuiAppConfigEnum {
     NEW_INA_CASH_MAS_APP_KEY("viDD5tnHnd7ABNnt9Zeq69"),
     NEW_INA_CASH_MAS_MASTER_SECRET("pvpyKjpzj76ebDQDJUP2V1"),
 
-
+    INA_KASROO_APP_ID("DNlDAVzXBp8yJPiG0fEao3"),
+    INA_KASROO_APP_SECRET("UgmERvZu6x7FF5owvasSP1"),
+    INA_KASROO_APP_KEY("BDneXwLwut9z2f12dwYoCA"),
+    INA_KASROO_MASTER_SECRET("szdXD2dC6i5hWl7obikco5"),
     ;
 
 

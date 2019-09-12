@@ -158,6 +158,13 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_MASTER_SECRET.getValue());
                 break;
+
+            case INA_KASROO:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_KASROO_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_KASROO_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_KASROO_MASTER_SECRET.getValue());
+                break;
+
             default:
                 //参数错误异常
                 System.err.println(" ======获取个推推送key错误======= ");
