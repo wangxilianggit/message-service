@@ -166,7 +166,7 @@ public class GeTuiUtils {
                 break;
 
             default:
-                //参数错误异常
+                //参数错误异
                 System.err.println(" ======获取个推推送key错误======= ");
                 NotificationExceptionUtils.throwExceptionParamInvalid(context);
         }

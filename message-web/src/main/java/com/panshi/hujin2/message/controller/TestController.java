@@ -125,6 +125,25 @@ public class TestController {
     private final String inaPhoneNumber_6 = "6281285290562";//自己这的 印尼测试手机号
 
 
+    public static void main(String[] args) {
+        String aa = "testsmstttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhtestsmstttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh";
+        String aa1 = "testsmstttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh";
+        System.out.println("aa.length() = " + aa1.length());
+
+
+//        long x = 1l;
+//        System.out.println("Long.toHexString(x) = " + Long.toHexString(x));
+////        long aaa = 1l;
+////        long y = 2l;
+////        System.out.println(Long.toHexString(x+y));
+//
+//        long x = Long.parseLong("f1", 16);
+//        long y = Long.parseLong("f2", 16);
+//        System.out.println(Long.toHexString(x+y));
+
+
+    }
+    
     //測試KMI
 
     @RequestMapping("/kmitest")
