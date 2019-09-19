@@ -159,16 +159,43 @@ public class GeTuiUtils {
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_MASTER_SECRET.getValue());
                 break;
 
-            case NEW_INA_CASH_MAS_UNNDT:
-                infoBO.setAppId(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_UNNDT_APP_ID.getValue());
-                infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_UNNDT_APP_KEY.getValue());
-                infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_UNNDT_APP_SECRET.getValue());
-                break;
-
             case INA_KASROO:
                 infoBO.setAppId(GeTuiAppConfigEnum.INA_KASROO_APP_ID.getValue());
                 infoBO.setAppKey(GeTuiAppConfigEnum.INA_KASROO_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_KASROO_MASTER_SECRET.getValue());
+                break;
+
+                //204
+            case NEW_INA_CASH_KLICK_TASK:
+                infoBO.setAppId(GeTuiAppConfigEnum.NEW_INA_CASH_KLICK_TASK_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_KLICK_TASK_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_KLICK_TASK_MASTER_SECRET.getValue());
+                break;
+
+                //203
+            case NEW_INA_CASH_MAS_TEXT:
+                infoBO.setAppId(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_TEXT_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_TEXT_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MAS_TEXT_MASTER_SECRET.getValue());
+                break;
+
+
+
+
+
+
+            //500
+            case INA_CASH_YINNI_IN:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_CASH_YINNI_IN_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_CASH_YINNI_IN_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_CASH_YINNI_IN_MASTER_SECRET.getValue());
+                break;
+
+            //600
+            case VI_CASH_ANDROID_CASHCAT:
+                infoBO.setAppId(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_MASTER_SECRET.getValue());
                 break;
 
             default:
