@@ -193,6 +193,14 @@ public class GeTuiUtils {
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_CASH_YINNI_IN_MASTER_SECRET.getValue());
                 break;
 
+            //501
+            case INA_CASH_IN_ROO:
+                infoBO.setAppId(GeTuiAppConfigEnum.INA_CASH_IN_ROO_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.INA_CASH_IN_ROO_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.INA_CASH_IN_ROO_MASTER_SECRET.getValue());
+                break;
+
+
             //600
             case VI_CASH_ANDROID_CASHCAT:
                 infoBO.setAppId(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_APP_ID.getValue());
