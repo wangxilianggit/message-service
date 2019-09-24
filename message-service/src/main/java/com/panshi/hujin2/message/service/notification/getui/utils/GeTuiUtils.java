@@ -184,7 +184,12 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_MASTEXT_UNNDT_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_MASTEXT_UNNDT_MASTER_SECRET.getValue());
                 break;
-
+             //206
+            case NEW_INA_CASH_TASK_WQAS:
+                infoBO.setAppId(GeTuiAppConfigEnum.NEW_INA_CASH_TASK_WQAS_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.NEW_INA_CASH_TASK_WQAS_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.NEW_INA_CASH_TASK_WQAS_MASTER_SECRET.getValue());
+                break;
 
             //500
             case INA_CASH_YINNI_IN:
