@@ -378,7 +378,7 @@
     message_send_record
     <where>
       <if test="consumerId != null">
-        and current_consumer_id = #{consumerId}
+        and consumer_id = #{consumerId}
       </if>
 
       <if test="queueId != null">
@@ -399,7 +399,7 @@
     message_send_record
     <where>
       <if test="consumerId != null">
-        and current_consumer_id = #{consumerId}
+        and consumer_id = #{consumerId}
       </if>
 
       <if test="queueId != null">
@@ -447,7 +447,7 @@
     message_send_record
     <where>
       <if test="consumerId != null">
-        and current_consumer_id = #{consumerId}
+        and consumer_id = #{consumerId}
       </if>
 
       <if test="queueId != null">
