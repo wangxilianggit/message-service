@@ -405,6 +405,12 @@
       <if test="queueId != null">
         and queue_id = #{queueId}
       </if>
+      <if test="queueIds != null and queueIds.size() > 0">
+        and queue_id in
+        <foreach collection="queueIds" open="(" close=")" separator="," index="queueIdId">
+          #{queueIdId}
+        </foreach>
+      </if>
 
       <if test="fee != null">
         and fee = #{fee}
@@ -452,6 +458,13 @@
 
       <if test="queueId != null">
         and queue_id = #{queueId}
+      </if>
+
+      <if test="queueIds != null and queueIds.size() > 0">
+        and queue_id in
+        <foreach collection="queueIds" open="(" close=")" separator="," index="queueIdId">
+          #{queueIdId}
+        </foreach>
       </if>
 
       <if test="fee != null">

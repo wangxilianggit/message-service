@@ -4,6 +4,7 @@ import com.panshi.hujin2.base.domain.qo.BaseQO;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author shenJianKang
@@ -26,6 +27,10 @@ public class MessageSendRecordQO extends BaseQO {
      *  队列id
      */
     private Integer queueId;
+    /**
+     *  队列ids
+     */
+    private List<Integer> queueIds;
 
     /**
      *  消耗费用
