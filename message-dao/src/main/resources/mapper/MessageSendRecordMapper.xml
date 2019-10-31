@@ -476,7 +476,7 @@
 
       <if test="queueIds != null and queueIds.size() > 0">
         and queue_id in
-        <foreach collection="queueIds" open="(" close=")" separator="," index="queueIdId">
+        <foreach collection="queueIds" open="(" close=")" separator="," item="queueIdId">
           #{queueIdId}
         </foreach>
       </if>
