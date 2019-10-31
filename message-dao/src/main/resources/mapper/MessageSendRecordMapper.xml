@@ -402,6 +402,13 @@
         and consumer_id = #{consumerId}
       </if>
 
+      <if test="currentConsumerIdList != null and currentConsumerIdList.size() > 0">
+        AND consumer_id IN
+        <foreach collection="currentConsumerIdList" index="" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+
       <if test="queueId != null">
         and queue_id = #{queueId}
       </if>
@@ -454,6 +461,13 @@
     <where>
       <if test="consumerId != null">
         and consumer_id = #{consumerId}
+      </if>
+
+      <if test="currentConsumerIdList != null and currentConsumerIdList.size() > 0">
+        AND consumer_id IN
+        <foreach collection="currentConsumerIdList" index="" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
       </if>
 
       <if test="queueId != null">

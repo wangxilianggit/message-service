@@ -24,6 +24,11 @@ public class MessageSendRecordQO extends BaseQO {
     private Integer consumerId;
 
     /**
+     *  子商户id list
+     */
+    private List<Integer> currentConsumerIdList;
+
+    /**
      *  队列id
      */
     private Integer queueId;
