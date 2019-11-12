@@ -371,9 +371,25 @@
 
 
   <!--自定义方法-->
+  <sql id="Base_Column_List_02">
+    id,
+    consumer_id,
+    queue_id,
+    fee,
+    app_id,
+    country_id,
+    channel_id,
+    phone_number,
+    msg_text,
+    msg_id,
+    res_code,
+    res_explain,
+    create_time,
+    modify_time
+  </sql>
   <select id="querySendStatistics" parameterType="com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO" resultMap="BaseResultMap">
     select
-    *
+    <include refid="Base_Column_List_02" />
     from
     message_send_record
     <where>
@@ -455,7 +471,7 @@
 
   <select id="queryByParam" parameterType="com.panshi.hujin2.message.domain.qo.MessageSendRecordQO" resultMap="BaseResultMap">
     select
-    *
+    <include refid="Base_Column_List_02" />
     from
     message_send_record
     <where>
@@ -521,6 +537,30 @@
         limit #{page.dbNumber}
       </if>
     </if>
+  </select>
+
+
+  <select id="countByResCde" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+            COUNT(1)
+        FROM
+        message_send_record
+    <where>
+      <if test="queueId != null">
+        and queue_id = #{queueId}
+      </if>
+
+      <if test="resCode != null">
+        <if test="resCode == 0">
+          and res_code = 0
+        </if>
+
+        <if test="resCode != 0">
+          and res_code != 0
+        </if>
+      </if>
+
+    </where>
   </select>
 
 

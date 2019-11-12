@@ -545,28 +545,40 @@ public class MessageFacadeImpl implements IMessageFacade {
     public BasicResult<MsgSendResultBO> querySendResult(MsgSendStatisticsQO qo, Context context) {
         try {
             MsgSendResultBO resultBO = new MsgSendResultBO();
-            List<MessageSendRecordDO> doList = messageSendRecordMapper.querySendStatistics(qo);
-            if(CollectionUtils.isNotEmpty(doList)){
-                //Integer totalSendCount =0;
-                Integer successSendCount=0;
-                Integer failSendCount=0;
-                //Double totalFee = 0D;
-                BigDecimal feeBigDecimal = BigDecimal.ZERO;
-                for(MessageSendRecordDO recordDO:doList){
-                    Integer resCode = recordDO.getResCode();
-                    if(resCode == 0){
-                        successSendCount ++;
-                    }else {
-                        failSendCount ++;
-                    }
-                    Double fee = recordDO.getFee();
-                    feeBigDecimal = feeBigDecimal.add(new BigDecimal(fee));
-                }
-                resultBO.setTotalSendCount(doList.size());
-                resultBO.setSuccessSendCount(successSendCount);
-                resultBO.setFailSendCount(failSendCount);
-                resultBO.setFee(feeBigDecimal.doubleValue());
-            }
+//            long start_1 = System.currentTimeMillis();
+            //List<MessageSendRecordDO> doList = messageSendRecordMapper.querySendStatistics(qo);
+            Integer totalNum = messageSendRecordMapper.countByResCde(qo.getQueueId(),null);
+            Integer successNum = messageSendRecordMapper.countByResCde(qo.getQueueId(),0);
+            Integer failNum = messageSendRecordMapper.countByResCde(qo.getQueueId(), 1);
+            resultBO.setTotalSendCount(totalNum);
+            resultBO.setSuccessSendCount(successNum);
+            resultBO.setFailSendCount(failNum);
+
+//            long end_1 = System.currentTimeMillis();
+//            LOGGER.info("========第次  messageFacade.querySendResult[{}]",end_1-start_1);
+
+//            if(CollectionUtils.isNotEmpty(doList)){
+//                //Integer totalSendCount =0;
+//                Integer successSendCount=0;
+//                Integer failSendCount=0;
+//                //Double totalFee = 0D;
+//                BigDecimal feeBigDecimal = BigDecimal.ZERO;
+//                for(MessageSendRecordDO recordDO:doList){
+//                    Integer resCode = recordDO.getResCode();
+//                    if(resCode == 0){
+//                        //// TODO: 2019/11/6 思考： 这里要改，成功失败数 是否用stat 回执显示
+//                        successSendCount ++;
+//                    }else {
+//                        failSendCount ++;
+//                    }
+//                    Double fee = recordDO.getFee();
+//                    feeBigDecimal = feeBigDecimal.add(new BigDecimal(fee));
+//                }
+//                resultBO.setTotalSendCount(doList.size());
+//                resultBO.setSuccessSendCount(successSendCount);
+//                resultBO.setFailSendCount(failSendCount);
+//                resultBO.setFee(feeBigDecimal.doubleValue());
+//            }
             return BasicResult.ok(resultBO);
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);

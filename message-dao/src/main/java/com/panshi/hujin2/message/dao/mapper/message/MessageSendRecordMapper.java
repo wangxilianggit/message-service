@@ -41,4 +41,12 @@ public interface MessageSendRecordMapper {
 
     Integer countByParam(MessageSendRecordQO qo);
     List<MessageSendRecordDO> queryByParam(MessageSendRecordQO qo);
+
+    /**
+     *@Description: 根据queueId, resCode 统计成功或失败 数，resCode不能为空，=0成功，!=0失败
+     *@Param:  * @param resCode
+     *@Author: shenJianKang
+     *@date: 2019/11/12 19:55
+     */
+    Integer countByResCde(@Param("queueId") Integer queueId, @Param("resCode") Integer resCode);
 }
