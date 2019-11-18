@@ -12,6 +12,19 @@ import java.util.List;
  * 发送邮件
  */
 public interface IEmailSendFacade {
+
+    /**
+     *@Description:
+     *@Param:  * @param address
+     * @param subject
+     * @param htmlContent
+     *@Author: shenJianKang
+     *@date: 2019/11/18 14:43
+     */
+    BasicResult<Void> sendEmail(String address,String subject,String htmlContent);
+
+
+
 //    /**
 //     * 发送巴西的邮件
 //     * @param brEmailSendBO
@@ -28,4 +41,6 @@ public interface IEmailSendFacade {
 //     * @return
 //     */
 //    BasicResult<Void> batchSendEmailBr(List<BrEmailSendBO> brEmailSendBOS, Context context);
+
+
 }

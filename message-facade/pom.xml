@@ -20,6 +20,18 @@
             <groupId>com.panshi.hujin2</groupId>
             <artifactId>basic-project-rpc</artifactId>
         </dependency>
+
+        <!--阿里云email-->
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>aliyun-sjk-java-sdk-core</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xuanmiao</groupId>
+            <artifactId>aliyun-sjk-java-sdk-dm</artifactId>
+            <version>3.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>
