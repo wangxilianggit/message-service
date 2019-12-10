@@ -49,4 +49,8 @@ public interface MessageSendRecordMapper {
      *@date: 2019/11/12 19:55
      */
     Integer countByResCde(@Param("queueId") Integer queueId, @Param("resCode") Integer resCode);
+
+
+    @Deprecated
+    List<MessageSendRecordDO> queryAllFieldByParam(MessageSendRecordQO qo);
 }

@@ -212,7 +212,7 @@ public class FCMFacadeImpl implements IFCMFacade {
      *@date: 2019/8/29 17:53
      */
 //    @Async
-    private String push(String deviceToken,
+    public String push(String deviceToken,
                       String title,
                       String body,
                       String route,

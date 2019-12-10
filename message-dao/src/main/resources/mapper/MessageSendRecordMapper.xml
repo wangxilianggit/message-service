@@ -564,4 +564,76 @@
   </select>
 
 
+
+  <select id="queryAllFieldByParam" parameterType="com.panshi.hujin2.message.domain.qo.MessageSendRecordQO" resultMap="BaseResultMap">
+    select
+    *
+    from
+    message_send_record
+    <where>
+      <if test="consumerId != null">
+        and consumer_id = #{consumerId}
+      </if>
+
+      <if test="currentConsumerIdList != null and currentConsumerIdList.size() > 0">
+        AND consumer_id IN
+        <foreach collection="currentConsumerIdList" index="" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="queueId != null">
+        and queue_id = #{queueId}
+      </if>
+
+      <if test="queueIds != null and queueIds.size() > 0">
+        and queue_id in
+        <foreach collection="queueIds" open="(" close=")" separator="," item="queueIdId">
+          #{queueIdId}
+        </foreach>
+      </if>
+
+      <if test="fee != null">
+        and fee = #{fee}
+      </if>
+
+      <if test="channelId != null">
+        and channel_id = #{channelId}
+      </if>
+
+      <if test="phoneNumber != null">
+        and  phone_number LIKE CONCAT('%',#{phoneNumber},'%')
+      </if>
+
+      <if test="msgText != null">
+        and  msg_text LIKE CONCAT('%',#{msgText},'%')
+      </if>
+
+      <if test="resCode != null">
+        <if test="resCode == 0">
+          and res_code = #{resCode}
+        </if>
+        <if test="resCode == 1">
+          and res_code <![CDATA[ <> ]]> 0
+        </if>
+      </if>
+
+      <if test="createTimeStart != null">
+        and create_time <![CDATA[ >= ]]> #{createTimeStart}
+      </if>
+      <if test="createTimeEnd != null">
+        and create_time <![CDATA[ <= ]]> #{createTimeEnd}
+      </if>
+    </where>
+    <if test="page.dbNumber != null">
+      <if test="page.dbIndex != null">
+        limit #{page.dbIndex}, #{page.dbNumber}
+      </if>
+      <if test="page.dbIndex == null">
+        limit #{page.dbNumber}
+      </if>
+    </if>
+  </select>
+
+
 </mapper>
