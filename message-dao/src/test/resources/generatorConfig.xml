@@ -43,12 +43,12 @@
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
         </javaClientGenerator>
         <!-- 配置表信息 -->
-        <table schema="" tableName="user_fcm_relation" domainObjectName="UserFcmRelation"
-               enableCountByExample="true"
-               enableUpdateByExample="true"
-               enableDeleteByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true" >
+        <table schema="" tableName="user_one_signal_relation" domainObjectName="UserOneSignalRelation"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false" >
 
             <!--insert返回自增主键-->
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
