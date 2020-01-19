@@ -219,6 +219,11 @@ public class GeTuiUtils {
                 infoBO.setAppKey(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_APP_KEY.getValue());
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_MASTER_SECRET.getValue());
                 break;
+//            case VI_CASH_ANDROID_CASHCAT:
+//                infoBO.setAppId(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_APP_ID.getValue());
+//                infoBO.setAppKey(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_APP_KEY.getValue());
+//                infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHCAT_MASTER_SECRET.getValue());
+//                break;
 
             default:
                 //参数错误异
