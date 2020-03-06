@@ -6,6 +6,7 @@ import com.panshi.hujin2.base.common.factory.MessageFactory;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.domain.result.BasicResultCode;
 import com.panshi.hujin2.base.service.Context;
+import com.panshi.hujin2.base.service.utils.ContextUtils;
 import com.panshi.hujin2.message.dao.mapper.onesignal.UserOneSignalRelationMapper;
 import com.panshi.hujin2.message.dao.model.onesignal.UserOneSignalRelationDO;
 import com.panshi.hujin2.message.domain.enums.getui.GeTuiPushTemplateEnum;
@@ -15,6 +16,8 @@ import com.panshi.hujin2.message.facade.IOneSignalFacade;
 import com.panshi.hujin2.message.facade.bo.AppPushHistoryInputBo;
 import com.panshi.hujin2.message.facade.bo.AppPushRecordInputBO;
 import com.panshi.hujin2.message.facade.bo.AppPushTemplateOutputBO;
+import com.panshi.hujin2.message.facade.bo.UserClientRelationOutputBO;
+import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import com.panshi.hujin2.message.service.notification.getui.INotificationHistoryService;
 import com.panshi.hujin2.message.service.notification.getui.INotificationPushService;
@@ -145,34 +148,193 @@ public class OneSignalFacadeImpl implements IOneSignalFacade {
             }
 
             if(send){
-                String res = sendByPlayerId(playerId, title, text);
-
-                if (StringUtils.isNotBlank(res)) {
-                    AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
-                    inputBO.setAppId(appEnmu.getCode());
-                    inputBO.setPushType(PushTypeEnum.SINGLE_PUSH.getCode());
-                    inputBO.setTemplateType(GeTuiPushTemplateEnum.ONE_SIGNAL.getCode());
-                    inputBO.setUserId(userId);
-                    inputBO.setClientId(playerId);
-                    inputBO.setBusinessTypeId(businessTypeId);
-                    inputBO.setTitle(title);
-                    inputBO.setText(text);
-                    //透传内容
-                    //inputBO.setTransmissionContent("");
-                    inputBO.setPushResponse(res);
-                    //推送消息记录表
-                    notificationPushService.addPushRecord(inputBO,context);
-
-                    LOGGER.debug("--------用户[{}]  firebase FCM 发送结果[{}]",res);
-                }else {
-                    return BasicResult.error(BasicResultCode.ERROR.getCode(), MessageFactory.getMsg("G19770108", context.getLocale()));
-                }
+                String res = sendByPlayerId(
+                        appEnmu,
+                        userId,
+                        businessTypeId,
+                        playerId,
+                        title,
+                        text);
             }
 
             return BasicResult.ok();
         } catch (Exception e){
-            LOGGER.debug(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
             return BasicResult.error(BasicResultCode.ERROR.getCode(), MessageFactory.getMsg("G19770108", context.getLocale()));
+        }
+    }
+
+    @Override
+    public BasicResult<Void> pushMessageToSingle(ApplicationEnmu appEnmu, Integer userId, Integer businessTypeId, String title, String text, Boolean send, Boolean recordHistory, Context context) {
+        try {
+            NotificationExceptionUtils.verifyObjectIsNull(context,userId,appEnmu);
+            NotificationExceptionUtils.verifyStringIsBlank(context,text);
+
+            //默认个推不发送通知
+            if(send == null){
+                send = Boolean.FALSE;
+            }
+
+            //默认消息中心记录发送历史
+            if(recordHistory == null){
+                recordHistory = Boolean.TRUE;
+            }
+
+            if(recordHistory){
+                //通过参数校验后，不管发送是否成功失败，都要在消息中心记录
+                AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                historyInputBo.setAppId(appEnmu.getCode());
+                historyInputBo.setUserId(userId);
+                historyInputBo.setBusinessTypeId(businessTypeId);
+                historyInputBo.setTitle(title);
+                historyInputBo.setText(text);
+                historyInputBo.setStatus(false);//未读
+                int resCount = notificationHistoryService.addPushHistory(historyInputBo,context);
+                if(resCount == 0){
+                    NotificationExceptionUtils.throwExceptionAddFail(context);
+                }
+            }
+            if(send){
+                //自定义标题和内容推送
+                pushToSingle(appEnmu,userId,businessTypeId,title,text,context);
+            }
+            return BasicResult.ok();
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    @Override
+    public BasicResult<String> pushMessageToList(
+            ApplicationEnmu appEnum,
+            List<Integer> userIdList,
+            String title,
+            String text,
+            Boolean send,
+            Boolean recordHistory,
+            Context context) {
+        String res = "";
+        try {
+            NotificationExceptionUtils.verifyObjectIsNull(context,userIdList,appEnum);
+            NotificationExceptionUtils.verifyStringIsBlank(context,text);
+
+            //默认个推不发送通知
+            if(send == null){
+                send = Boolean.FALSE;
+            }
+            //默认消息中心记录发送历史
+            if(recordHistory == null){
+                recordHistory = Boolean.TRUE;
+            }
+
+            Integer executeNum = 1000;//单次批量处理的数据量
+            if(userIdList.size() > executeNum){
+                //分批
+                for(int i = 0;i<userIdList.size();i += executeNum){
+                    List<Integer> uidList = new ArrayList();
+                    Integer limit = i+executeNum;
+                    uidList = userIdList.subList(i,limit);
+                    List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+                    if(recordHistory){
+                        for(Integer uid :uidList){
+                            if(uid != null){
+                                //不管发送是否成功失败，都要在消息中心记录
+                                AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                                historyInputBo.setAppId(appEnum.getCode());
+                                historyInputBo.setUserId(uid);
+                                //                        historyInputBo.setBusinessTypeId(businessTypeId);
+                                historyInputBo.setTitle(title);
+                                historyInputBo.setText(text);
+                                historyInputBo.setStatus(false);
+                                insertList.add(historyInputBo);
+                            }
+                        }
+                    }
+                    if(insertList.size() > 0){
+                        notificationHistoryService.insertBatch(insertList, context);
+                    }
+                    if(send){
+                        //TODO: 2020/3/6 13:06 by ShenJianKang  循环调用，以后优化成批量
+                        for(Integer uid :uidList){
+                            pushToSingle(appEnum,
+                                    uid,
+                                    null,
+                                    title,
+                                    text,
+                                    context);
+                        }
+                    }
+                }
+            }else {
+                if(recordHistory){
+                    List<AppPushHistoryInputBo> insertList = new ArrayList<>();
+                    for(Integer uid :userIdList){
+                        if(uid != null){
+                            //不管发送是否成功失败，都要在消息中心记录
+                            AppPushHistoryInputBo historyInputBo = new AppPushHistoryInputBo();
+                            historyInputBo.setAppId(appEnum.getCode());
+                            historyInputBo.setUserId(uid);
+//                        historyInputBo.setBusinessTypeId(businessTypeId);
+                            historyInputBo.setTitle(title);
+                            historyInputBo.setText(text);
+                            historyInputBo.setStatus(false);
+                            insertList.add(historyInputBo);
+                        }
+                    }
+                    if(insertList.size()>0){
+                        notificationHistoryService.insertBatch(insertList, context);
+                    }
+                }
+                if(send){
+                    //TODO: 2020/3/6 13:06 by ShenJianKang  循环调用，以后优化成批量
+                    for(Integer uid :userIdList){
+                        pushToSingle(appEnum,
+                                uid,
+                                null,
+                                title,
+                                text,
+                                context);
+                    }
+                }
+            }
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
+        //TODO: 2020/3/6 13:15 by ShenJianKang  这个返回的res应该是批量推送的响应结果
+        return BasicResult.ok(res);
+    }
+
+    private String pushToSingle(ApplicationEnmu appEnmu,
+                                    Integer userId,
+                                    Integer businessTypeId,
+                                    String title,
+                                    String text,
+                                    Context context) {
+        try {
+            ExceptionMessageUtils.verifyObjectIsNull(context,userId);
+
+            String res = "";
+            UserOneSignalRelationDO relationDO = userOneSignalRelationMapper.queryLastRecordByUserId(appEnmu.getCode(), userId);
+            if(relationDO != null){
+                String playerId = relationDO.getClientId();
+                if(StringUtils.isBlank(playerId)){
+                    throw new OneSignalException("用户id["+userId+"]的onesignal playerId为空");
+                }
+
+                res = sendByPlayerId(
+                        appEnmu,
+                        userId,
+                        businessTypeId,
+                        playerId,
+                        title,
+                        text);
+            }
+            return res;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         }
     }
 
@@ -230,7 +392,12 @@ public class OneSignalFacadeImpl implements IOneSignalFacade {
      *@date: 2020/1/9 16:17
      */
     @Async
-    public String sendByPlayerId(String playerId, String title, String content){
+    public String sendByPlayerId(ApplicationEnmu appEnmu,
+                                 Integer userId,
+                                 Integer businessTypeId,
+                                 String playerId,
+                                 String title,
+                                 String content){
         String jsonResponse = null;
         try {
 
@@ -241,6 +408,7 @@ public class OneSignalFacadeImpl implements IOneSignalFacade {
             con.setDoInput(true);
 
             con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            //con.setRequestProperty("Authorization", "ZjJkZTEzOTItNmY4Mi00NmUyLWI5MmItMjkyNGRiOWUyYTA1");
             con.setRequestMethod("POST");
 
             //TODO: 2020/1/3 14:40 by ShenJianKang 更多请求参数 见文档：https://documentation.onesignal.com/reference
@@ -276,6 +444,26 @@ public class OneSignalFacadeImpl implements IOneSignalFacade {
             }
             ////请求返回的结果：{"id":"0f27b392-5489-40dc-8236-86cdf8a08fd4","recipients":1,"external_id":null}
             LOGGER.info("onesignal sendByPlayerId jsonResponse: " + jsonResponse);
+
+            if (StringUtils.isNotBlank(jsonResponse)) {
+                AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
+                inputBO.setAppId(appEnmu.getCode());
+                inputBO.setPushType(PushTypeEnum.SINGLE_PUSH.getCode());
+                inputBO.setTemplateType(GeTuiPushTemplateEnum.ONE_SIGNAL.getCode());
+                inputBO.setUserId(userId);
+                inputBO.setClientId(playerId);
+                inputBO.setBusinessTypeId(businessTypeId);
+                inputBO.setTitle(title);
+                inputBO.setText(content);
+                //透传内容
+                //inputBO.setTransmissionContent("");
+                inputBO.setPushResponse(jsonResponse);
+                //推送消息记录表
+                Context context = ContextUtils.getDefaultContext();
+                notificationPushService.addPushRecord(inputBO,context);
+
+//                    LOGGER.debug("--------用户[{}]  onesignale 发送结果[{}]",userId, res);
+            }
         } catch(Throwable t) {
             t.printStackTrace();
         }

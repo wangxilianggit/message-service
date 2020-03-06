@@ -16,11 +16,42 @@ import java.util.List;
  */
 public interface IOneSignalFacade {
 
-    //向单个设备推送
+    //向单个设备推送， 配置模版推送
     BasicResult<Void> pushMessageToSingle(ApplicationEnmu appEnmu,
                                           Integer userId,
                                           String pushTemplateCode,
                                           List paramList,
+                                          Boolean send,
+                                          Boolean recordHistory,
+                                          Context context);
+
+    //向单个设备推送，自定义内容
+    BasicResult<Void> pushMessageToSingle(ApplicationEnmu appEnmu,
+                                          Integer userId,
+                                          Integer businessTypeId,
+                                          String title,
+                                          String text,
+                                          Boolean send,
+                                          Boolean recordHistory,
+                                          Context context);
+
+
+    /**
+     * @description:            根据用户id list 批量推送（入参title，text不需要再查询出来）
+     * @param appEnum
+     * @param userIdList
+     * @param pushTitle
+     * @param pushContent
+     * @param send
+     * @param recordHistory
+     * @param context
+     * @Author shenjiankang
+     * @Date 2019/3/8 21:52
+     */
+    BasicResult<String> pushMessageToList(ApplicationEnmu appEnum,
+                                          List<Integer> userIdList,
+                                          String title,
+                                          String text,
                                           Boolean send,
                                           Boolean recordHistory,
                                           Context context);

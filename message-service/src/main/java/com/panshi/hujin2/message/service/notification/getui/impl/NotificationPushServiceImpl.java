@@ -797,18 +797,19 @@ public class NotificationPushServiceImpl implements INotificationPushService {
                     List<AppPushHistoryInputBo> insertList = new ArrayList<>();
                     for(Integer uid :uidList){
                         if(uid != null){
-                            AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
-                            inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
-                            inputBO.setTemplateType(4);
-                            inputBO.setUserId(uid);
-//                        inputBO.setClientId(clientId);
-//                    inputBO.setBusinessTypeId(businessTypeId);
-                            inputBO.setTitle(title);
-                            inputBO.setText(text);
-                            inputBO.setTransmissionContent("");
-//                        inputBO.setPushResponse(ret.getResponse().toString());
-                            //推送消息记录表
-                            addPushRecord(inputBO,context);
+                            //TODO: 2020/3/6 12:54 by ShenJianKang  不插入记录，这里还没获取推送响应信息
+//                            AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
+//                            inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
+//                            inputBO.setTemplateType(4);
+//                            inputBO.setUserId(uid);
+////                        inputBO.setClientId(clientId);
+////                    inputBO.setBusinessTypeId(businessTypeId);
+//                            inputBO.setTitle(title);
+//                            inputBO.setText(text);
+//                            inputBO.setTransmissionContent("");
+////                        inputBO.setPushResponse(ret.getResponse().toString());
+//                            //推送消息记录表
+//                            addPushRecord(inputBO,context);
 
                             if(recordHistory){
                                 //不管发送是否成功失败，都要在消息中心记录
@@ -833,18 +834,19 @@ public class NotificationPushServiceImpl implements INotificationPushService {
                 for(Integer uid :userIdList){
                     if(uid != null){
                         //todo 看情况不需要的话删除该插入操作  insertAppPushRecord(inputBO);//推送消息记录表
-                        AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
-                        inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
-                        inputBO.setTemplateType(4);
-                        inputBO.setUserId(uid);
-//                        inputBO.setClientId(clientId);
-//                    inputBO.setBusinessTypeId(businessTypeId);
-                        inputBO.setTitle(title);
-                        inputBO.setText(text);
-                        inputBO.setTransmissionContent("");
-//                        inputBO.setPushResponse(ret.getResponse().toString());
-                        //推送消息记录表
-                        addPushRecord(inputBO,context);
+                        //TODO: 2020/3/6 12:54 by ShenJianKang  不插入记录，这里还没获取推送响应信息
+//                        AppPushRecordInputBO inputBO = new AppPushRecordInputBO();
+//                        inputBO.setPushType(PushTypeEnum.LIST_PUSH.getCode());
+//                        inputBO.setTemplateType(4);
+//                        inputBO.setUserId(uid);
+////                        inputBO.setClientId(clientId);
+////                    inputBO.setBusinessTypeId(businessTypeId);
+//                        inputBO.setTitle(title);
+//                        inputBO.setText(text);
+//                        inputBO.setTransmissionContent("");
+////                        inputBO.setPushResponse(ret.getResponse().toString());
+//                        //推送消息记录表
+//                        addPushRecord(inputBO,context);
 
                         if(recordHistory){
                             //不管发送是否成功失败，都要在消息中心记录
