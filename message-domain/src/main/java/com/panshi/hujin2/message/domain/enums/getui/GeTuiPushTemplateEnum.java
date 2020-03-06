@@ -13,6 +13,7 @@ public enum GeTuiPushTemplateEnum {
 
 
     FCM(11,"FIREBASE FCM"),
+    ONE_SIGNAL(12,"ONE SIGNAL"),
 
     ;
 
