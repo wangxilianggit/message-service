@@ -241,7 +241,7 @@ public class KMIServiceImpl extends SendMsg {
                 sendJsonObj2.put("from", "AFT");
                 sendJsonObj2.put("to", phoneNumber);
                 sendJsonObj2.put("message", msgText);
-                String params2 = sendJsonObj.toString();
+                String params2 = sendJsonObj2.toString();
                 sendRes = HttpUtil.post(kmiSendOtpMsgUrl, params2);
             }
 

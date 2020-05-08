@@ -75,6 +75,10 @@ public class MessageFacadeImpl implements IMessageFacade {
     private ISendMsgService inaSMSService;
 
     @Autowired
+    @Qualifier("nxService")
+    private ISendMsgService nxService;
+
+    @Autowired
     private UrgentRecallMsgLogMapper urgentRecallMsgLogMapper;
     @Autowired
     private UrgentRecallCallLogMapper callLogMapper;
@@ -246,6 +250,53 @@ public class MessageFacadeImpl implements IMessageFacade {
         }
     }
 
+    @Override
+    public BasicResult<Void> sendInternationalMsg(SendMsgBO sendMsgBO) {
+        ApplicationEnmu applicationEnmu = sendMsgBO.getApplicationEnmu();
+        String phoneNumber = sendMsgBO.getPhoneNumber();
+        String templateCode = sendMsgBO.getTemplateCode();
+        List<String> paramList = sendMsgBO.getParamList();
+        Context context = sendMsgBO.getContext();
+        ChannelEnum channelEnum = sendMsgBO.getChannelEnum();
+        try {
+            //todo 应该在开头就限制发送次数(因为现在的计算次数是再方法执行完放入换成执行的,如果几个请求同时执行,就会发生多个都算第一次的情况)
+            ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
+            ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,templateCode);
+
+            ISendMsgService sendMsgService = null;
+
+            //String locale = String.valueOf(context.getLocale());
+            String i18n = applicationEnmu.getI18n();
+            LOGGER.info("==========> 发送短信，获取到的 i18n ：[{}]",i18n);
+            if("vi".equals(i18n)){
+                //越南
+                phoneNumber = 84 +phoneNumber;
+                sendMsgService = tianyihongService;
+            }else {
+                //印尼
+                phoneNumber = 62 +phoneNumber;
+                sendMsgService = KMIService;
+                if(channelEnum != null){
+                    if(ChannelEnum.NIU_XIN.equals(channelEnum)){
+                        sendMsgService = nxService;
+                    }
+                }
+            }
+            boolean res = sendMsgService.sendInternationalMsg(applicationEnmu,
+                    phoneNumber,
+                    templateCode,
+                    paramList,
+                    context);
+            if(res){
+                return BasicResult.ok();
+            }
+            return BasicResult.error(BasicResultCode.ERROR.getCode()," msg send error");
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            return BasicResult.error(BasicResultCode.ERROR.getCode(),
+                    MessageFactory.getMsg("G19880108",context.getLocale()));
+        }
+    }
 
 
     @Override

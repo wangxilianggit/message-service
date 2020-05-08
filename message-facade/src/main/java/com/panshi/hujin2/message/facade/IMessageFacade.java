@@ -35,6 +35,8 @@ public interface IMessageFacade {
                                            List<String> paramList,
                                            Context context);
 
+    BasicResult<Void> sendInternationalMsg(SendMsgBO sendMsgBO);
+
     /**
      * @description:        批量推送，同一个模板，不同参数
      * @param applicationEnmu

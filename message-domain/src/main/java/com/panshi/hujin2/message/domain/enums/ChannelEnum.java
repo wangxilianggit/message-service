@@ -15,6 +15,7 @@ public enum ChannelEnum {
     YIMEIRUANTONG(6,"yimeiruantong"),
     KMI(7,"KMI"),
     INA_HORIZON_SMS(8,"INA_HORIZON_SMS"),
+    NIU_XIN(9,"NIU_XIN"),
     ;
 
     private int code;
