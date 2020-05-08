@@ -57,11 +57,11 @@ public class NXServiceImpl extends SendMsg {
 //    static String appkey = "1wB7jHly";
 //    static String secretkey = "ec9EOu3i";
 
-    @Value("sms.niuxin.request_url")
+    @Value("${sms.niuxin.request_url}")
     private String reqUrl;
-    @Value("sms.niuxin.appkey")
+    @Value("${sms.niuxin.appkey}")
     private String appkey;
-    @Value("sms.niuxin.secretkey")
+    @Value("${sms.niuxin.secretkey}")
     private String secretkey;
 
 
