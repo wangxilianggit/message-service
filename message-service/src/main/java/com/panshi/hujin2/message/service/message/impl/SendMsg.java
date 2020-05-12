@@ -43,7 +43,8 @@ public abstract class SendMsg implements ISendMsgService {
                                         String phoneNumber,
                                         String templateCode,
                                         List<String> paramList,
-                                        Context context) {
+                                        Context context,
+                                        Integer msgType) {
         ExceptionMessageUtils.verifyObjectIsNull(context, applicationEnmu);
         ExceptionMessageUtils.verifyStringIsBlank(context, phoneNumber,templateCode);
 
@@ -66,7 +67,7 @@ public abstract class SendMsg implements ISendMsgService {
 
         LOGGER.info("发送内容：[{}]",sendContent);
 
-        return sendInternationalMsg(applicationEnmu,phoneNumber,sendContent,context);
+        return sendInternationalMsg(applicationEnmu,phoneNumber,sendContent,context,msgType);
     }
 
 
@@ -100,7 +101,7 @@ public abstract class SendMsg implements ISendMsgService {
             if (StringUtils.isNotBlank(sendContent)){
                 //发送
                 LOGGER.info("--------发送手机号[{}]: [{}]",phoneNumber,sendContent);
-                sendInternationalMsg(applicationEnmu,phoneNumber,sendContent,context);
+                sendInternationalMsg(applicationEnmu,phoneNumber,sendContent,context,null);
             } else {
                 LOGGER.info("--------因为参数异常没有发送的手机号[{}]",phoneNumber);
                 //unsendList.add(phoneNumber);
@@ -146,7 +147,7 @@ public abstract class SendMsg implements ISendMsgService {
                             if (StringUtils.isNotBlank(sendContent)){
 
                                 //暂时只能用循环单推实现，没用不同模板群发对应的api接口
-                                sendInternationalMsg(applicationEnmu,phoneNumber,sendContent,context);
+                                sendInternationalMsg(applicationEnmu,phoneNumber,sendContent,context,null);
                                 LOGGER.info("--------发送手机号[{}]: [{}]",phoneNumber,sendContent);
                             }
                         }

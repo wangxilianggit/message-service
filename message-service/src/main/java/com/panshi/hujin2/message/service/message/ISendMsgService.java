@@ -35,7 +35,8 @@ public interface ISendMsgService {
                               String phoneNumber,
                               String templateCode,
                               List<String> paramList,
-                              Context context);
+                              Context context,
+                              Integer msgType);
 
     /**
      * @description:        发送国际短信（单个发送）
@@ -46,7 +47,7 @@ public interface ISendMsgService {
      * @Author shenjiankang
      * @Date 2018/6/28 19:38
      */
-    boolean sendInternationalMsg(ApplicationEnmu applicationEnmu,String phoneNumber, String msgText,Context context );
+    boolean sendInternationalMsg(ApplicationEnmu applicationEnmu,String phoneNumber, String msgText,Context context ,Integer msgType);
 
 
 
@@ -84,7 +85,7 @@ public interface ISendMsgService {
                                         Double fee,
                                         List phoneNumberList,
                                         String sendText,
-                                        Context context );
+                                        Context context);
 
     /**
      * @description:        批量推送，同一个模板，不同参数;

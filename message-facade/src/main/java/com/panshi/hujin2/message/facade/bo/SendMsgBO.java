@@ -3,6 +3,7 @@ package com.panshi.hujin2.message.facade.bo;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
+import com.panshi.hujin2.message.domain.enums.MsgTypeEnum;
 import lombok.Data;
 
 import java.util.List;
@@ -39,4 +40,11 @@ public class SendMsgBO {
      *  发送渠道
      */
     private ChannelEnum channelEnum;
+
+    /**
+     * 短信类型
+     * @see MsgTypeEnum
+     */
+    private Integer msgType;
+
 }

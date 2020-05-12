@@ -209,7 +209,7 @@ public class KMIServiceImpl extends SendMsg {
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu,
                                         String phoneNumber,
                                         String msgText,
-                                        Context context) {
+                                        Context context,Integer msgType) {
         LOGGER.info("=========== INA KMI ====================");
         try {
             String token = getToken();
@@ -257,6 +257,7 @@ public class KMIServiceImpl extends SendMsg {
                 inputBO.setChannelId(ChannelEnum.KMI.getCode());
                 inputBO.setPhoneNumber(phoneNumber);
                 inputBO.setMsgText(msgText);
+                inputBO.setMsgType(msgType);
                 //inputBO.setMsgId(msgid);
 //            inputBO.setResCode(Integer.valueOf(code));
 //            inputBO.setResExplain(error);

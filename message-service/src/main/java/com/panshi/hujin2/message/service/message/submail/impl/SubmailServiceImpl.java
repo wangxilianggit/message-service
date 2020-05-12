@@ -71,7 +71,7 @@ public class SubmailServiceImpl extends SendMsg {
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu,
                                         String phoneNumber,
                                         String msgText,
-                                        Context context) {
+                                        Context context,Integer msgType) {
         try {
             ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,msgText);
 

@@ -97,7 +97,7 @@ public class MessageFacadeImpl implements IMessageFacade {
                                                   String phoneNumber,
                                                   String templateCode,
                                                   List<String> paramList,
-                                                  Context context) {
+                                                  Context context,Integer msgType) {
         try {
             //todo 应该在开头就限制发送次数(因为现在的计算次数是再方法执行完放入换成执行的,如果几个请求同时执行,就会发生多个都算第一次的情况)
             ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
@@ -139,7 +139,7 @@ public class MessageFacadeImpl implements IMessageFacade {
                         phoneNumber,
                         templateCode,
                         paramList,
-                        context);
+                        context,msgType);
             if(res){
                 return BasicResult.ok();
             }
@@ -286,7 +286,8 @@ public class MessageFacadeImpl implements IMessageFacade {
                     phoneNumber,
                     templateCode,
                     paramList,
-                    context);
+                    context,
+                    sendMsgBO.getMsgType());
             if(res){
                 return BasicResult.ok();
             }
@@ -449,7 +450,7 @@ public class MessageFacadeImpl implements IMessageFacade {
 //                    insertDO.setSendResult();//这里的发送结果暂时只是请求第三方短信发送是否成功的结果
                     logList.add(insertDO);
 
-                    tianyihongService.sendInternationalMsg(inputBO.getApplicationEnmu(),phoneNumber,inputBO.getContent(),context);
+                    tianyihongService.sendInternationalMsg(inputBO.getApplicationEnmu(),phoneNumber,inputBO.getContent(),context,null);
                 }
             }
 //            String phoneNumberParams = sb.toString();

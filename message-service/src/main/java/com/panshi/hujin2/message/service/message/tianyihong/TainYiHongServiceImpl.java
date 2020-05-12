@@ -78,7 +78,7 @@ public class TainYiHongServiceImpl extends SendMsg {
      * @Date 2019/1/30
      */
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {
         LOGGER.info("--------开始通过【tainyihong】发送短信,。。。手机号：[{}]，发送内容[{}]",phoneNumber, msgText);
         ExceptionMessageUtils.verifyObjectIsNull(context, applicationEnmu);
         ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,msgText);
@@ -147,6 +147,7 @@ public class TainYiHongServiceImpl extends SendMsg {
             inputBO.setChannelId(ChannelEnum.TIANYIHONG.getCode());
             inputBO.setPhoneNumber(phoneNumber);
             inputBO.setMsgText(msgText);
+            inputBO.setMsgType(msgType);
             //inputBO.setMsgId(msgid);
 //            inputBO.setResCode(Integer.valueOf(code));
 //            inputBO.setResExplain(error);

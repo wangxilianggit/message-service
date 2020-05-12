@@ -33,7 +33,7 @@ public interface IMessageFacade {
                                            String phoneNumber,
                                            String templateCode,
                                            List<String> paramList,
-                                           Context context);
+                                           Context context,Integer msgType);
 
     BasicResult<Void> sendInternationalMsg(SendMsgBO sendMsgBO);
 
