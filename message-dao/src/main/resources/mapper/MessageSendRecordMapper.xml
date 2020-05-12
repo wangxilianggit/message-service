@@ -481,6 +481,11 @@
           #{channelIdItem}
         </foreach>
       </if>
+
+      <if test="msgType != null">
+        and msg_type = #{msgType}
+      </if>
+
     </where>
   </select>
 
@@ -543,6 +548,11 @@
       <if test="createTimeEnd != null">
         and create_time <![CDATA[ <= ]]> #{createTimeEnd}
       </if>
+
+      <if test="msgType != null">
+        and msg_type = #{msgType}
+      </if>
+
     </where>
     <if test="page.dbNumber != null">
       <if test="page.dbIndex != null">

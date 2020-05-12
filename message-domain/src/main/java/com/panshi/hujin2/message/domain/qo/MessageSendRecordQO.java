@@ -102,4 +102,5 @@ public class MessageSendRecordQO extends BaseQO {
      */
     private Date createTimeEnd;
 
+    private Integer msgType;
 }
