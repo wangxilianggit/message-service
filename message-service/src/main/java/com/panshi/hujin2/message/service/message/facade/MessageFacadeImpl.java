@@ -8,6 +8,7 @@ import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.domain.result.BasicResultCode;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.base.service.utils.ContextUtils;
+import com.panshi.hujin2.message.common.utils.SuccessivelySendMap;
 import com.panshi.hujin2.message.dao.mapper.message.MessageSendRecordMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallCallLogMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallMsgLogMapper;
@@ -20,6 +21,11 @@ import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.*;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
+import com.panshi.hujin2.message.service.message.impl.PaasooServiceImpl;
+import com.panshi.hujin2.message.service.message.kmi.KMILongnumberServiceImpl;
+import com.panshi.hujin2.message.service.message.kmi.KMIServiceImpl;
+import com.panshi.hujin2.message.service.message.nx.NXServiceImpl;
+import com.panshi.hujin2.message.service.message.tianyihong.TainYiHongServiceImpl;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -46,25 +52,25 @@ public class MessageFacadeImpl implements IMessageFacade {
     @Autowired
     private List<ISendMsgService> messageService;
 
-    @Autowired
-    @Qualifier("chuanglanService")
-    private ISendMsgService chuanglanMessageService;
+//    @Autowired
+//    @Qualifier("chuanglanService")
+//    private ISendMsgService chuanglanMessageService;
 
-    @Autowired
-    @Qualifier("submailSerivce")
-    private ISendMsgService submailMessageService;
-
-    @Autowired
-    @Qualifier("infobipService")
-    private ISendMsgService infobipService;
+//    @Autowired
+//    @Qualifier("submailSerivce")
+//    private ISendMsgService submailMessageService;
+//
+//    @Autowired
+//    @Qualifier("infobipService")
+//    private ISendMsgService infobipService;
 
     @Autowired
     @Qualifier("tianyihongService")
     private ISendMsgService tianyihongService;
 
-    @Autowired
-    @Qualifier("paasooService")
-    private ISendMsgService paasooService;
+//    @Autowired
+//    @Qualifier("paasooService")
+//    private ISendMsgService paasooService;
 
     @Autowired
     @Qualifier("KMIService")
@@ -79,18 +85,18 @@ public class MessageFacadeImpl implements IMessageFacade {
     private ISendMsgService nxService;
 
     @Autowired
+    @Qualifier("KMILongnumberService")
+    private ISendMsgService KMILongnumberService;
+
+    @Autowired
     private UrgentRecallMsgLogMapper urgentRecallMsgLogMapper;
     @Autowired
     private UrgentRecallCallLogMapper callLogMapper;
-
     @Autowired
     private MessageSendRecordMapper messageSendRecordMapper;
 
 
-    public static void main(String[] args) {
-        Context context = ContextUtils.getDefaultContext();
-        System.out.println("context.getLocale() = " + context.getLocale());
-    }
+
     
     @Override
     public BasicResult<Void> sendInternationalMsg(ApplicationEnmu applicationEnmu,
@@ -263,6 +269,7 @@ public class MessageFacadeImpl implements IMessageFacade {
             ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
             ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,templateCode);
 
+            Map<String,Integer> suMap = SuccessivelySendMap.successivelySendMap;
             ISendMsgService sendMsgService = null;
 
             //String locale = String.valueOf(context.getLocale());
@@ -275,18 +282,56 @@ public class MessageFacadeImpl implements IMessageFacade {
             }else {
                 //印尼
                 phoneNumber = 62 +phoneNumber;
-                sendMsgService = KMIService;
-                if(channelEnum != null){
-                    if(ChannelEnum.NIU_XIN.equals(channelEnum)){
-                        sendMsgService = nxService;
+//                sendMsgService = KMIService;
+//                if(channelEnum != null){
+//                    if(ChannelEnum.NIU_XIN.equals(channelEnum)){
+//                        sendMsgService = nxService;
+//                    }
+//                }
+
+                //TODO: 2020/5/12 18:13 by ShenJianKang 切换短信通道
+
+
+                //按照通道发送顺序：kmi otp短信、牛信otp短信、kmi 营销短信，
+                if(suMap.size()==0){
+                    //sendMsgService = getMsgSendInstance(sendMsgChannel);
+                    sendMsgService = KMIService;
+                }else{
+                    Integer resType = suMap.get(phoneNumber);
+
+                    if(resType!=null){
+                        if(ChannelEnum.KMI.getCode() == resType){
+                            sendMsgService = KMIService;
+                        }else if(ChannelEnum.NIU_XIN.getCode() == resType){
+                            sendMsgService = nxService;
+                        }else if(ChannelEnum.KMI_LONGNUMBER.getCode() == resType){
+                            sendMsgService = KMILongnumberService;
+                        } else {
+                            sendMsgService = KMIService;
+                        }
+                    }else{
+                        sendMsgService = KMIService;
                     }
                 }
+                //TODO: 2020/5/12 18:13 by ShenJianKang 切换短信通道
             }
             boolean res = sendMsgService.sendInternationalMsg(applicationEnmu,
                     phoneNumber,
                     templateCode,
                     paramList,
                     context);
+
+            //发送优先级:：kmi otp短信、牛信otp短信、kmi 营销短信，
+            if(sendMsgService instanceof KMIServiceImpl){
+                suMap.put(phoneNumber,ChannelEnum.NIU_XIN.getCode());
+            }else if(sendMsgService instanceof NXServiceImpl){
+                suMap.put(phoneNumber,ChannelEnum.KMI_LONGNUMBER.getCode());
+            }else if(sendMsgService instanceof KMILongnumberServiceImpl){
+                suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+            }else {
+                suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+            }
+
             if(res){
                 return BasicResult.ok();
             }
@@ -297,6 +342,87 @@ public class MessageFacadeImpl implements IMessageFacade {
                     MessageFactory.getMsg("G19880108",context.getLocale()));
         }
     }
+
+//    //根据list 排序
+//    public void sort(){
+//        Map<Integer, String> map = new HashMap<>();
+//        map.put(1,"KMI-opt");
+//        map.put(2,"NIU_XIN");
+//        map.put(3,"KMI-营销短信");
+//
+//        //key 放渠道code， 放下一个code
+//        Map<Integer,Integer> rankMap = new HashMap<>();
+//        Integer beforeChannel = -1;
+//        for(Iterator<Integer> iterator = map.keySet().iterator();iterator.hasNext();){
+//            Integer sortId = iterator.next();
+//            String msgChannel = map.get(sortId);
+//
+//            ChannelEnum channelEnum = ChannelEnum.getByText(msgChannel);
+//
+//            //根据 短信枚举 获取
+//            rankMap.put(beforeChannel, );
+//        }
+//    }
+
+//    public static void main(String[] args) {
+//        ISendMsgService sendMsgService = null;
+//        //TODO: 2020/5/12 21:23 by ShenJianKang  用一个标志 flagmap 存放最大值是多少，如果是最大值，直接取第一个
+//        //根据 关闭 短信通道 按序发送
+//        Map<Integer, String> map = new HashMap<>();
+//        map.put(1,"opt");
+//        map.put(2,"nx");
+//        map.put(3,"longnumber");
+//        //map.put(-1,"opt");
+//
+//        //发送时保存的发送短信渠道类型
+//        Integer currentMsgChannel = 发送map.get();
+//
+//        //TODO: 2020/5/12 21:33 by ShenJianKang 设计一个 map，key是当前发送渠道，value是下一个渠道
+//        ISendMsgService sendMsgService = 排序map。get（currentMsgChannel）;
+//
+//        //这个map 放下一阶段
+//
+//        for(Iterator<Integer> iterator = map.keySet().iterator();iterator.hasNext();){
+//            Integer sortId = iterator.next();
+//            String msgChannel = map.get(sortId);
+//
+//            if(sortId == maxIndex){
+//                sendMsgService = KMIService;
+//            }else {
+//                //取map sortId 下一个 渠道
+//
+//            }
+//
+//
+//        }
+//
+//        for(Iterator<Integer> iterator = map.keySet().iterator();iterator.hasNext();){
+//            Integer sortId = iterator.next();
+//            String msgChannel = map.get(sortId);
+//            ISendMsgService sendMsgService = getMsgChannel(msgChannel);
+//            if(){
+//
+//            }
+//        }
+//
+//    }
+
+    public ISendMsgService getMsgChannel(String msgChannel){
+        ISendMsgService sendMsgService = null;
+        if(ChannelEnum.KMI.getText().equals(msgChannel)){
+            sendMsgService = KMIService;
+        }else if(ChannelEnum.NIU_XIN.getText().equals(msgChannel)){
+            sendMsgService = nxService;
+        }else if(ChannelEnum.KMI_LONGNUMBER.getText().equals(msgChannel)){
+            sendMsgService = KMILongnumberService;
+        }
+
+        if(sendMsgService == null){
+            sendMsgService = KMIService;
+        }
+        return sendMsgService;
+    }
+
 
 
     @Override
@@ -661,26 +787,26 @@ public class MessageFacadeImpl implements IMessageFacade {
      * @Date 2018/8/2 11:52
      */
     //todo 优化，用哪个短信渠道最好在服务启动时，只加载一次 static
-    private ISendMsgService getMsgSendInstance(String param){
-        ISendMsgService sendMsgService = null;
-        if(ChannelEnum.CHUANGLAN.getText().equals(param)){
-            //创蓝
-            sendMsgService = chuanglanMessageService;
-        }else if(ChannelEnum.SUBMAIL.getText().equals(param)){
-            //SUBMAIL
-            sendMsgService = submailMessageService;
-        }else if(ChannelEnum.INFOBIP.getText().equals(param)){
-            //INFOBIP
-            sendMsgService = infobipService;
-        }else if(ChannelEnum.TIANYIHONG.getText().equals(param)){
-            //天一泓
-            sendMsgService = tianyihongService;
-        }
-        if(sendMsgService == null){
-            sendMsgService = tianyihongService;
-        }
-        return sendMsgService;
-    }
+//    private ISendMsgService getMsgSendInstance(String param){
+//        ISendMsgService sendMsgService = null;
+//        if(ChannelEnum.CHUANGLAN.getText().equals(param)){
+//            //创蓝
+//            sendMsgService = chuanglanMessageService;
+//        }else if(ChannelEnum.SUBMAIL.getText().equals(param)){
+//            //SUBMAIL
+//            sendMsgService = submailMessageService;
+//        }else if(ChannelEnum.INFOBIP.getText().equals(param)){
+//            //INFOBIP
+//            sendMsgService = infobipService;
+//        }else if(ChannelEnum.TIANYIHONG.getText().equals(param)){
+//            //天一泓
+//            sendMsgService = tianyihongService;
+//        }
+//        if(sendMsgService == null){
+//            sendMsgService = tianyihongService;
+//        }
+//        return sendMsgService;
+//    }
 
 
 }

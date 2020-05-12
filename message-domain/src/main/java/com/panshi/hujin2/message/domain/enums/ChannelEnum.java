@@ -1,5 +1,7 @@
 package com.panshi.hujin2.message.domain.enums;
 
+import java.util.Objects;
+
 /**
  * create by shenjiankang on 2018/6/20 16:47
  *
@@ -13,9 +15,10 @@ public enum ChannelEnum {
     TIANYIHONG(4,"tianyihong"),
     PAASOO(5,"paasoo"),
     YIMEIRUANTONG(6,"yimeiruantong"),
-    KMI(7,"KMI"),
+    KMI(7,"KMI-opt"),
     INA_HORIZON_SMS(8,"INA_HORIZON_SMS"),
     NIU_XIN(9,"NIU_XIN"),
+    KMI_LONGNUMBER(10,"KMI-营销短信"),
     ;
 
     private int code;
@@ -41,4 +44,15 @@ public enum ChannelEnum {
     public void setText(String text) {
         this.text = text;
     }
+
+
+    public static ChannelEnum getByText(Integer text) {
+        for (ChannelEnum t : values()) {
+            if (Objects.equals(t.getText(), text))
+                return t;
+        }
+        return null;
+    }
+
+
 }
