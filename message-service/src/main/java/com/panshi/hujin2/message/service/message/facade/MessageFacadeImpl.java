@@ -653,6 +653,24 @@ public class MessageFacadeImpl implements IMessageFacade {
         return BasicResult.ok(Collections.emptyList());
     }
 
+    @Override
+    public BasicResult<Integer> countSendRecordByParam(MessageSendRecordQO qo) {
+        if(qo == null){
+            qo = new MessageSendRecordQO();
+        }
+        Integer count = messageSendRecordMapper.countByParam(qo);
+        return BasicResult.ok(count);
+    }
+
+    @Override
+    public BasicResult<Integer> countPhoneNumberByParam(MessageSendRecordQO qo) {
+        if(qo == null){
+            qo = new MessageSendRecordQO();
+        }
+        Integer count = messageSendRecordMapper.countByParam(qo);
+        return null;
+    }
+
 
     /**
      * @description:    获取短信发送的实例

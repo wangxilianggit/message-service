@@ -53,9 +53,14 @@ public class MessageSendRecordQO extends BaseQO {
 //    private Integer countryId;
 
     /**
-     *  渠道id：7-kmi;8-ina_sms;
+     *  渠道id：7-kmi;9-牛信;
      */
     private Integer channelId;
+
+    /**
+     *  渠道id：7-kmi;9-牛信;
+     */
+    private List<Integer> channelIds;
 
     /**
      *  手机号码
