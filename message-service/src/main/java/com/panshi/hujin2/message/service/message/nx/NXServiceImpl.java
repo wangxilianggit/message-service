@@ -115,6 +115,7 @@ public class NXServiceImpl extends SendMsg {
             }
 
             inputBO.setReturnValue(sendRes);
+            inputBO.setMsgType(msgType);
             msgDBService.addMsgSendRecord(inputBO,context);
 
             if("0".equals(code)){
