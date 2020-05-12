@@ -175,7 +175,7 @@ public class InfobipServiceImpl extends SendMsg {
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu,
                                         String phoneNumber,
                                         String msgText,
-                                        Context context){
+                                        Context context,Integer msgType){
 
         ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,msgText);
 

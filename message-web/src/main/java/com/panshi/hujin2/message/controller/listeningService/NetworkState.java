@@ -82,7 +82,7 @@ public class NetworkState implements Runnable{
                       boolean sendRes = tianyihongService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
                               "8613777400292",
                               "【eloan】墨西哥eloan生产环境挂了"+logString,
-                              context);
+                              context,null);
                       System.out.println("--------发送结果 sendRes = " + sendRes+"  发送次数："+sendCount);
                       sendCount ++;
                   }

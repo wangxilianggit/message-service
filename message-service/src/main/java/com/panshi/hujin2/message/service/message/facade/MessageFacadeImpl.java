@@ -103,7 +103,7 @@ public class MessageFacadeImpl implements IMessageFacade {
                                                   String phoneNumber,
                                                   String templateCode,
                                                   List<String> paramList,
-                                                  Context context) {
+                                                  Context context,Integer msgType) {
         try {
             //todo 应该在开头就限制发送次数(因为现在的计算次数是再方法执行完放入换成执行的,如果几个请求同时执行,就会发生多个都算第一次的情况)
             ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
@@ -145,7 +145,7 @@ public class MessageFacadeImpl implements IMessageFacade {
                         phoneNumber,
                         templateCode,
                         paramList,
-                        context);
+                        context,msgType);
             if(res){
                 return BasicResult.ok();
             }
@@ -319,7 +319,8 @@ public class MessageFacadeImpl implements IMessageFacade {
                     phoneNumber,
                     templateCode,
                     paramList,
-                    context);
+                    context,
+            sendMsgBO.getMsgType());
 
             //发送优先级:：kmi otp短信、牛信otp短信、kmi 营销短信，
             if(sendMsgService instanceof KMIServiceImpl){
@@ -331,7 +332,6 @@ public class MessageFacadeImpl implements IMessageFacade {
             }else {
                 suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
             }
-
             if(res){
                 return BasicResult.ok();
             }
@@ -575,7 +575,7 @@ public class MessageFacadeImpl implements IMessageFacade {
 //                    insertDO.setSendResult();//这里的发送结果暂时只是请求第三方短信发送是否成功的结果
                     logList.add(insertDO);
 
-                    tianyihongService.sendInternationalMsg(inputBO.getApplicationEnmu(),phoneNumber,inputBO.getContent(),context);
+                    tianyihongService.sendInternationalMsg(inputBO.getApplicationEnmu(),phoneNumber,inputBO.getContent(),context,null);
                 }
             }
 //            String phoneNumberParams = sb.toString();
@@ -777,6 +777,24 @@ public class MessageFacadeImpl implements IMessageFacade {
             return BasicResult.ok(boList);
         }
         return BasicResult.ok(Collections.emptyList());
+    }
+
+    @Override
+    public BasicResult<Integer> countSendRecordByParam(MessageSendRecordQO qo) {
+        if(qo == null){
+            qo = new MessageSendRecordQO();
+        }
+        Integer count = messageSendRecordMapper.countByParam(qo);
+        return BasicResult.ok(count);
+    }
+
+    @Override
+    public BasicResult<Integer> countPhoneNumberByParam(MessageSendRecordQO qo) {
+        if(qo == null){
+            qo = new MessageSendRecordQO();
+        }
+        Integer count = messageSendRecordMapper.countByParam(qo);
+        return BasicResult.ok(count);
     }
 
 

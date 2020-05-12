@@ -33,7 +33,7 @@ public interface IMessageFacade {
                                            String phoneNumber,
                                            String templateCode,
                                            List<String> paramList,
-                                           Context context);
+                                           Context context,Integer msgType);
 
     BasicResult<Void> sendInternationalMsg(SendMsgBO sendMsgBO);
 
@@ -178,10 +178,22 @@ public interface IMessageFacade {
     BasicResult<List<MessageSendRecordBO>> querySendRecordByParam(MessageSendRecordQO qo);
 
 
+    /**
+     *@Description:     查詢短信發送記錄数量
+     *@Param:  * @param qo
+     *@Author: shenJianKang
+     *@date: 2019/8/21 16:28
+     */
+    BasicResult<Integer> countSendRecordByParam(MessageSendRecordQO qo);
 
 
-
-
+    /**
+     *@Description:     查詢發送短信用户手机号数量
+     *@Param:  * @param qo
+     *@Author: shenJianKang
+     *@date: 2019/8/21 16:28
+     */
+    BasicResult<Integer> countPhoneNumberByParam(MessageSendRecordQO qo);
 
 
 

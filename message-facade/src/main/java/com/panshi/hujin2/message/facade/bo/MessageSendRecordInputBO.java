@@ -1,5 +1,6 @@
 package com.panshi.hujin2.message.facade.bo;
 
+import com.panshi.hujin2.message.domain.enums.MsgTypeEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -61,5 +62,11 @@ public class MessageSendRecordInputBO {
      *  请求短信发送接口的返回信息
      */
     private String returnValue;
+
+    /**
+     * 短信类型
+     * @see MsgTypeEnum
+     */
+    private Integer msgType;
 
 }

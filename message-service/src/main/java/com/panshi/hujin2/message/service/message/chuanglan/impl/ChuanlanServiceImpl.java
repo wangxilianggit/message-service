@@ -59,7 +59,7 @@ public class ChuanlanServiceImpl extends SendMsg {
 
 
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {
         try {
             ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,msgText);
 

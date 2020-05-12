@@ -53,4 +53,6 @@ public interface MessageSendRecordMapper {
 
     @Deprecated
     List<MessageSendRecordDO> queryAllFieldByParam(MessageSendRecordQO qo);
+
+    Integer countPhoneNumberByParam(MessageSendRecordQO qo);
 }

@@ -1,5 +1,6 @@
 package com.panshi.hujin2.message.dao.model;
 
+import com.panshi.hujin2.message.domain.enums.MsgTypeEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -80,5 +81,11 @@ public class MessageSendRecordDO {
      *  修改时间
      */
     private Date modifyTime;
+
+    /**
+     * 短信类型
+     * @see MsgTypeEnum
+     */
+    private Integer msgType;
 
 }

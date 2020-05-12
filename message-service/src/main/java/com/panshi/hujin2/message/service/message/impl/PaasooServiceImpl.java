@@ -52,7 +52,7 @@ public class PaasooServiceImpl extends SendMsg {
     }
 
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {
 
         ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
         ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber, msgText);
@@ -93,6 +93,7 @@ public class PaasooServiceImpl extends SendMsg {
         inputBO.setResCode(Integer.valueOf(status));
         inputBO.setResExplain(failDsec);
         inputBO.setReturnValue(res);
+        inputBO.setMsgType(msgType);
         msgDBService.addMsgSendRecord(inputBO,context);
 
         if(PaasooResponseEnum.paasoo_sms_response_0.getCode().equals(status)){

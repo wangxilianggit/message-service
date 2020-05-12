@@ -83,7 +83,7 @@ public class InaSMSServiceImpl extends SendMsg {
 
 
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {
 //        String url= "https://203.166.197.162/ApiLongNumber/receive.php";
 //        String uid = "userHorizon";
 //        String owd= "Q21u1h3oq";

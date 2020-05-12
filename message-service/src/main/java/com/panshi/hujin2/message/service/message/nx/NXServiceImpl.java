@@ -66,7 +66,7 @@ public class NXServiceImpl extends SendMsg {
 
 
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {
 //        String phoneNumber = "6281285290562";
 //        String msgText = "Kode verifikasi anda untuk login ke cashdog adalah 1111";
 
@@ -115,6 +115,7 @@ public class NXServiceImpl extends SendMsg {
             }
 
             inputBO.setReturnValue(sendRes);
+            inputBO.setMsgType(msgType);
             msgDBService.addMsgSendRecord(inputBO,context);
 
             if("0".equals(code)){

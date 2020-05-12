@@ -68,7 +68,7 @@ public class YiMeiRuanTongServiceImpl extends SendMsg {
     }
 
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {
         LOGGER.info("--------开始通过【tainyihong】发送短信,。。。手机号：[{}]，发送内容[{}]",phoneNumber, msgText);
         ExceptionMessageUtils.verifyObjectIsNull(context, applicationEnmu);
         ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,msgText);
@@ -100,6 +100,7 @@ public class YiMeiRuanTongServiceImpl extends SendMsg {
             inputBO.setMsgText(msgText);
             inputBO.setReturnValue(res);
             inputBO.setMsgId(msgId);
+            inputBO.setMsgType(msgType);
             if(StringUtils.isNotBlank(code)){
                 String resExplain = YiMeiRuanTongResponseEnum.getStatusDesc(code).getDesc();
                 inputBO.setResExplain(resExplain);

@@ -62,8 +62,9 @@ public class KMIServiceImpl extends SendMsg {
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu,
                                         String phoneNumber,
                                         String msgText,
-                                        Context context) {
-        LOGGER.info("=========== INA KMI OPT ====================");
+                                        Context context,
+                                        Integer msgType) {
+        LOGGER.info("=========== INA KMI ====================");
         try {
             String token = kmiUtil.getToken();
             //普通短信

@@ -38,7 +38,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
     private String kmiSendLongnumberUrl;
 
     @Override
-    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context) {
+    public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context, Integer msgType) {
         LOGGER.info("=========== INA KMI LONGNUMBER ====================");
         try {
             String token = kmiUtil.getToken();

@@ -174,6 +174,10 @@
       <if test="modifyTime != null">
         modify_time,
       </if>
+
+      <if test="msgType != null">
+        msg_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="consumerId != null">
@@ -217,6 +221,10 @@
       </if>
       <if test="modifyTime != null">
         #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+
+      <if test="msgType != null">
+        #{msgType},
       </if>
     </trim>
   </insert>
@@ -466,6 +474,18 @@
       <if test="createTimeEnd != null">
         and create_time <![CDATA[ <= ]]> #{createTimeEnd}
       </if>
+
+      <if test="channelIds != null and channelIds.size() > 0">
+        AND channel_id IN
+        <foreach collection="channelIds" index="" item="channelIdItem" open="(" separator="," close=")">
+          #{channelIdItem}
+        </foreach>
+      </if>
+
+      <if test="msgType != null">
+        and msg_type = #{msgType}
+      </if>
+
     </where>
   </select>
 
@@ -528,6 +548,11 @@
       <if test="createTimeEnd != null">
         and create_time <![CDATA[ <= ]]> #{createTimeEnd}
       </if>
+
+      <if test="msgType != null">
+        and msg_type = #{msgType}
+      </if>
+
     </where>
     <if test="page.dbNumber != null">
       <if test="page.dbIndex != null">
@@ -634,6 +659,72 @@
       </if>
     </if>
   </select>
+  <select id="countPhoneNumberByParam" parameterType="com.panshi.hujin2.message.domain.qo.MessageSendRecordQO" resultType="java.lang.Integer">
+    select
+    count(distinct(phone_number))
+    from
+    message_send_record
+    <where>
+      <if test="consumerId != null">
+        and consumer_id = #{consumerId}
+      </if>
 
+      <if test="currentConsumerIdList != null and currentConsumerIdList.size() > 0">
+        AND consumer_id IN
+        <foreach collection="currentConsumerIdList" index="" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="queueId != null">
+        and queue_id = #{queueId}
+      </if>
+      <if test="queueIds != null and queueIds.size() > 0">
+        and queue_id in
+        <foreach collection="queueIds" open="(" close=")" separator="," item="queueIdId">
+          #{queueIdId}
+        </foreach>
+      </if>
+
+      <if test="fee != null">
+        and fee = #{fee}
+      </if>
+
+      <if test="channelId != null">
+        and channel_id = #{channelId}
+      </if>
+
+      <if test="phoneNumber != null">
+        and  phone_number LIKE CONCAT('%',#{phoneNumber},'%')
+      </if>
+
+      <if test="msgText != null">
+        and  msg_text LIKE CONCAT('%',#{msgText},'%')
+      </if>
+
+      <if test="resCode != null">
+        <if test="resCode == 0">
+          and res_code = #{resCode}
+        </if>
+        <if test="resCode == 1">
+          and res_code <![CDATA[ <> ]]> 0
+        </if>
+      </if>
+
+      <if test="createTimeStart != null">
+        and create_time <![CDATA[ >= ]]> #{createTimeStart}
+      </if>
+      <if test="createTimeEnd != null">
+        and create_time <![CDATA[ <= ]]> #{createTimeEnd}
+      </if>
+
+      <if test="channelIds != null and channelIds.size() > 0">
+        AND channel_id IN
+        <foreach collection="channelIds" index="" item="channelIdItem" open="(" separator="," close=")">
+          #{channelIdItem}
+        </foreach>
+      </if>
+    </where>
+  </select>
 
 </mapper>

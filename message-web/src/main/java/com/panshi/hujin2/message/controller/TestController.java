@@ -151,7 +151,7 @@ public class TestController {
         KMIService.sendInternationalMsg(ApplicationEnmu.VI_CASH_DOG,
                 "6213777400262",
                 "test sms",
-                ContextUtils.getDefaultContext());
+                ContextUtils.getDefaultContext(),null);
    }
 
 
@@ -395,7 +395,7 @@ public class TestController {
         boolean subRes4 = tianyihongService.sendInternationalMsg(ApplicationEnmu.VI_CASH_DOG,
                 phoneNumber1,
                 text7,
-                context);
+                context,null);
 //        System.out.println("tianyiHong发送结果： " + text1+"RES: "+subRes3 );
 //        System.out.println("===============================================");
     }
@@ -415,7 +415,7 @@ public class TestController {
                 "525574991875",
                 templateCode,
                 list,
-                context);
+                context,null);
     }
 
 
@@ -451,7 +451,7 @@ public class TestController {
                                          phoneNumber,
                                             "201807130238138540004",
                                             paramList,
-                                          context);
+                                          context,null);
     }
 
 //    @RequestMapping("/batchDiffTemplate")
@@ -552,7 +552,7 @@ public class TestController {
                 boolean res = chuanglanMessageService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
                         phoneNumber,
                         msgText,
-                        context);
+                        context,null);
                 System.out.println("创蓝发送结果： " + msgText+"RES: " +res);
                 System.out.println("----------------------------------------------");
 
@@ -581,7 +581,7 @@ public class TestController {
                 boolean subRes1 = infobipService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
                         phoneNumber,
                         msgText,
-                        context);
+                        context,null);
                 System.out.println("INFOBIP发送结果： " + msgText+"RES: "+subRes1 );
                 System.out.println("===============================================");
 
@@ -597,7 +597,7 @@ public class TestController {
                 boolean subRes3 = tianyihongService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
                         phoneNumber,
                         msgText,
-                        context);
+                        context,null);
                 System.out.println("tianyiHong发送结果： " + msgText+"RES: "+subRes3 );
                 System.out.println("===============================================");
 
@@ -652,7 +652,7 @@ public class TestController {
         boolean res = chuanglanMessageService.sendInternationalMsg(ApplicationEnmu.PAN_GUAN_JIA,
                 phoneNumber,
                 msg+"C",
-                context);
+                context,null);
         System.out.println("创蓝res----------------:    "+res);
 
 //        for (int i = 0; i < 1; i++) {
@@ -684,7 +684,7 @@ public class TestController {
                 phoneNumber,
                 "201807240342551900001",
                 paramList,
-                context);
+                context,null);
         return BasicResult.ok();
     }
 
@@ -701,13 +701,13 @@ public class TestController {
                     phoneNumber,
                     "201807130238138540004",
                     paramList,
-                    context);
+                    context,null);
         }else {
             submailMessageService.sendInternationalMsg(ApplicationEnmu.PAN_GUAN_JIA,
                     phoneNumber,
                     "201807130238138540004",
                     paramList,
-                    context);
+                    context,null);
         }
     }
 
@@ -744,7 +744,7 @@ public class TestController {
                 boolean res = infobipService.sendInternationalMsg(ApplicationEnmu.PAN_GUAN_JIA,
                         phoneNumber,
                         msg + randomNumber + "I",
-                        context);
+                        context,null);
                 System.out.println("INFOBIP发送结果： " + res);
                 System.out.println("----------------------------------------------");
             }
@@ -788,7 +788,7 @@ public class TestController {
                         phoneNumber,
                         "201807240342551900001",
                         list,
-                        context);
+                        context,null);
                 System.out.println("INFOBIP发送结果： " + res);
                 System.out.println("----------------------------------------------");
             }
@@ -856,7 +856,7 @@ public class TestController {
         chuanglanMessageService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
                 mobile,
                 "【盘管家】您的验证码是：4737C",
-                context);
+                context,null);
     }
 
     //測試infobip 不同模板群發
@@ -955,7 +955,7 @@ public class TestController {
         List list = new ArrayList();
         list.add("222");
         messageFacade.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
-                phoneNumber,"201807240342551900001",list,context);
+                phoneNumber,"201807240342551900001",list,context,null);
 //        tianyihongService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,
 //                phoneNumber,"201807240342551900001",list,context);
     }
@@ -1009,7 +1009,7 @@ public class TestController {
                 boolean res = chuanglanMessageService.sendInternationalMsg(ApplicationEnmu.BR_Eloan,
                         phoneNumber,
                         msgText,
-                        context);
+                        context,null);
                 System.out.println("创蓝发送结果： " + res);
                 System.out.println("----------------------------------------------");
 
@@ -1025,7 +1025,7 @@ public class TestController {
                 boolean subRes = submailMessageService.sendInternationalMsg(ApplicationEnmu.BR_Eloan,
                         phoneNumber,
                         msgText,
-                        context);
+                        context,null);
                 System.out.println("submail发送结果" + subRes);
                 System.out.println("===============================================");
 
@@ -1040,7 +1040,7 @@ public class TestController {
                 boolean subRes1 = infobipService.sendInternationalMsg(ApplicationEnmu.BR_Eloan,
                         phoneNumber,
                         msgText,
-                        context);
+                        context,null);
                 System.out.println("===============================================");
 
 
@@ -1080,7 +1080,7 @@ public class TestController {
         list.add("6661");
 
         //todo  测试轮换发送
-        messageFacade.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,mobile,"201807240353333890001",list, ContextUtils.getMexicoContext());
+        messageFacade.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,mobile,"201807240353333890001",list, ContextUtils.getMexicoContext(),null);
     }
 
     //yimeiruantongService
@@ -1088,7 +1088,7 @@ public class TestController {
     public void sendYimeiruantong(String mobile){
         String phoneNumber = "861";
         String sendText = "【盘石】您的验证码为：123456";
-        yimeiruantongService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,mobile,sendText, ContextUtils.getMexicoContext());
+        yimeiruantongService.sendInternationalMsg(ApplicationEnmu.WU_YOU_DAI,mobile,sendText, ContextUtils.getMexicoContext(),null);
         List list = new ArrayList();
         list.add("6661");
 
