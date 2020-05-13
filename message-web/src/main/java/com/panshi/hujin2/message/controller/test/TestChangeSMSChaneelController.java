@@ -12,6 +12,8 @@ import com.panshi.hujin2.message.service.message.nx.NXServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("test/changeSMSChannel")
 public class TestChangeSMSChaneelController {
-
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     @Autowired
     @Qualifier("KMIService")
     private ISendMsgService KMIService;
@@ -54,7 +56,7 @@ public class TestChangeSMSChaneelController {
 
 
 
-//    @GetMapping("/test1/{phoneNumber}")
+    @GetMapping("/test1/{phoneNumber}")
     public void test(@PathVariable String phoneNumber){
         Map<String,Integer> suMap = SuccessivelySendMap.successivelySendMap;
         ISendMsgService sendMsgService = null;
@@ -71,8 +73,12 @@ public class TestChangeSMSChaneelController {
             return o1.getPriority().compareTo(o2.getPriority());
         });
 
+        System.out.println("短信渠道顺序");
+        for(SmsChannelConfigDO configDO:configDOS){
+            System.out.println("configDO.getMsgChannel() = " + configDO.getMsgChannel());
+        }
 
-//                ISendMsgService firstSendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
+//      ISendMsgService firstSendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
 
         //String firstChannel = null;
         String lastChannel = null;
@@ -94,6 +100,7 @@ public class TestChangeSMSChaneelController {
                 rankMap.put(currChannel, nextChannel);
             }
         }
+        System.out.println("rankMap = " + rankMap);
 
         //按照通道发送顺序：kmi otp短信、牛信otp短信、kmi 营销短信，
         if(suMap.size()==0){
@@ -117,9 +124,31 @@ public class TestChangeSMSChaneelController {
 //                    }else{
 //                        sendMsgService = KMIService;
 //                    }
-            Integer channelCode = suMap.get(phoneNumber);
-            ChannelEnum channelEnum = ChannelEnum.getByCode(channelCode);
-            String nextChannel = rankMap.get(channelEnum.getText());
+
+
+            boolean isFirst = false;
+            ChannelEnum channelEnum = null;
+            if(suMap.containsKey(phoneNumber)){
+                Integer channelCode = suMap.get(phoneNumber);
+                LOGGER.info("channelCode: "+channelCode);
+                channelEnum = ChannelEnum.getByCode(channelCode);
+                LOGGER.info("channelEnum: "+channelEnum);
+                if(channelEnum == null){
+                    //如果是空的就默认拿第一个发送的渠道
+                    //channelEnum = ChannelEnum.KMI;
+                    isFirst = true;
+                }
+            }else {
+                //channelEnum = ChannelEnum.KMI;
+                isFirst = true;
+            }
+            String nextChannel = null;
+            if(isFirst){
+                nextChannel = "-1";
+            }else {
+                nextChannel = rankMap.get(channelEnum.getText());
+            }
+            LOGGER.info("nextChannel"+ nextChannel);
             if(StringUtils.isBlank(nextChannel)){
                 sendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
             }else {
@@ -150,16 +179,16 @@ public class TestChangeSMSChaneelController {
         //动态的版本 //TODO: 2020/5/13 0:30 by ShenJianKang  也可以直接记录 本次发送channelType ：suMap.put(phoneNumber,currChannel);
         if(sendMsgService instanceof KMIServiceImpl){
             suMap.put(phoneNumber, ChannelEnum.KMI.getCode());
-            System.out.println(" = kmi 发送" );
+            System.out.println(" = kmi 发送 " + phoneNumber);
         }else if(sendMsgService instanceof NXServiceImpl){
             suMap.put(phoneNumber,ChannelEnum.NIU_XIN.getCode());
-            System.out.println(" = 牛信 发送" );
+            System.out.println(" = 牛信 发送 " + phoneNumber);
         }else if(sendMsgService instanceof KMILongnumberServiceImpl){
             suMap.put(phoneNumber,ChannelEnum.KMI_LONGNUMBER.getCode());
-            System.out.println(" = kmi 营销 发送" );
+            System.out.println(" = kmi 营销 发送 " + phoneNumber);
         }else {
             suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
-            System.out.println(" = kmi 发送" );
+            System.out.println(" = kmi 发送 " + phoneNumber);
         }
 
     }
