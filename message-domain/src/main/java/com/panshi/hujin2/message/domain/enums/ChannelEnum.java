@@ -45,8 +45,15 @@ public enum ChannelEnum {
         this.text = text;
     }
 
+    public static ChannelEnum getByCode(Integer code) {
+        for (ChannelEnum t : values()) {
+            if (Objects.equals(t.getCode(), code))
+                return t;
+        }
+        return null;
+    }
 
-    public static ChannelEnum getByText(Integer text) {
+    public static ChannelEnum getByText(String text) {
         for (ChannelEnum t : values()) {
             if (Objects.equals(t.getText(), text))
                 return t;

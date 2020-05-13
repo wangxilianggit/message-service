@@ -50,7 +50,7 @@ public class FCMController2 {
     String SCOPES = "https://www.googleapis.com/auth/firebase.messaging";
 
 
-    @RequestMapping("/aaa")
+//    @RequestMapping("/aaa")
     public void  fcm1(){
         try {
             //push(clientToken, "sjk_title","sjk_body","0",null,null);

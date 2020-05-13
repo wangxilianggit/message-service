@@ -20,7 +20,7 @@
 <!--                        password="8812345!@#">-->
 <!--        </jdbcConnection>-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://47.98.62.0:3306/vi_cash_dog?useUnicode=true&amp;characterEncoding=UTF-8"
+                        connectionURL="jdbc:mysql://47.98.62.0:3306/ina_cash_luckkangaroo?useUnicode=true&amp;characterEncoding=UTF-8"
                         userId="root"
                         password="Dolphin0408+">
         </jdbcConnection>
@@ -30,7 +30,7 @@
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
         <!-- 生成实体类地址 -->
-        <javaModelGenerator targetPackage="com.panshi.hujin2.message.dao.model.onesignal" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.panshi.hujin2.message.dao.model" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
             <property name="trimStrings" value="true" /> <!-- 是否针对string类型的字段在set的时候进行trim调用 -->
         </javaModelGenerator>
@@ -39,16 +39,16 @@
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
         </sqlMapGenerator>
         <!-- 生成DAO -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.panshi.hujin2.message.dao.mapper.onesignal" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.panshi.hujin2.message.dao.mapper.message" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
         </javaClientGenerator>
         <!-- 配置表信息 -->
-        <table schema="" tableName="user_one_signal_relation" domainObjectName="UserOneSignalRelation"
-               enableCountByExample="true"
-               enableUpdateByExample="true"
-               enableDeleteByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true" >
+        <table schema="" tableName="sms_channel_config" domainObjectName="SmsChannelConfig"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false" >
 
             <!--insert返回自增主键-->
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>

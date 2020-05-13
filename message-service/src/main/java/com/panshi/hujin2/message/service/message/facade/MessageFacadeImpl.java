@@ -10,6 +10,7 @@ import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.base.service.utils.ContextUtils;
 import com.panshi.hujin2.message.common.utils.SuccessivelySendMap;
 import com.panshi.hujin2.message.dao.mapper.message.MessageSendRecordMapper;
+import com.panshi.hujin2.message.dao.mapper.message.SmsChannelConfigMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallCallLogMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallMsgLogMapper;
 import com.panshi.hujin2.message.dao.model.*;
@@ -94,6 +95,8 @@ public class MessageFacadeImpl implements IMessageFacade {
     private UrgentRecallCallLogMapper callLogMapper;
     @Autowired
     private MessageSendRecordMapper messageSendRecordMapper;
+    @Autowired
+    private SmsChannelConfigMapper smsChannelConfigMapper;
 
 
 
@@ -263,7 +266,7 @@ public class MessageFacadeImpl implements IMessageFacade {
         String templateCode = sendMsgBO.getTemplateCode();
         List<String> paramList = sendMsgBO.getParamList();
         Context context = sendMsgBO.getContext();
-        ChannelEnum channelEnum = sendMsgBO.getChannelEnum();
+        //ChannelEnum channelEnum = sendMsgBO.getChannelEnum();
         try {
             //todo 应该在开头就限制发送次数(因为现在的计算次数是再方法执行完放入换成执行的,如果几个请求同时执行,就会发生多个都算第一次的情况)
             ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
@@ -290,28 +293,77 @@ public class MessageFacadeImpl implements IMessageFacade {
 //                }
 
                 //TODO: 2020/5/12 18:13 by ShenJianKang 切换短信通道
+                List<SmsChannelConfigDO>  configDOS = smsChannelConfigMapper.queryAllValid();
+                if(CollectionUtils.isEmpty(configDOS)){
+                    LOGGER.error("没有可以发送的短信渠道");
+                    return  BasicResult.ok();
+                }
+                configDOS.sort((o1, o2)->{
+                    return o1.getPriority().compareTo(o2.getPriority());
+                });
 
+
+//                ISendMsgService firstSendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
+
+                //String firstChannel = null;
+                String lastChannel = null;
+                //key:本次channel  value:下一次channel
+                Map<String, String> rankMap = new HashMap<>();
+                for(int i=0;i<configDOS.size();i++){
+                    String currChannel = configDOS.get(i).getMsgChannel();
+                    //ChannelEnum channelEnum1 = ChannelEnum.getByText(currChannel);
+                    if((i+1) == configDOS.size()){
+                        //最后一次循环
+                        rankMap.put(currChannel,"-1");
+                        lastChannel = currChannel;
+                    }else {
+//                        if(i == 0){
+//                            firstChannel = currChannel;
+//                        }
+                        String nextChannel =  configDOS.get(i+1).getMsgChannel();
+                        //ChannelEnum channelEnum2 = ChannelEnum.getByText(nextChannel);
+                        rankMap.put(currChannel, nextChannel);
+                    }
+                }
 
                 //按照通道发送顺序：kmi otp短信、牛信otp短信、kmi 营销短信，
                 if(suMap.size()==0){
                     //sendMsgService = getMsgSendInstance(sendMsgChannel);
-                    sendMsgService = KMIService;
+                    //sendMsgService = KMIService;
+                    //第一个发送渠道
+                    sendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
                 }else{
-                    Integer resType = suMap.get(phoneNumber);
-
-                    if(resType!=null){
-                        if(ChannelEnum.KMI.getCode() == resType){
-                            sendMsgService = KMIService;
-                        }else if(ChannelEnum.NIU_XIN.getCode() == resType){
-                            sendMsgService = nxService;
-                        }else if(ChannelEnum.KMI_LONGNUMBER.getCode() == resType){
-                            sendMsgService = KMILongnumberService;
-                        } else {
-                            sendMsgService = KMIService;
+                    //写死的版本
+//                    Integer resType = suMap.get(phoneNumber);
+//                    if(resType!=null){
+//                        if(ChannelEnum.KMI.getCode() == resType){
+//                            sendMsgService = KMIService;
+//                        }else if(ChannelEnum.NIU_XIN.getCode() == resType){
+//                            sendMsgService = nxService;
+//                        }else if(ChannelEnum.KMI_LONGNUMBER.getCode() == resType){
+//                            sendMsgService = KMILongnumberService;
+//                        } else {
+//                            sendMsgService = KMIService;
+//                        }
+//                    }else{
+//                        sendMsgService = KMIService;
+//                    }
+                    Integer channelCode = suMap.get(phoneNumber);
+                    ChannelEnum channelEnum = ChannelEnum.getByCode(channelCode);
+                    String nextChannel = rankMap.get(channelEnum.getText());
+                    if(StringUtils.isBlank(nextChannel)){
+                        //TODO: 2020/5/13 10:15 by ShenJianKang 这里如果修改了 渠道配置表， 只能从第一个重新开始走，无法按重新排好的顺序走下面一个
+                        sendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
+                    }else {
+                        if(nextChannel.equals("-1")){
+                            //取最后一个
+                            //sendMsgService = getMsgChannel(lastChannel);
+                            sendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
+                        }else {
+                            sendMsgService = getMsgChannel(nextChannel);
                         }
-                    }else{
-                        sendMsgService = KMIService;
                     }
+
                 }
                 //TODO: 2020/5/12 18:13 by ShenJianKang 切换短信通道
             }
@@ -322,16 +374,31 @@ public class MessageFacadeImpl implements IMessageFacade {
                     context,
             sendMsgBO.getMsgType());
 
+
             //发送优先级:：kmi otp短信、牛信otp短信、kmi 营销短信，
+            //写死的版本
+//            if(sendMsgService instanceof KMIServiceImpl){
+//                suMap.put(phoneNumber,ChannelEnum.NIU_XIN.getCode());
+//            }else if(sendMsgService instanceof NXServiceImpl){
+//                suMap.put(phoneNumber,ChannelEnum.KMI_LONGNUMBER.getCode());
+//            }else if(sendMsgService instanceof KMILongnumberServiceImpl){
+//                suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+//            }else {
+//                suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+//            }
+
+            //动态的版本 //TODO: 2020/5/13 0:30 by ShenJianKang  也可以直接记录 本次发送channelType ：suMap.put(phoneNumber,currChannel);
             if(sendMsgService instanceof KMIServiceImpl){
-                suMap.put(phoneNumber,ChannelEnum.NIU_XIN.getCode());
-            }else if(sendMsgService instanceof NXServiceImpl){
-                suMap.put(phoneNumber,ChannelEnum.KMI_LONGNUMBER.getCode());
-            }else if(sendMsgService instanceof KMILongnumberServiceImpl){
                 suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+            }else if(sendMsgService instanceof NXServiceImpl){
+                suMap.put(phoneNumber,ChannelEnum.NIU_XIN.getCode());
+            }else if(sendMsgService instanceof KMILongnumberServiceImpl){
+                suMap.put(phoneNumber,ChannelEnum.KMI_LONGNUMBER.getCode());
             }else {
                 suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
             }
+
+
             if(res){
                 return BasicResult.ok();
             }
@@ -343,24 +410,106 @@ public class MessageFacadeImpl implements IMessageFacade {
         }
     }
 
-//    //根据list 排序
-//    public void sort(){
-//        Map<Integer, String> map = new HashMap<>();
-//        map.put(1,"KMI-opt");
-//        map.put(2,"NIU_XIN");
-//        map.put(3,"KMI-营销短信");
+
+    public void sort(){
+//        List<SmsChannelConfigDO>  configDOS = smsChannelConfigMapper.queryAll();
+//        configDOS.sort((o1, o2)->{
+//            return o1.getPriority().compareTo(o2.getPriority());
+//        });
+//        //key:本次channel  value:下一次channel
+//        Map<Integer,Integer> rankMap = new HashMap<>();
+//        for(int i=0;i<configDOS.size();i++){
+//            String msgChannel = configDOS.get(i).getMsgChannel();
+//            ChannelEnum channelEnum = ChannelEnum.getByText(msgChannel);
+//            if((i+1) == configDOS.size()){
+//                //最后一次循环
+//                rankMap.put(channelEnum.getCode(),-1);
+//
+//            }else {
+//                String msgChannel2 =  configDOS.get(i+1).getMsgChannel();
+//                ChannelEnum channelEnum2 = ChannelEnum.getByText(msgChannel2);
+//                rankMap.put(channelEnum.getCode(),channelEnum2.getCode());
+//            }
+//        }
+    }
+
+    public static void main(String[] args) {
+        List<SmsChannelConfigDO>  configDOS = new ArrayList<>();
+        SmsChannelConfigDO configDO1 = new SmsChannelConfigDO();
+        configDO1.setPriority(1);
+        configDO1.setMsgChannel("KMI-opt");
+
+        SmsChannelConfigDO configDO2 = new SmsChannelConfigDO();
+        configDO2.setPriority(2);
+        configDO2.setMsgChannel("NIU_XIN");
+
+        SmsChannelConfigDO configDO3 = new SmsChannelConfigDO();
+        configDO3.setPriority(3);
+        configDO3.setMsgChannel("KMI-营销短信");
+        configDOS.add(configDO1);
+        configDOS.add(configDO3);
+        configDOS.add(configDO2);
+
+
+        configDOS.sort((o1, o2)->{
+            return o1.getPriority().compareTo(o2.getPriority());
+        });
+        Map<Integer,Integer> rankMap = new HashMap<>();
+//        Integer beforeChannel = null;
+        for(int i=0;i<configDOS.size();i++){
+            String msgChannel = configDOS.get(i).getMsgChannel();
+            ChannelEnum channelEnum = ChannelEnum.getByText(msgChannel);
+//            beforeChannel = channelEnum.getCode();
+//            if(i == 0){
+//                //第一次循环 跳过
+//                //continue;
+//            }else if((i+1) == configDOS.size()){
+//                //最后一次循环
+//                rankMap.put(beforeChannel,channelEnum.getCode());
+//            }else {
+//                rankMap.put(beforeChannel,channelEnum.getCode());
+//            }
+
+            if((i+1) == configDOS.size()){
+                //最后一次循环
+                rankMap.put(channelEnum.getCode(),-1);
+
+            }else {
+                String msgChannel2 =  configDOS.get(i+1).getMsgChannel();
+                ChannelEnum channelEnum2 = ChannelEnum.getByText(msgChannel2);
+                rankMap.put(channelEnum.getCode(),channelEnum2.getCode());
+            }
+        }
+    }
+
+    //根据list 排序
+//    public void sort0(){
+////        Map<Integer, String> map = new HashMap<>();
+////        map.put(1,"KMI-opt");
+////        map.put(2,"NIU_XIN");
+////        map.put(3,"KMI-营销短信");
 //
 //        //key 放渠道code， 放下一个code
 //        Map<Integer,Integer> rankMap = new HashMap<>();
 //        Integer beforeChannel = -1;
 //        for(Iterator<Integer> iterator = map.keySet().iterator();iterator.hasNext();){
-//            Integer sortId = iterator.next();
+//            Integer sortId = iterator.next();//纯排序
 //            String msgChannel = map.get(sortId);
 //
 //            ChannelEnum channelEnum = ChannelEnum.getByText(msgChannel);
+//            beforeChannel = channelEnum.getCode();
+//            if(第一次循环){
+//                rankMap.put(channelEnum.getCode(),beforeChannel);
+//                跳过
+//            }
+//            //TODO: 2020/5/12 23:19 by ShenJianKang 跳过第一个循环， 从第2个开始执行
+//            if(是最后一次循环){
 //
-//            //根据 短信枚举 获取
-//            rankMap.put(beforeChannel, );
+//            }else {
+//                不是最后一次
+//                //根据 短信枚举 获取
+//                rankMap.put(beforeChannel, channelEnum.getCode());
+//            }
 //        }
 //    }
 

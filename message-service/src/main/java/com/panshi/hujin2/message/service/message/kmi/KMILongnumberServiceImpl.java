@@ -98,6 +98,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
             inputBO.setResCode(Integer.valueOf(code));
             inputBO.setResExplain(desc);
             inputBO.setReturnValue(sendRes);
+            inputBO.setMsgType(msgType);
             msgDBService.addMsgSendRecord(inputBO,context);
             return true;
         }catch (Exception e){

@@ -30,7 +30,7 @@ public class FCMController {
 
     String clientToken = "fTynYFtXRUI:APA91bGMfdZkpnAbJnRa5iOv4zWh_VcDcd6pCc4Gx8w2KSK7DgzpBfD245hQHp_pa-F0jNGXxV3qievbp1ct6iEc4LX0D4_KGMo6jnA3exbbjp-5kogFS8o8TpA8p7LRPJi9BOQCjTtx";
 
-    @RequestMapping("/aaa")
+//    @RequestMapping("/aaa")
     public void  fcm1(){
         try {
 //            FileInputStream serviceAccount =
