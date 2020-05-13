@@ -302,6 +302,10 @@ public class MessageFacadeImpl implements IMessageFacade {
                     return o1.getPriority().compareTo(o2.getPriority());
                 });
 
+//                LOGGER.info("短信渠道顺序");
+//                for(SmsChannelConfigDO configDO:configDOS){
+//                    LOGGER.info("=== "+ configDO.getMsgChannel());
+//                }
 
 //                ISendMsgService firstSendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
 
@@ -325,6 +329,7 @@ public class MessageFacadeImpl implements IMessageFacade {
                         rankMap.put(currChannel, nextChannel);
                     }
                 }
+                LOGGER.info("rankMap = " + rankMap);
 
                 //按照通道发送顺序：kmi otp短信、牛信otp短信、kmi 营销短信，
                 if(suMap.size()==0){
@@ -348,9 +353,30 @@ public class MessageFacadeImpl implements IMessageFacade {
 //                    }else{
 //                        sendMsgService = KMIService;
 //                    }
-                    Integer channelCode = suMap.get(phoneNumber);
-                    ChannelEnum channelEnum = ChannelEnum.getByCode(channelCode);
-                    String nextChannel = rankMap.get(channelEnum.getText());
+
+                    boolean isFirst = false;//该手机号码是否是第一次发送
+                    ChannelEnum channelEnum = null;
+                    if(suMap.containsKey(phoneNumber)){
+                        Integer channelCode = suMap.get(phoneNumber);
+                        //LOGGER.info("channelCode: "+channelCode);
+                        channelEnum = ChannelEnum.getByCode(channelCode);
+                        //LOGGER.info("channelEnum: "+channelEnum);
+                        if(channelEnum == null){
+                            //如果是空的就默认拿第一个发送的渠道
+                            //channelEnum = ChannelEnum.KMI;
+                            isFirst = true;
+                        }
+                    }else {
+                        //channelEnum = ChannelEnum.KMI;
+                        isFirst = true;
+                    }
+                    String nextChannel = null;
+                    if(isFirst){
+                        nextChannel = "-1";
+                    }else {
+                        nextChannel = rankMap.get(channelEnum.getText());
+                    }
+                    //LOGGER.info("nextChannel"+ nextChannel);
                     if(StringUtils.isBlank(nextChannel)){
                         //TODO: 2020/5/13 10:15 by ShenJianKang 这里如果修改了 渠道配置表， 只能从第一个重新开始走，无法按重新排好的顺序走下面一个
                         sendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
