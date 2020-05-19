@@ -3,6 +3,7 @@ package com.panshi.hujin2.message.service.message.kmi;
 import com.gexin.fastjson.JSON;
 import com.gexin.fastjson.JSONObject;
 import com.panshi.hujin2.message.common.utils.HttpUtil;
+import com.panshi.hujin2.message.common.utils.MD5Util;
 import com.panshi.hujin2.message.dao.mapper.message.KmiTokenLogMapper;
 import com.panshi.hujin2.message.dao.model.KmiTokenLogDO;
 import com.panshi.hujin2.message.domain.exception.MessageException;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +27,13 @@ public class KMIUtil {
     private static Logger LOGGER = LoggerFactory.getLogger(KMIUtil.class);
 
     public static final String TOKEN_KEY = "KMI_TOKEN";
-    public static final String KmiTokenUrl = "http://cs.kmindo.com:9980/cs/login?account=EasyKlick&password=b99846c549c57aa213fa8fe0033afdea";
+    public static final String KmiTokenUrl = "http://cs.kmindo.com:9980/cs/login?";
+
+    @Value("kmi.account")
+    private String account;
+
+    @Value("kmi.pwd")
+    private String pwd;
 
     @Autowired
     private KmiTokenLogMapper kmiTokenLogMapper;
@@ -45,10 +53,15 @@ public class KMIUtil {
 
         String token = null;
         if(tokenObj == null){
-            LOGGER.info("map为空获取KMI 请求 [{}]",KmiTokenUrl);
-            String result = HttpUtil.get(KmiTokenUrl);
+
+            // 拼接KmiTokenUrl
+            String pwdMD5 = MD5Util.MD5(pwd);
+            String KmiTokenUrlTemp = KmiTokenUrl+"account="+account+"&password="+pwdMD5;
+
+            LOGGER.info("map为空获取KMI 请求 [{}]",KmiTokenUrlTemp);
+            String result = HttpUtil.get(KmiTokenUrlTemp);
             LOGGER.info("map为空获取KMI token [{}]",result);
-            saveReqTokenLog(KmiTokenUrl+"_____"+result);
+            saveReqTokenLog(KmiTokenUrlTemp+"_____"+result);
 
             if(StringUtils.isNotBlank(result)){
                 //解析result
@@ -76,10 +89,10 @@ public class KMIUtil {
                 while (flag && num<10){
                     try {
                         Thread.sleep(1000);
-                        LOGGER.info("重试获取KMI 请求 [{}]",KmiTokenUrl);
-                        result = HttpUtil.get(KmiTokenUrl);
+                        LOGGER.info("重试获取KMI 请求 [{}]",KmiTokenUrlTemp);
+                        result = HttpUtil.get(KmiTokenUrlTemp);
                         LOGGER.info("重试获取KMI token [{}]",result);
-                        saveReqTokenLog(KmiTokenUrl+"______"+result);
+                        saveReqTokenLog(KmiTokenUrlTemp+"______"+result);
 
                         num ++;
                         if(StringUtils.isNotBlank(result)){

@@ -44,7 +44,7 @@ public class KMIServiceImpl extends SendMsg {
 //    @Value("${kmi.token.url}")
 //    private String KmiTokenUrl;
 
-    private final String KmiTokenUrl = "http://cs.kmindo.com:9980/cs/login?account=EasyKlick&password=b99846c549c57aa213fa8fe0033afdea";
+//    private final String KmiTokenUrl = "http://cs.kmindo.com:9980/cs/login?account=EasyKlick&password=b99846c549c57aa213fa8fe0033afdea";
 
     @Value("${kmi.send.msg.otp.url}")
     private String kmiSendOtpMsgUrl;
