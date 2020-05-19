@@ -29,10 +29,10 @@ public class KMIUtil {
     public static final String TOKEN_KEY = "KMI_TOKEN";
     public static final String KmiTokenUrl = "http://cs.kmindo.com:9980/cs/login?";
 
-    @Value("kmi.account")
+    @Value("${kmi.account}")
     private String account;
 
-    @Value("kmi.pwd")
+    @Value("${kmi.pwd}")
     private String pwd;
 
     @Autowired
