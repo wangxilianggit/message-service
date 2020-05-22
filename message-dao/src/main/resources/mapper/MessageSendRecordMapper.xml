@@ -724,6 +724,9 @@
           #{channelIdItem}
         </foreach>
       </if>
+      <if test="msgType != null">
+        and msg_type = #{msgType}
+      </if>
     </where>
   </select>
 
