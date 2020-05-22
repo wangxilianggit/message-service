@@ -38,6 +38,14 @@ public interface IMessageFacade {
     BasicResult<Void> sendInternationalMsg(SendMsgBO sendMsgBO);
 
     /**
+     *@Description:             发送国际 语音 短信 (单个发送)
+     *@param sendMsgBO
+     *@Author: shenJianKang
+     *@date: 2020/5/21 17:58
+     */
+    BasicResult<Void> sendInternationalVoiceMsg(SendMsgBO sendMsgBO);
+
+    /**
      * @description:        批量推送，同一个模板，不同参数
      * @param applicationEnmu
      * @param paramMap

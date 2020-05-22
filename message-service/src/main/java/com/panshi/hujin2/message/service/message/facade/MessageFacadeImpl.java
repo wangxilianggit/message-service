@@ -28,6 +28,7 @@ import com.panshi.hujin2.message.service.message.kmi.KMIServiceImpl;
 import com.panshi.hujin2.message.service.message.nx.NXServiceImpl;
 import com.panshi.hujin2.message.service.message.tianyihong.TainYiHongServiceImpl;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
+import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -88,6 +89,10 @@ public class MessageFacadeImpl implements IMessageFacade {
     @Autowired
     @Qualifier("KMILongnumberService")
     private ISendMsgService KMILongnumberService;
+
+    @Autowired
+    @Qualifier("KMIVoiceServiceImpl")
+    private ISendMsgService KMIVoiceServiceImpl;
 
     @Autowired
     private UrgentRecallMsgLogMapper urgentRecallMsgLogMapper;
@@ -302,13 +307,6 @@ public class MessageFacadeImpl implements IMessageFacade {
                     return o1.getPriority().compareTo(o2.getPriority());
                 });
 
-//                LOGGER.info("短信渠道顺序");
-//                for(SmsChannelConfigDO configDO:configDOS){
-//                    LOGGER.info("=== "+ configDO.getMsgChannel());
-//                }
-
-//                ISendMsgService firstSendMsgService = getMsgChannel(configDOS.get(0).getMsgChannel());
-
                 //String firstChannel = null;
                 String lastChannel = null;
                 //key:本次channel  value:下一次channel
@@ -429,6 +427,42 @@ public class MessageFacadeImpl implements IMessageFacade {
                 return BasicResult.ok();
             }
             return BasicResult.error(BasicResultCode.ERROR.getCode()," msg send error");
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            return BasicResult.error(BasicResultCode.ERROR.getCode(),
+                    MessageFactory.getMsg("G19880108",context.getLocale()));
+        }
+    }
+
+    @Override
+    public BasicResult<Void> sendInternationalVoiceMsg(SendMsgBO sendMsgBO) {
+        ApplicationEnmu applicationEnmu = sendMsgBO.getApplicationEnmu();
+        String phoneNumber = sendMsgBO.getPhoneNumber();
+        String verifyCode = sendMsgBO.getVerifyCode();
+        Context context = sendMsgBO.getContext();
+        Integer msgType = sendMsgBO.getMsgType();
+
+        try {
+            //todo 应该在开头就限制发送次数(因为现在的计算次数是再方法执行完放入换成执行的,如果几个请求同时执行,就会发生多个都算第一次的情况)
+//            if(!MsgUtils.checkSendNum(phoneNumber,everydaySendNum)){
+//                ExceptionMessageUtils.throwExceptionMobileSendNumOverLimit(context);
+//            }
+
+            ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
+            ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,verifyCode);
+
+
+            boolean res = KMIVoiceServiceImpl.sendInternationalMsg(
+                    applicationEnmu,
+                    phoneNumber,
+                    verifyCode,
+                    ContextUtils.getDefaultContext(),
+                    msgType);
+
+            if(res){
+                return BasicResult.ok();
+            }
+            return BasicResult.error(BasicResultCode.ERROR.getCode()," voice msg send error");
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
             return BasicResult.error(BasicResultCode.ERROR.getCode(),

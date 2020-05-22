@@ -100,6 +100,23 @@ public class KMILongnumberServiceImpl extends SendMsg {
             inputBO.setReturnValue(sendRes);
             inputBO.setMsgType(msgType);
             msgDBService.addMsgSendRecord(inputBO,context);
+
+            if("0".equals(code)){
+                //成功请求创蓝短信接口
+                Integer sendNum = 1;
+                Object sendN = MsgUtils.expiryMap.get(phoneNumber);
+                if(sendN != null){
+                    sendNum = (Integer)sendN + 1;
+                }
+                Long endTime = MsgUtils.getEndTime();
+                //转成毫秒
+                endTime = endTime * 1000;
+
+                //日志打印，当天手机号码发送次数
+                MsgUtils.printMsgSendLogs(phoneNumber,sendNum, endTime);
+
+                MsgUtils.expiryMap.put(phoneNumber, sendNum, endTime);
+            }
             return true;
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);

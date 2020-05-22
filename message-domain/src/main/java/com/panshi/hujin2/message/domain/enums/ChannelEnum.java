@@ -19,6 +19,7 @@ public enum ChannelEnum {
     INA_HORIZON_SMS(8,"INA_HORIZON_SMS"),
     NIU_XIN(9,"NIU_XIN"),
     KMI_LONGNUMBER(10,"KMI-营销短信"),
+    KMI_VOICE_VERIFY(11,"KMI-语音短信"),
     ;
 
     private int code;
