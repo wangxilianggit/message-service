@@ -260,6 +260,13 @@ public enum GeTuiAppConfigEnum {
     VI_CASH_ANDROID_CASHDOG_APP_KEY("BDneXwLwut9z2f12dwYoCA"),
     VI_CASH_ANDROID_CASHDOG_MASTER_SECRET("szdXD2dC6i5hWl7obikco5"),
 
+    // 10000  com.youbel.app
+    COM_YOUBEL_APP_APP_ID("DNlDAVzXBp8yJPiG0fEao3"),
+    COM_YOUBEL_APP_APP_SECRET("UgmERvZu6x7FF5owvasSP1"),
+    COM_YOUBEL_APP_APP_KEY("BDneXwLwut9z2f12dwYoCA"),
+    COM_YOUBEL_APP_MASTER_SECRET("szdXD2dC6i5hWl7obikco5"),
+
+
 
     ;
 

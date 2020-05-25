@@ -225,6 +225,14 @@ public class GeTuiUtils {
                 infoBO.setMasterSecret(GeTuiAppConfigEnum.VI_CASH_ANDROID_CASHDOG_MASTER_SECRET.getValue());
                 break;
 
+
+                // 10000
+            case COM_YOUBEL_APP:
+                infoBO.setAppId(GeTuiAppConfigEnum.COM_YOUBEL_APP_APP_ID.getValue());
+                infoBO.setAppKey(GeTuiAppConfigEnum.COM_YOUBEL_APP_APP_KEY.getValue());
+                infoBO.setMasterSecret(GeTuiAppConfigEnum.COM_YOUBEL_APP_MASTER_SECRET.getValue());
+                break;
+
             default:
                 //参数错误异
                 System.err.println(" ======获取个推推送key错误======= ");
