@@ -204,7 +204,22 @@ public interface IMessageFacade {
     BasicResult<Integer> countPhoneNumberByParam(MessageSendRecordQO qo);
 
 
-
+    /**
+     * @description:            发送固定模板短信
+     * @param applicationEnmu   调用服务的应用，见com.panshi.hujin2.message.enums.ChannelEnum
+     * @param phoneNumber       手机号
+     * @param templateCode      模板编号
+     * @param paramList         发送的键值信息列表
+     * @param context           国际化上下文
+     * @Author shenjiankang
+     * @Date 2018/7/3 17:54
+     */
+    BasicResult<Void> sendInternationalMsg(ApplicationEnmu applicationEnmu,
+                                           String phoneNumber,
+                                           String templateCode,
+                                           Map<String,String> paramList,
+                                           Context context,
+                                           Integer msgType);
 
 
 

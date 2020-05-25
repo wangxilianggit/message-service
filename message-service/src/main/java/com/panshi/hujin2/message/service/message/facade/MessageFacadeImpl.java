@@ -1,5 +1,6 @@
 package com.panshi.hujin2.message.service.message.facade;
 
+import com.google.common.collect.Maps;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.factory.MessageFactory;
 import com.panshi.hujin2.base.common.util.DozerUtils;
@@ -22,6 +23,7 @@ import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.*;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
+import com.panshi.hujin2.message.service.message.aliyun.AliyunServiceImpl;
 import com.panshi.hujin2.message.service.message.impl.PaasooServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMILongnumberServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMIServiceImpl;
@@ -1004,6 +1006,40 @@ public class MessageFacadeImpl implements IMessageFacade {
         }
         Integer count = messageSendRecordMapper.countPhoneNumberByParam(qo);
         return BasicResult.ok(count);
+    }
+
+
+    @Autowired
+    private AliyunServiceImpl aliyunService;
+
+    @Override
+    public BasicResult<Void> sendInternationalMsg(ApplicationEnmu applicationEnmu,
+                                                  String phoneNumber,
+                                                  String templateCode,
+                                                  Map<String, String> paramList,
+                                                  Context context,
+                                                  Integer msgType) {
+
+        ExceptionMessageUtils.verifyObjectIsNull(context,applicationEnmu);
+        ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,templateCode);
+        if(org.springframework.util.CollectionUtils.isEmpty(paramList)){
+            ExceptionMessageUtils.throwExceptionParamIsNull(context);
+        }
+
+        String i18n = applicationEnmu.getI18n();
+        LOGGER.info("==========> 发送短信，获取到的 i18n ：[{}]",i18n);
+
+
+        boolean res = aliyunService.sendInternationalMsg(applicationEnmu,
+                phoneNumber,
+                templateCode,
+                paramList,
+                context,
+                msgType);
+        if(res){
+            return BasicResult.ok();
+        }
+        return BasicResult.error(BasicResultCode.ERROR.getCode(),"aliyun msg send error");
     }
 
 

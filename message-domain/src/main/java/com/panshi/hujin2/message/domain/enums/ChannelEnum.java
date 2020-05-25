@@ -20,6 +20,7 @@ public enum ChannelEnum {
     NIU_XIN(9,"NIU_XIN"),
     KMI_LONGNUMBER(10,"KMI-营销短信"),
     KMI_VOICE_VERIFY(11,"KMI-语音短信"),
+    ALIYUN(12,"aliyun"),
     ;
 
     private int code;
