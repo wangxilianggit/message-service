@@ -47,4 +47,9 @@ public class SendMsgBO {
      */
     private Integer msgType;
 
+    /**
+     *  验证码, 目前只有语音短信 需要使用该参数
+     */
+    private String verifyCode;
+
 }

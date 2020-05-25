@@ -9,6 +9,7 @@ import com.panshi.hujin2.message.common.utils.MD5Util;
 import com.panshi.hujin2.message.dao.mapper.message.KmiTokenLogMapper;
 import com.panshi.hujin2.message.dao.model.KmiTokenLogDO;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
+import com.panshi.hujin2.message.domain.enums.ChuangLanIntResponseEnum;
 import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
 import com.panshi.hujin2.message.service.message.impl.SendMsg;
@@ -134,6 +135,23 @@ public class KMIServiceImpl extends SendMsg {
             inputBO.setReturnValue(sendRes);
             inputBO.setMsgType(msgType);
             int count = msgDBService.addMsgSendRecord(inputBO,context);
+
+            if("0".equals(code)){
+                //成功请求创蓝短信接口
+                Integer sendNum = 1;
+                Object sendN = MsgUtils.expiryMap.get(phoneNumber);
+                if(sendN != null){
+                    sendNum = (Integer)sendN + 1;
+                }
+                Long endTime = MsgUtils.getEndTime();
+                //转成毫秒
+                endTime = endTime * 1000;
+
+                //日志打印，当天手机号码发送次数
+                MsgUtils.printMsgSendLogs(phoneNumber,sendNum, endTime);
+
+                MsgUtils.expiryMap.put(phoneNumber, sendNum, endTime);
+            }
             return true;
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
