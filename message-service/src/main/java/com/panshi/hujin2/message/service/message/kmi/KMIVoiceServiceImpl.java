@@ -50,6 +50,16 @@ public class KMIVoiceServiceImpl extends SendMsg {
             sendJsonObj.put("verifyCode", msgText);//短信验证码,6位纯数字
             String params = sendJsonObj.toString();
 
+
+//            System.out.println("params = " + params);
+//            kmi目前兼容了，会返回data
+//            08
+//            628
+//            +628
+//            00628
+
+
+
             //以下是正常6位验证码:111
             //手机号0              返回:{"result":{"code":0,"desc":"SUCCESS"}}
             //以下是正常6位验证码:111111
