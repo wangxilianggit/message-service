@@ -103,4 +103,9 @@ public class MessageSendRecordQO extends BaseQO {
     private Date createTimeEnd;
 
     private Integer msgType;
+
+    /**
+     *  手机号码list
+     */
+    private List<String> phoneNumberList;
 }

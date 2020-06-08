@@ -55,4 +55,6 @@ public interface MessageSendRecordMapper {
     List<MessageSendRecordDO> queryAllFieldByParam(MessageSendRecordQO qo);
 
     Integer countPhoneNumberByParam(MessageSendRecordQO qo);
+
+    Integer countByPhoneNumberList(MessageSendRecordQO qo);
 }

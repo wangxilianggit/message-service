@@ -223,5 +223,5 @@ public interface IMessageFacade {
 
 
 
-
+    public BasicResult<Integer> countByPhoneNumberList(MessageSendRecordQO qo);
 }

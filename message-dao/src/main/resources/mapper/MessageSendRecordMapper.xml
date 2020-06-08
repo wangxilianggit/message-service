@@ -730,4 +730,28 @@
     </where>
   </select>
 
+
+  <select id="countByPhoneNumberList" parameterType="com.panshi.hujin2.message.domain.qo.MessageSendRecordQO" resultType="java.lang.Integer">
+    SELECT
+        *
+    FROM
+    message_send_record m2
+    WHERE
+    m2.id IN ( SELECT max( id ) FROM `message_send_record` m1
+    <where>
+      <if test="phoneNumberList != null and phoneNumberList.size() > 0">
+        AND m1.phone_number IN
+        <foreach collection="phoneNumberList" index="" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+    GROUP BY phone_number )
+    and m2.msg_type = #{msgType}
+    and m2.channel_id IN
+    <foreach collection="channelIds" index="" item="channelIdItem" open="(" separator="," close=")">
+      #{channelIdItem}
+    </foreach>
+  </select>
+
 </mapper>

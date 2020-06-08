@@ -1007,6 +1007,14 @@ public class MessageFacadeImpl implements IMessageFacade {
         Integer count = messageSendRecordMapper.countPhoneNumberByParam(qo);
         return BasicResult.ok(count);
     }
+    @Override
+    public BasicResult<Integer> countByPhoneNumberList(MessageSendRecordQO qo) {
+        if(qo == null){
+            qo = new MessageSendRecordQO();
+        }
+        Integer count = messageSendRecordMapper.countByPhoneNumberList(qo);
+        return BasicResult.ok(count);
+    }
 
 
     @Autowired
