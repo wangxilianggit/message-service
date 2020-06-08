@@ -733,7 +733,7 @@
 
   <select id="countByPhoneNumberList" parameterType="com.panshi.hujin2.message.domain.qo.MessageSendRecordQO" resultType="java.lang.Integer">
     SELECT
-        *
+        count(*)
     FROM
     message_send_record m2
     WHERE
