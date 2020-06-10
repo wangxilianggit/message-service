@@ -1,5 +1,6 @@
 package com.panshi.hujin2.message.facade.bo;
 
+import com.panshi.hujin2.message.domain.enums.MsgTypeEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -84,4 +85,10 @@ public class MessageSendRecordBO {
      *  修改时间
      */
     private Date modifyTime;
+
+    /**
+     * 短信类型
+     * @see MsgTypeEnum
+     */
+    private Integer msgType;
 }

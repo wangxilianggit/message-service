@@ -224,4 +224,6 @@ public interface IMessageFacade {
 
 
     public BasicResult<Integer> countByPhoneNumberList(MessageSendRecordQO qo);
+
+    public BasicResult<MessageSendRecordBO> queryByPhoneNumber(String PhoneNumber);
 }

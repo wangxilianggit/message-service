@@ -1016,6 +1016,31 @@ public class MessageFacadeImpl implements IMessageFacade {
         return BasicResult.ok(count);
     }
 
+    @Override
+    public BasicResult<MessageSendRecordBO> queryByPhoneNumber(String PhoneNumber) {
+
+        MessageSendRecordDO  voiceSms= messageSendRecordMapper.selectLastByPhoneNumber(PhoneNumber,1);
+
+        MessageSendRecordDO normalSms = messageSendRecordMapper.selectLastByPhoneNumber("62"+PhoneNumber,1);
+
+        if(normalSms==null&&voiceSms==null){
+            return BasicResult.ok(null);
+        }
+
+        if(normalSms==null&&voiceSms!=null){
+            return BasicResult.ok(DozerUtils.convert(voiceSms,MessageSendRecordBO.class));
+        }
+
+        if(normalSms!=null&&voiceSms==null){
+            return BasicResult.ok(DozerUtils.convert(normalSms,MessageSendRecordBO.class));
+        }
+        if(normalSms.getId()>voiceSms.getId()){
+            return BasicResult.ok(DozerUtils.convert(normalSms,MessageSendRecordBO.class));
+        }else{
+            return BasicResult.ok(DozerUtils.convert(voiceSms,MessageSendRecordBO.class));
+        }
+    }
+
 
     @Autowired
     private AliyunServiceImpl aliyunService;

@@ -17,6 +17,7 @@
     <result column="return_value" jdbcType="VARCHAR" property="returnValue" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -754,4 +755,9 @@
     </foreach>
   </select>
 
+  <select id="selectLastByPhoneNumber" resultMap="BaseResultMap">
+    select * from message_send_record
+    where phone_number = #{phoneNumber} and msg_type = #{msgType} and channel_id IN (7,9,10,11)
+    order by id desc limit 1
+  </select>
 </mapper>

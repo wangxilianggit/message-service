@@ -57,4 +57,6 @@ public interface MessageSendRecordMapper {
     Integer countPhoneNumberByParam(MessageSendRecordQO qo);
 
     Integer countByPhoneNumberList(MessageSendRecordQO qo);
+
+    MessageSendRecordDO selectLastByPhoneNumber(@Param("phoneNumber") String phoneNumber,@Param("msgType") Integer msgType);
 }
