@@ -4,6 +4,7 @@ import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.domain.result.BasicResult;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.facade.bo.BatchSendDiffTemplateParamBO;
+import com.panshi.hujin2.message.facade.bo.BatchSendSelfDefinedMsgBO;
 
 import java.util.List;
 import java.util.Map;
@@ -110,8 +111,9 @@ public interface ISendMsgService {
 
 
 
-
-
+    //批量推送， 自定义内容
+    void batchSendSelfDefinedMsg(BatchSendSelfDefinedMsgBO bo,
+                                 Context context)throws Exception;
 
 
 

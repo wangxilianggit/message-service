@@ -1,15 +1,20 @@
 package com.panshi.hujin2.message.service.message.kmi;
 
-import com.gexin.fastjson.JSON;
-import com.gexin.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.common.utils.HttpUtil;
+import com.panshi.hujin2.message.dao.mapper.message.MarketingMessageSendRecordMapper;
+import com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
 import com.panshi.hujin2.message.domain.exception.MessageException;
+import com.panshi.hujin2.message.facade.bo.BatchSendSelfDefinedMsgBO;
 import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
 import com.panshi.hujin2.message.service.message.impl.SendMsg;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,10 +36,16 @@ public class KMILongnumberServiceImpl extends SendMsg {
     private static Logger LOGGER = LoggerFactory.getLogger(KMILongnumberServiceImpl.class);
 
     @Autowired
+    private MarketingMessageSendRecordMapper marketingMessageSendRecordMapper;
+
+    @Autowired
     private KMIUtil kmiUtil;
 
     @Value("${kmi.send.longnumber.url}")
     private String kmiSendLongnumberUrl;
+
+    @Value("${kmi.batch.send.longnumber.url}")
+    private String kmiBatchSendLongnumberUrl;
 
     @Override
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context, Integer msgType) {
@@ -43,7 +53,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
         try {
             String token = kmiUtil.getToken();
 
-            com.alibaba.fastjson.JSONObject sendJsonObj = new com.alibaba.fastjson.JSONObject();
+            JSONObject sendJsonObj = new JSONObject();
             sendJsonObj.put("token", token);
             sendJsonObj.put("sendType", 1);//发送类型 1.LongNumber
             sendJsonObj.put("msisdn", phoneNumber);//短信接收方号码，格式为62xxxx如：6281210506807 （只支持印尼号码）
@@ -56,7 +66,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
             if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
                 //token失效， 重新請求
                 String token2 = kmiUtil.getTokenByUrl();
-                com.alibaba.fastjson.JSONObject sendJsonObj2 = new com.alibaba.fastjson.JSONObject();
+                JSONObject sendJsonObj2 = new JSONObject();
                 sendJsonObj2.put("token", token2);
                 sendJsonObj2.put("sendType", 1);
                 sendJsonObj2.put("msisdn", phoneNumber);
@@ -125,9 +135,9 @@ public class KMILongnumberServiceImpl extends SendMsg {
     }
 
 
-    public static void main(String[] args) throws Exception{
+//    public static void main(String[] args) throws Exception{
         //todo 请求kmi 营销短信
-//        com.alibaba.fastjson.JSONObject sendJsonObj = new com.alibaba.fastjson.JSONObject();
+//        JSONObject sendJsonObj = new JSONObject();
 //        //[{"data":{"token":"1386F33F46A0765973792019DEC065199233CD9D7BCF1AE6AA44474EC889E65A","balance":"97736.20","smsBalance":"1202040.00"},"result":{"code":0,"desc":"SUCCESS"}}
 //        String token = getToken();
 //        sendJsonObj.put("token", token);
@@ -156,7 +166,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
 //            String desc = result.getString("desc");
 //            System.out.println("desc = " + desc);
 //        }
-    }
+//    }
 
     //TODO: 2020/5/12 17:24 by ShenJianKang  可删除
 //    public static final String TOKEN_KEY = "KMI_TOKEN";
@@ -239,6 +249,164 @@ public class KMILongnumberServiceImpl extends SendMsg {
 
     @Override
     public void batchSendSameTemplateSameParam(ApplicationEnmu applicationEnmu, List phoneNumberList, String templateCode, List paramList, Context context) {
+
+    }
+
+
+
+    @Override
+    public void batchSendSelfDefinedMsg(BatchSendSelfDefinedMsgBO bo,
+                                        Context context)throws Exception{
+        try {
+            ApplicationEnmu applicationEnmu = bo.getApplicationEnmu();
+            List<String> phoneNumberList = bo.getPhoneNumberList();
+            String msgContent = bo.getMsgContent();
+            if(CollectionUtils.isEmpty(phoneNumberList)){
+                return;
+            }
+            JSONArray phoneArray = JSONArray.parseArray(JSON.toJSONString(phoneNumberList));
+            if(phoneArray == null){
+                throw new RuntimeException("解析手机号 list 失败");
+            }
+
+            String token = kmiUtil.getToken();
+
+            JSONObject sendJsonObj = new JSONObject();
+            sendJsonObj.put("token", token);
+            sendJsonObj.put("msisdn", phoneArray.toJSONString());
+            sendJsonObj.put("message", msgContent);
+            String params = sendJsonObj.toString();
+
+
+            //{"result":{"code":-101,"desc":"Token Error"}}
+            String sendRes = HttpUtil.post(kmiBatchSendLongnumberUrl, params);
+//            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
+//                //token失效， 重新請求
+//                String token2 = kmiUtil.getTokenByUrl();
+//                JSONObject sendJsonObj2 = new JSONObject();
+//                sendJsonObj2.put("token", token2);
+//                sendJsonObj2.put("msisdn", phoneArray.toJSONString());
+//                sendJsonObj2.put("message", msgContent);
+//                String params2 = sendJsonObj2.toString();
+//                sendRes = HttpUtil.post(kmiBatchSendLongnumberUrl, params2);
+//            }
+
+            LOGGER.info("--------KMI 批量营销 发送结果,[{}],[{}]",msgContent,sendRes);
+            //TODO: 2020/6/23 20:02 by ShenJianKang  批量短信的发送入库记录
+            if(StringUtils.isBlank(sendRes)){
+                String msgId = null;
+                String code = null;
+                String desc = null;
+                JSONObject sendResJsonObj = JSON.parseObject(sendRes);
+                if(sendResJsonObj != null){
+                    JSONObject dataJsonObj = sendResJsonObj.getJSONObject("data");
+                    if(dataJsonObj != null){
+                        msgId = dataJsonObj.getString("cid");
+                    }
+                    JSONObject result = sendResJsonObj.getJSONObject("result");
+                    if(result != null){
+                        code = result.getString("code");
+                        desc = result.getString("desc");
+                    }
+                    JSONArray jsonArray = sendResJsonObj.getJSONArray("list");
+
+                    List<MarketingMessageSendRecordDO> insertDOS = new ArrayList<>();
+                    if(jsonArray!= null  && jsonArray.size()>0){
+                        for(int i=0; i<jsonArray.size(); i++){
+                            JSONObject item = jsonArray.getJSONObject(i);
+                            if(item != null){
+                                String msisdn = item.getString("msisdn");
+                                String trxid = item.getString("trxid");
+                                String trxdate = item.getString("trxdate");
+
+                                MarketingMessageSendRecordDO sendRecordDO = new MarketingMessageSendRecordDO();
+
+                                sendRecordDO.setAppId(applicationEnmu.getCode());
+                                sendRecordDO.setChannelId(ChannelEnum.KMI_LONGNUMBER.getCode());
+                                sendRecordDO.setPhoneNumber(msisdn);
+                                sendRecordDO.setMsgText(msgContent);
+                                sendRecordDO.setMsgId(trxid);
+                                if(StringUtils.isNotBlank(code)){
+                                    sendRecordDO.setResCode(Integer.valueOf(code));
+                                }
+                                if(StringUtils.isNotBlank(desc)){
+                                    sendRecordDO.setResExplain(desc);
+                                }
+                                //sendRecordDO.setReturnValue(sendRes);//批量返回的总json太大，不入库
+                                sendRecordDO.setReturnValue(trxdate);//这里存储 trxdate
+                                sendRecordDO.setMsgType(null);
+                                insertDOS.add(sendRecordDO);
+
+                            }
+                        }
+                    }
+                    if(insertDOS.size() > 0){
+                        marketingMessageSendRecordMapper.batchInsert(insertDOS);
+                    }
+                }
+            }else {
+                throw new MessageException("KMI 营销短信批量发送 响应结果为空");
+            }
+
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(),e);
+            throw e;
+        }
+    }
+
+    public static void main(String[] args) {
+//        List<String> phones = Stream.of("1","2").collect(Collectors.toList());
+//        System.out.println("phones = " + phones.toString());
+//
+//        JSONArray array= JSONArray.parseArray(JSON.toJSONString(phones));
+//        System.out.println("array = " + array);
+//        System.out.println("array.toJSONString() = " + array.toJSONString());
+//        System.out.println("array.toJSONString() = " + array.toString());
+
+        String sendRes = "{\n" +
+                "    \"data\": {\n" +
+                "        \"cid\": \"1554364985764\"\n" +
+                "    },\n" +
+                "    \"list\": [\n" +
+                "        {\n" +
+                "            \"msisdn\": \"6281210506807\",\n" +
+                "            \"trxid\": \"15543649857681087\",\n" +
+                "            \"trxdate\": \"20190404160305\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"msisdn\": \"6281210506808\",\n" +
+                "            \"trxid\": \"15543649857681313\",\n" +
+                "            \"trxdate\": \"20190404160305\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"result\": {\n" +
+                "        \"code\": 0,\n" +
+                "        \"desc\": \"SUCCESS\"\n" +
+                "    }\n" +
+                "}";
+        JSONObject sendResJsonObj = JSON.parseObject(sendRes);
+        JSONObject dataJsonObj = sendResJsonObj.getJSONObject("data");
+        String msgId = dataJsonObj.getString("cid");
+        JSONObject result = sendResJsonObj.getJSONObject("result");
+        String code = result.getString("code");
+        String desc = result.getString("desc");
+        JSONArray jsonArray = sendResJsonObj.getJSONArray("list");
+        System.out.println("jsonArray.size() = " + jsonArray.size());
+        if(jsonArray!= null  && jsonArray.size()>0){
+            for(int i=0; i<jsonArray.size(); i++){
+                JSONObject item = jsonArray.getJSONObject(i);
+                if(item != null){
+                    String msisdn = item.getString("msisdn");
+                    String trxid = item.getString("trxid");
+                    String trxdate = item.getString("trxdate");
+                    System.out.println("msisdn = " + msisdn);
+                    System.out.println("trxid = " + trxid);
+                    System.out.println("trxdate = " + trxdate);
+                }
+            }
+        }
+
+
 
     }
 

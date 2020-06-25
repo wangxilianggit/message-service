@@ -5,6 +5,7 @@ import com.panshi.hujin2.base.redis.RedisUtils;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.domain.enums.ApplicationDefaultLanguageEnum;
 import com.panshi.hujin2.message.facade.bo.BatchSendDiffTemplateParamBO;
+import com.panshi.hujin2.message.facade.bo.BatchSendSelfDefinedMsgBO;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
 import com.panshi.hujin2.message.service.message.IMsgDBService;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
@@ -162,6 +163,11 @@ public abstract class SendMsg implements ISendMsgService {
 
     }
 
+    @Override
+    public void batchSendSelfDefinedMsg(BatchSendSelfDefinedMsgBO bo,
+                                        Context context)throws Exception{
+        //TODO: 2020/6/23 19:29 by ShenJianKang  目前只有kmi 营销短信用到， 重写
+    }
 
 
 

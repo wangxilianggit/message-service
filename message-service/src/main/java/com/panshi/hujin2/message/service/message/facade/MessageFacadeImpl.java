@@ -1,6 +1,5 @@
 package com.panshi.hujin2.message.service.message.facade;
 
-import com.google.common.collect.Maps;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.factory.MessageFactory;
 import com.panshi.hujin2.base.common.util.DozerUtils;
@@ -24,13 +23,11 @@ import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.*;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
 import com.panshi.hujin2.message.service.message.aliyun.AliyunServiceImpl;
-import com.panshi.hujin2.message.service.message.impl.PaasooServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMILongnumberServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMIServiceImpl;
+import com.panshi.hujin2.message.service.message.nx.NXMarketingServiceImpl;
 import com.panshi.hujin2.message.service.message.nx.NXServiceImpl;
-import com.panshi.hujin2.message.service.message.tianyihong.TainYiHongServiceImpl;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
-import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -39,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -104,6 +100,8 @@ public class MessageFacadeImpl implements IMessageFacade {
     private MessageSendRecordMapper messageSendRecordMapper;
     @Autowired
     private SmsChannelConfigMapper smsChannelConfigMapper;
+    @Autowired
+    private NXMarketingServiceImpl nxMarketingService;
 
 
 
@@ -1038,6 +1036,29 @@ public class MessageFacadeImpl implements IMessageFacade {
             return BasicResult.ok(DozerUtils.convert(normalSms,MessageSendRecordBO.class));
         }else{
             return BasicResult.ok(DozerUtils.convert(voiceSms,MessageSendRecordBO.class));
+        }
+    }
+
+    @Override
+    public BasicResult<Void> batchSendSelfDefinedMsgByKmi(BatchSendSelfDefinedMsgBO bo, Context context) {
+        try {
+            KMILongnumberService.batchSendSelfDefinedMsg(bo, context);
+            return BasicResult.ok();
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), BasicResultCode.SYS_EXCEPTION.getMessage());
+        }
+    }
+
+    @Override
+    public BasicResult<Void> batchSendSelfDefinedMsgByNX(BatchSendSelfDefinedMsgBO bo,
+                                                         Context context) {
+        try {
+            nxMarketingService.batchSendSelfDefinedMsg(bo, context);
+            return BasicResult.ok();
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), BasicResultCode.SYS_EXCEPTION.getMessage());
         }
     }
 

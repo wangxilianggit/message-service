@@ -17,10 +17,11 @@ public enum ChannelEnum {
     YIMEIRUANTONG(6,"yimeiruantong"),
     KMI(7,"KMI-opt"),
     INA_HORIZON_SMS(8,"INA_HORIZON_SMS"),
-    NIU_XIN(9,"NIU_XIN"),
+    NIU_XIN(9,"NIU_XIN_OTP"),
     KMI_LONGNUMBER(10,"KMI-营销短信"),
     KMI_VOICE_VERIFY(11,"KMI-语音短信"),
     ALIYUN(12,"aliyun"),
+    NIU_XIN_MARKETING(13,"NIU_XIN_MARKETING"),
     ;
 
     private int code;

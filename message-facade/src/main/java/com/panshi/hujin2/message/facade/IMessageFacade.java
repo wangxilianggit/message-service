@@ -226,4 +226,21 @@ public interface IMessageFacade {
     public BasicResult<Integer> countByPhoneNumberList(MessageSendRecordQO qo);
 
     public BasicResult<MessageSendRecordBO> queryByPhoneNumber(String PhoneNumber);
+
+
+    /**
+     *@Description:     批量发送自定义短信， kmi发送
+     *@Author: shenJianKang
+     *@date: 2020/6/23 21:00
+     */
+    BasicResult<Void> batchSendSelfDefinedMsgByKmi(BatchSendSelfDefinedMsgBO bo,
+                                 Context context);
+
+    /**
+     *@Description:     批量发送自定义短信， 牛信 发送
+     *@Author: shenJianKang
+     *@date: 2020/6/24 16:33
+     */
+    BasicResult<Void> batchSendSelfDefinedMsgByNX(BatchSendSelfDefinedMsgBO bo,
+                                                   Context context);
 }

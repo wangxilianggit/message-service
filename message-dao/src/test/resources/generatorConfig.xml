@@ -43,7 +43,7 @@
             <property name="enableSubPackages" value="true" /> <!-- 是否在当前路径下新加一层-->
         </javaClientGenerator>
         <!-- 配置表信息 -->
-        <table schema="" tableName="sms_channel_config" domainObjectName="SmsChannelConfig"
+        <table schema="" tableName="marketing_message_send_record" domainObjectName="MarketingMessageSendRecord"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
