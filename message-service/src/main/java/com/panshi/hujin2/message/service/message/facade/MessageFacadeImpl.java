@@ -15,16 +15,20 @@ import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallCallLogMapper;
 import com.panshi.hujin2.message.dao.mapper.message.UrgentRecallMsgLogMapper;
 import com.panshi.hujin2.message.dao.model.*;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
+import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.domain.qo.MessageSendRecordQO;
 import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallCallLogQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
 import com.panshi.hujin2.message.facade.IMessageFacade;
 import com.panshi.hujin2.message.facade.bo.*;
+import com.panshi.hujin2.message.facade.bo.kmi.KMITokenBalanceInfoBO;
+import com.panshi.hujin2.message.facade.bo.niuXin.NiuXinBalanceInfoBO;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
 import com.panshi.hujin2.message.service.message.aliyun.AliyunServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMILongnumberServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMIServiceImpl;
+import com.panshi.hujin2.message.service.message.kmi.KMIUtil;
 import com.panshi.hujin2.message.service.message.nx.NXMarketingServiceImpl;
 import com.panshi.hujin2.message.service.message.nx.NXServiceImpl;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
@@ -102,7 +106,8 @@ public class MessageFacadeImpl implements IMessageFacade {
     private SmsChannelConfigMapper smsChannelConfigMapper;
     @Autowired
     private NXMarketingServiceImpl nxMarketingService;
-
+    @Autowired
+    private KMIUtil kmiUtil;
 
 
     
@@ -1046,6 +1051,9 @@ public class MessageFacadeImpl implements IMessageFacade {
             return BasicResult.ok();
         }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
+            if(e instanceof MessageException){
+                return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), e.getMessage());
+            }
             return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), BasicResultCode.SYS_EXCEPTION.getMessage());
         }
     }
@@ -1058,6 +1066,31 @@ public class MessageFacadeImpl implements IMessageFacade {
             return BasicResult.ok();
         }catch (Exception e){
             LOGGER.error(e.getMessage(), e);
+            return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), BasicResultCode.SYS_EXCEPTION.getMessage());
+        }
+    }
+
+    @Override
+    public BasicResult<KMITokenBalanceInfoBO> getKMITokenAndBalanceIgnoreCache() {
+        try {
+            KMITokenBalanceInfoBO bo = kmiUtil.getKMITokenAndBalanceIgnoreCache();
+            return BasicResult.ok(bo);
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), BasicResultCode.SYS_EXCEPTION.getMessage());
+        }
+    }
+
+    @Override
+    public BasicResult<NiuXinBalanceInfoBO> getNiuxinBalance() {
+        try {
+            NiuXinBalanceInfoBO bo = nxMarketingService.getBalance();
+            return BasicResult.ok(bo);
+        }catch (Exception e){
+            LOGGER.error(e.getMessage(), e);
+            if(e instanceof MessageException){
+                return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(),  e.getMessage());
+            }
             return BasicResult.error(BasicResultCode.SYS_EXCEPTION.getCode(), BasicResultCode.SYS_EXCEPTION.getMessage());
         }
     }

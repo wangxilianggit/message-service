@@ -68,16 +68,16 @@ public class KMIVoiceServiceImpl extends SendMsg {
             //手机号62081210       返回:{"result":{"code":0,"desc":"SUCCESS"}}
             //手机号081210         返回:{"data":{"id":81,"voiceCode":"111111"},"result":{"code":0,"desc":"SUCCESS"}}
             String sendRes = HttpUtil.post(kmiSendVoiceVerifyUrl, params);
-            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
-                //token失效， 重新請求
-                String token2 = kmiUtil.getTokenByUrl();
-                JSONObject sendJsonObj2 = new JSONObject();
-                sendJsonObj2.put("token", token2);
-                sendJsonObj2.put("msisdn", phoneNumber);
-                sendJsonObj2.put("verifyCode", msgText);
-                String params2 = sendJsonObj2.toString();
-                sendRes = HttpUtil.post(kmiSendVoiceVerifyUrl, params2);
-            }
+//            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
+//                //token失效， 重新請求
+//                String token2 = kmiUtil.getTokenByUrl();
+//                JSONObject sendJsonObj2 = new JSONObject();
+//                sendJsonObj2.put("token", token2);
+//                sendJsonObj2.put("msisdn", phoneNumber);
+//                sendJsonObj2.put("verifyCode", msgText);
+//                String params2 = sendJsonObj2.toString();
+//                sendRes = HttpUtil.post(kmiSendVoiceVerifyUrl, params2);
+//            }
 
             LOGGER.info("--------KMI longnumber 发送结果:[{}],[{}],[{}]",phoneNumber,msgText,sendRes);
             MessageSendRecordInputBO inputBO = new MessageSendRecordInputBO();

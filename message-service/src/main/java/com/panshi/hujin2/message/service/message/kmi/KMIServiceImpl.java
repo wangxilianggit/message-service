@@ -88,17 +88,17 @@ public class KMIServiceImpl extends SendMsg {
 
             //{"result":{"code":-101,"desc":"Token Error"}}
             String sendRes = HttpUtil.post(kmiSendOtpMsgUrl, params);
-            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
-                //token失效， 重新請求
-                String token2 = kmiUtil.getTokenByUrl();
-                com.alibaba.fastjson.JSONObject sendJsonObj2 = new com.alibaba.fastjson.JSONObject();
-                sendJsonObj2.put("token", token2);
-                sendJsonObj2.put("from", "AFT");
-                sendJsonObj2.put("to", phoneNumber);
-                sendJsonObj2.put("message", msgText);
-                String params2 = sendJsonObj2.toString();
-                sendRes = HttpUtil.post(kmiSendOtpMsgUrl, params2);
-            }
+//            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
+//                //token失效， 重新請求
+//                String token2 = kmiUtil.getTokenByUrl();
+//                com.alibaba.fastjson.JSONObject sendJsonObj2 = new com.alibaba.fastjson.JSONObject();
+//                sendJsonObj2.put("token", token2);
+//                sendJsonObj2.put("from", "AFT");
+//                sendJsonObj2.put("to", phoneNumber);
+//                sendJsonObj2.put("message", msgText);
+//                String params2 = sendJsonObj2.toString();
+//                sendRes = HttpUtil.post(kmiSendOtpMsgUrl, params2);
+//            }
 
             LOGGER.info("--------KMI发送结果:[{}],[{}],[{}]",phoneNumber,msgText,sendRes);
 

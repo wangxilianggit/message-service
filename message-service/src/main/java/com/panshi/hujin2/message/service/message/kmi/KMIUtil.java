@@ -7,6 +7,7 @@ import com.panshi.hujin2.message.common.utils.MD5Util;
 import com.panshi.hujin2.message.dao.mapper.message.KmiTokenLogMapper;
 import com.panshi.hujin2.message.dao.model.KmiTokenLogDO;
 import com.panshi.hujin2.message.domain.exception.MessageException;
+import com.panshi.hujin2.message.facade.bo.kmi.KMITokenBalanceInfoBO;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,8 +40,57 @@ public class KMIUtil {
     private KmiTokenLogMapper kmiTokenLogMapper;
 
 
+    private String requestKmiToken(){
+        // 拼接KmiTokenUrl
+        String pwdMD5 = MD5Util.MD5(pwd);
+        String KmiTokenUrlTemp = KmiTokenUrl+"account="+account+"&password="+pwdMD5;
+
+        LOGGER.info("map为空获取KMI 请求 [{}]",KmiTokenUrlTemp);
+        String result = HttpUtil.get(KmiTokenUrlTemp);
+        LOGGER.info("map为空获取KMI token [{}]",result);
+        saveReqTokenLog(KmiTokenUrlTemp+"_____"+result);
+        return result;
+    }
+
     /**
-     *@Description:     获取请求KMI需要的token
+     *@Description:     直接从API获取token、 账户余额；忽略缓存
+     *@Param:  * @param
+     *@Author: shenJianKang
+     *@date: 2020/6/29 16:25
+     */
+    public KMITokenBalanceInfoBO getKMITokenAndBalanceIgnoreCache(){
+        KMITokenBalanceInfoBO bo = new KMITokenBalanceInfoBO();
+        String result = requestKmiToken();
+        if(StringUtils.isNotBlank(result)){
+            //解析result
+            //{"data":{"token":"440E8E87F36D52E60631F892689D62E14A19623FE9147EC2FC1947E2D4AF5285","balance":"0.00"},"result":{"code":0,"desc":"SUCCESS"}}
+            JSONObject jsonObject = JSON.parseObject(result);
+            JSONObject res = jsonObject.getJSONObject("result");
+            if(res != null){
+                String code = res.getString("code");
+
+                if("0".equals(code)){
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    if(data != null){
+                        String token = data.getString("token");
+                        String balance = data.getString("balance");
+                        bo.setToken(token);
+                        if(StringUtils.isNotBlank(balance)){
+                            bo.setBalance(Double.valueOf(balance));
+                        }
+                    }
+                }
+                String desc = res.getString("desc");
+                bo.setCode(code);
+                bo.setDesc(desc);
+            }
+        }
+        return bo;
+    }
+
+
+    /**
+     *@Description:     获取请求KMI需要的token (缓存有，优先从缓存获取)
      *@Param:  * @param
      *@Author: shenJianKang
      *@date: 2019/7/4 10:10
@@ -131,7 +181,10 @@ public class KMIUtil {
 //        String pwd = MD5Util.MD5(kmiPwd);
 //        KmiTokenUrl = KmiTokenUrl + pwd;//全局變量不能重複 拼接
         LOGGER.info("map为空获取KMI 请求 [{}]",KmiTokenUrl);
-        String result = HttpUtil.get(KmiTokenUrl);
+
+        String pwdMD5 = MD5Util.MD5(pwd);
+        String KmiTokenUrlTemp = KmiTokenUrl+"account="+account+"&password="+pwdMD5;
+        String result = HttpUtil.get(KmiTokenUrlTemp);
         LOGGER.info("map为空获取KMI token [{}]",result);
         saveReqTokenLog(KmiTokenUrl+"___"+result);
 

@@ -6,13 +6,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.service.Context;
 import com.panshi.hujin2.message.common.utils.HttpUtil;
+import com.panshi.hujin2.message.dao.mapper.message.MarketingKmiBatchSendResponseMapper;
 import com.panshi.hujin2.message.dao.mapper.message.MarketingMessageSendRecordMapper;
+import com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO;
 import com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
 import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.bo.BatchSendSelfDefinedMsgBO;
 import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
 import com.panshi.hujin2.message.service.message.impl.SendMsg;
+import com.panshi.hujin2.message.service.message.submail.sdk.utils.StringUtil;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +27,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author shenJianKang
@@ -37,6 +42,8 @@ public class KMILongnumberServiceImpl extends SendMsg {
 
     @Autowired
     private MarketingMessageSendRecordMapper marketingMessageSendRecordMapper;
+    @Autowired
+    private MarketingKmiBatchSendResponseMapper marketingKmiBatchSendResponseMapper;
 
     @Autowired
     private KMIUtil kmiUtil;
@@ -63,17 +70,17 @@ public class KMILongnumberServiceImpl extends SendMsg {
 
             //{"result":{"code":-101,"desc":"Token Error"}}
             String sendRes = HttpUtil.post(kmiSendLongnumberUrl, params);
-            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
-                //token失效， 重新請求
-                String token2 = kmiUtil.getTokenByUrl();
-                JSONObject sendJsonObj2 = new JSONObject();
-                sendJsonObj2.put("token", token2);
-                sendJsonObj2.put("sendType", 1);
-                sendJsonObj2.put("msisdn", phoneNumber);
-                sendJsonObj2.put("message", msgText);
-                String params2 = sendJsonObj2.toString();
-                sendRes = HttpUtil.post(kmiSendLongnumberUrl, params2);
-            }
+//            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
+//                //token失效， 重新請求
+//                String token2 = kmiUtil.getTokenByUrl();
+//                JSONObject sendJsonObj2 = new JSONObject();
+//                sendJsonObj2.put("token", token2);
+//                sendJsonObj2.put("sendType", 1);
+//                sendJsonObj2.put("msisdn", phoneNumber);
+//                sendJsonObj2.put("message", msgText);
+//                String params2 = sendJsonObj2.toString();
+//                sendRes = HttpUtil.post(kmiSendLongnumberUrl, params2);
+//            }
 
             LOGGER.info("--------KMI longnumber 发送结果:[{}],[{}],[{}]",phoneNumber,msgText,sendRes);
             MessageSendRecordInputBO inputBO = new MessageSendRecordInputBO();
@@ -252,18 +259,46 @@ public class KMILongnumberServiceImpl extends SendMsg {
 
     }
 
+    public static void main(String[] args) {
+        List<String> phoneNumberList = Stream.of("6201","6202").collect(Collectors.toList());
+        System.out.println("phoneNumberList = " + phoneNumberList);
 
+        for(String phoneNumber:phoneNumberList){
+            if(StringUtils.isNotBlank(phoneNumber)){
+                if(phoneNumber.startsWith("620")){
+                    phoneNumber = phoneNumber.replace("620","62");
+                    System.out.println("phoneNumber = " + phoneNumber);
+                }
+            }
+        }
+        System.out.println("phoneNumberList = " + phoneNumberList);
+    }
 
     @Override
     public void batchSendSelfDefinedMsg(BatchSendSelfDefinedMsgBO bo,
                                         Context context)throws Exception{
         try {
             ApplicationEnmu applicationEnmu = bo.getApplicationEnmu();
-            List<String> phoneNumberList = bo.getPhoneNumberList();
+            List<String> phoneNumberListParam = bo.getPhoneNumberList();
             String msgContent = bo.getMsgContent();
-            if(CollectionUtils.isEmpty(phoneNumberList)){
+            if(CollectionUtils.isEmpty(phoneNumberListParam)){
                 return;
             }
+
+            List<String> phoneNumberList = new ArrayList<>();
+            //去掉62后面的0； 测试后格式62081808222759不能发送成功；返回：Check your phone number
+            // 格式6281808222759发送成功
+            for(String phoneNumber:phoneNumberListParam){
+                if(StringUtils.isNotBlank(phoneNumber)){
+                    if(phoneNumber.startsWith("620")){
+                        phoneNumber = phoneNumber.replace("620","62");
+                        phoneNumberList.add(phoneNumber);
+                    }else {
+                        phoneNumberList.add(phoneNumber);
+                    }
+                }
+            }
+
             JSONArray phoneArray = JSONArray.parseArray(JSON.toJSONString(phoneNumberList));
             if(phoneArray == null){
                 throw new RuntimeException("解析手机号 list 失败");
@@ -273,12 +308,14 @@ public class KMILongnumberServiceImpl extends SendMsg {
 
             JSONObject sendJsonObj = new JSONObject();
             sendJsonObj.put("token", token);
-            sendJsonObj.put("msisdn", phoneArray.toJSONString());
+            sendJsonObj.put("msisdn", phoneArray);
             sendJsonObj.put("message", msgContent);
             String params = sendJsonObj.toString();
 
 
             //{"result":{"code":-101,"desc":"Token Error"}}
+            //{"result":{"code":-99,"desc":"Params Error"}}
+            //{"data":{"cid":"1593424117810"},"list":[{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"},{"error":"Check your phone number"}],"result":{"code":0,"desc":"SUCCESS"}}
             String sendRes = HttpUtil.post(kmiBatchSendLongnumberUrl, params);
 //            if(StringUtils.isNotBlank(sendRes) && (sendRes.contains("-101") || sendRes.contains("Token Error"))){
 //                //token失效， 重新請求
@@ -292,8 +329,13 @@ public class KMILongnumberServiceImpl extends SendMsg {
 //            }
 
             LOGGER.info("--------KMI 批量营销 发送结果,[{}],[{}]",msgContent,sendRes);
+
+            MarketingKmiBatchSendResponseDO responseDO = new MarketingKmiBatchSendResponseDO();
+            responseDO.setMarketingSmsTaskRecordPrimaryKey(bo.getMarketingSmsTaskRecordPrimaryKey());
+            responseDO.setResponseInfo(sendRes);
+            marketingKmiBatchSendResponseMapper.insertSelective(responseDO);
             //TODO: 2020/6/23 20:02 by ShenJianKang  批量短信的发送入库记录
-            if(StringUtils.isBlank(sendRes)){
+            if(StringUtils.isNotBlank(sendRes)){
                 String msgId = null;
                 String code = null;
                 String desc = null;
@@ -308,40 +350,69 @@ public class KMILongnumberServiceImpl extends SendMsg {
                         code = result.getString("code");
                         desc = result.getString("desc");
                     }
-                    JSONArray jsonArray = sendResJsonObj.getJSONArray("list");
+                    if(StringUtils.isNotBlank(code)){
+                        if(!"0".equals(code)){
+                            //失败
+                            MarketingMessageSendRecordDO sendRecordDO = new MarketingMessageSendRecordDO();
 
-                    List<MarketingMessageSendRecordDO> insertDOS = new ArrayList<>();
-                    if(jsonArray!= null  && jsonArray.size()>0){
-                        for(int i=0; i<jsonArray.size(); i++){
-                            JSONObject item = jsonArray.getJSONObject(i);
-                            if(item != null){
-                                String msisdn = item.getString("msisdn");
-                                String trxid = item.getString("trxid");
-                                String trxdate = item.getString("trxdate");
+                            sendRecordDO.setAppId(applicationEnmu.getCode());
+                            sendRecordDO.setChannelId(ChannelEnum.KMI_LONGNUMBER.getCode());
+                            //sendRecordDO.setPhoneNumber(msisdn);
+                            sendRecordDO.setMsgText(msgContent);
+                            //sendRecordDO.setMsgId(trxid);
+                            if(StringUtils.isNotBlank(code)){
+                                sendRecordDO.setResCode(Integer.valueOf(code));
+                            }
+                            if(StringUtils.isNotBlank(desc)){
+                                sendRecordDO.setResExplain(desc);
+                            }
+                            sendRecordDO.setReturnValue(sendRes);
+                            //sendRecordDO.setReturnValue(trxdate);//这里存储 trxdate
+                            sendRecordDO.setMsgType(null);
+                            marketingMessageSendRecordMapper.insertSelective(sendRecordDO);
+                            throw new MessageException("KMI 营销短信批量发送 失败：["+sendRes+"]");
+                        }else {
+                            //成功
+                            JSONArray jsonArray = sendResJsonObj.getJSONArray("list");
 
-                                MarketingMessageSendRecordDO sendRecordDO = new MarketingMessageSendRecordDO();
+                            List<MarketingMessageSendRecordDO> insertDOS = new ArrayList<>();
+                            if(jsonArray!= null  && jsonArray.size()>0){
+                                for(int i=0; i<jsonArray.size(); i++){
+                                    JSONObject item = jsonArray.getJSONObject(i);
+                                    if(item != null){
+                                        String msisdn = item.getString("msisdn");
+                                        String trxid = item.getString("trxid");
+                                        String trxdate = item.getString("trxdate");
+                                        String error = item.getString("error");
 
-                                sendRecordDO.setAppId(applicationEnmu.getCode());
-                                sendRecordDO.setChannelId(ChannelEnum.KMI_LONGNUMBER.getCode());
-                                sendRecordDO.setPhoneNumber(msisdn);
-                                sendRecordDO.setMsgText(msgContent);
-                                sendRecordDO.setMsgId(trxid);
-                                if(StringUtils.isNotBlank(code)){
-                                    sendRecordDO.setResCode(Integer.valueOf(code));
+                                        MarketingMessageSendRecordDO sendRecordDO = new MarketingMessageSendRecordDO();
+
+                                        sendRecordDO.setAppId(applicationEnmu.getCode());
+                                        sendRecordDO.setChannelId(ChannelEnum.KMI_LONGNUMBER.getCode());
+                                        sendRecordDO.setPhoneNumber(msisdn);
+                                        sendRecordDO.setMsgText(msgContent);
+                                        sendRecordDO.setMsgId(trxid);
+                                        if(StringUtils.isNotBlank(code)){
+                                            sendRecordDO.setResCode(Integer.valueOf(code));
+                                        }
+                                        if(StringUtils.isNotBlank(desc)){
+                                            sendRecordDO.setResExplain(desc);
+                                        }
+                                        //sendRecordDO.setReturnValue(sendRes);//批量返回的总json太大，不入库
+                                        sendRecordDO.setReturnValue(trxdate);//这里存储 trxdate
+                                        if(StringUtils.isNotBlank(error)){
+                                            sendRecordDO.setReturnValue(error);
+                                        }
+                                        sendRecordDO.setMsgType(null);
+                                        insertDOS.add(sendRecordDO);
+
+                                    }
                                 }
-                                if(StringUtils.isNotBlank(desc)){
-                                    sendRecordDO.setResExplain(desc);
-                                }
-                                //sendRecordDO.setReturnValue(sendRes);//批量返回的总json太大，不入库
-                                sendRecordDO.setReturnValue(trxdate);//这里存储 trxdate
-                                sendRecordDO.setMsgType(null);
-                                insertDOS.add(sendRecordDO);
-
+                            }
+                            if(insertDOS.size() > 0){
+                                marketingMessageSendRecordMapper.batchInsert(insertDOS);
                             }
                         }
-                    }
-                    if(insertDOS.size() > 0){
-                        marketingMessageSendRecordMapper.batchInsert(insertDOS);
                     }
                 }
             }else {
@@ -354,61 +425,61 @@ public class KMILongnumberServiceImpl extends SendMsg {
         }
     }
 
-    public static void main(String[] args) {
-//        List<String> phones = Stream.of("1","2").collect(Collectors.toList());
-//        System.out.println("phones = " + phones.toString());
+//    public static void main(String[] args) {
+////        List<String> phones = Stream.of("1","2").collect(Collectors.toList());
+////        System.out.println("phones = " + phones.toString());
+////
+////        JSONArray array= JSONArray.parseArray(JSON.toJSONString(phones));
+////        System.out.println("array = " + array);
+////        System.out.println("array.toJSONString() = " + array.toJSONString());
+////        System.out.println("array.toJSONString() = " + array.toString());
 //
-//        JSONArray array= JSONArray.parseArray(JSON.toJSONString(phones));
-//        System.out.println("array = " + array);
-//        System.out.println("array.toJSONString() = " + array.toJSONString());
-//        System.out.println("array.toJSONString() = " + array.toString());
-
-        String sendRes = "{\n" +
-                "    \"data\": {\n" +
-                "        \"cid\": \"1554364985764\"\n" +
-                "    },\n" +
-                "    \"list\": [\n" +
-                "        {\n" +
-                "            \"msisdn\": \"6281210506807\",\n" +
-                "            \"trxid\": \"15543649857681087\",\n" +
-                "            \"trxdate\": \"20190404160305\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"msisdn\": \"6281210506808\",\n" +
-                "            \"trxid\": \"15543649857681313\",\n" +
-                "            \"trxdate\": \"20190404160305\"\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"result\": {\n" +
-                "        \"code\": 0,\n" +
-                "        \"desc\": \"SUCCESS\"\n" +
-                "    }\n" +
-                "}";
-        JSONObject sendResJsonObj = JSON.parseObject(sendRes);
-        JSONObject dataJsonObj = sendResJsonObj.getJSONObject("data");
-        String msgId = dataJsonObj.getString("cid");
-        JSONObject result = sendResJsonObj.getJSONObject("result");
-        String code = result.getString("code");
-        String desc = result.getString("desc");
-        JSONArray jsonArray = sendResJsonObj.getJSONArray("list");
-        System.out.println("jsonArray.size() = " + jsonArray.size());
-        if(jsonArray!= null  && jsonArray.size()>0){
-            for(int i=0; i<jsonArray.size(); i++){
-                JSONObject item = jsonArray.getJSONObject(i);
-                if(item != null){
-                    String msisdn = item.getString("msisdn");
-                    String trxid = item.getString("trxid");
-                    String trxdate = item.getString("trxdate");
-                    System.out.println("msisdn = " + msisdn);
-                    System.out.println("trxid = " + trxid);
-                    System.out.println("trxdate = " + trxdate);
-                }
-            }
-        }
-
-
-
-    }
+//        String sendRes = "{\n" +
+//                "    \"data\": {\n" +
+//                "        \"cid\": \"1554364985764\"\n" +
+//                "    },\n" +
+//                "    \"list\": [\n" +
+//                "        {\n" +
+//                "            \"msisdn\": \"6281210506807\",\n" +
+//                "            \"trxid\": \"15543649857681087\",\n" +
+//                "            \"trxdate\": \"20190404160305\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"msisdn\": \"6281210506808\",\n" +
+//                "            \"trxid\": \"15543649857681313\",\n" +
+//                "            \"trxdate\": \"20190404160305\"\n" +
+//                "        }\n" +
+//                "    ],\n" +
+//                "    \"result\": {\n" +
+//                "        \"code\": 0,\n" +
+//                "        \"desc\": \"SUCCESS\"\n" +
+//                "    }\n" +
+//                "}";
+//        JSONObject sendResJsonObj = JSON.parseObject(sendRes);
+//        JSONObject dataJsonObj = sendResJsonObj.getJSONObject("data");
+//        String msgId = dataJsonObj.getString("cid");
+//        JSONObject result = sendResJsonObj.getJSONObject("result");
+//        String code = result.getString("code");
+//        String desc = result.getString("desc");
+//        JSONArray jsonArray = sendResJsonObj.getJSONArray("list");
+//        System.out.println("jsonArray.size() = " + jsonArray.size());
+//        if(jsonArray!= null  && jsonArray.size()>0){
+//            for(int i=0; i<jsonArray.size(); i++){
+//                JSONObject item = jsonArray.getJSONObject(i);
+//                if(item != null){
+//                    String msisdn = item.getString("msisdn");
+//                    String trxid = item.getString("trxid");
+//                    String trxdate = item.getString("trxdate");
+//                    System.out.println("msisdn = " + msisdn);
+//                    System.out.println("trxid = " + trxid);
+//                    System.out.println("trxdate = " + trxdate);
+//                }
+//            }
+//        }
+//
+//
+//
+//    }
 
     @Override
     public String key() {

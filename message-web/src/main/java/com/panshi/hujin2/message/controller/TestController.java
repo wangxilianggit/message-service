@@ -16,6 +16,7 @@ import com.panshi.hujin2.message.service.message.IMsgDBService;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
 import com.panshi.hujin2.message.service.message.infobip.entity.InfobipParam2;
 import com.panshi.hujin2.message.service.message.infobip.impl.InfobipServiceImpl;
+import com.panshi.hujin2.message.service.message.nx.NXMarketingServiceImpl;
 import com.panshi.hujin2.message.service.message.sms.bo.SMSSendBO;
 import com.panshi.hujin2.message.service.message.submail.sdk.utils.StringUtil;
 import com.panshi.hujin2.message.service.message.utils.HttpUtils;
@@ -83,7 +84,8 @@ public class TestController {
     @Autowired
     @Qualifier("KMIService")
     private ISendMsgService KMIService;
-
+    @Autowired
+    private NXMarketingServiceImpl nxMarketingService;
 
 
 
@@ -140,12 +142,17 @@ public class TestController {
 //        long x = Long.parseLong("f1", 16);
 //        long y = Long.parseLong("f2", 16);
 //        System.out.println(Long.toHexString(x+y));
-
-
     }
+
+    //測試 牛信余额
+    @RequestMapping("/niuxinBalance")
+    public void niuxinBalance(){
+        nxMarketingService.getBalance();
+    }
+
+
     
     //測試KMI
-
     @RequestMapping("/kmitest")
    public void testKmi(){
         KMIService.sendInternationalMsg(ApplicationEnmu.VI_CASH_DOG,

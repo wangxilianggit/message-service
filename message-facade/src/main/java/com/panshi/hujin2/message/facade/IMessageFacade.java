@@ -8,6 +8,8 @@ import com.panshi.hujin2.message.domain.qo.MsgSendStatisticsQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallCallLogQO;
 import com.panshi.hujin2.message.domain.qo.UrgentRecallMsgLogQO;
 import com.panshi.hujin2.message.facade.bo.*;
+import com.panshi.hujin2.message.facade.bo.kmi.KMITokenBalanceInfoBO;
+import com.panshi.hujin2.message.facade.bo.niuXin.NiuXinBalanceInfoBO;
 
 import java.util.List;
 import java.util.Map;
@@ -243,4 +245,23 @@ public interface IMessageFacade {
      */
     BasicResult<Void> batchSendSelfDefinedMsgByNX(BatchSendSelfDefinedMsgBO bo,
                                                    Context context);
+
+    /**
+     *@Description:     直接从API获取token、 账户余额；忽略缓存
+     *@Param:  * @param
+     *@Author: shenJianKang
+     *@date: 2020/6/29 16:43
+     */
+    BasicResult<KMITokenBalanceInfoBO> getKMITokenAndBalanceIgnoreCache();
+
+
+    /**
+     *@Description:     获取牛信 余额
+     *@Param:  * @param
+     *@Author: shenJianKang
+     *@date: 2020/6/30 9:56
+     */
+    BasicResult<NiuXinBalanceInfoBO> getNiuxinBalance();
+
+
 }

@@ -11,6 +11,7 @@ import com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
 import com.panshi.hujin2.message.facade.bo.BatchSendSelfDefinedMsgBO;
 import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
+import com.panshi.hujin2.message.facade.bo.niuXin.NiuXinBalanceInfoBO;
 import com.panshi.hujin2.message.service.message.impl.SendMsg;
 import com.panshi.hujin2.message.service.message.utils.HttpUtils;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
@@ -55,10 +56,37 @@ public class NXMarketingServiceImpl extends SendMsg {
     @Value("${sms.niuxin.marketing.secretkey}")
     private String secretkey;
 
+    @Value("${sms.niuxin.getbalance.url}")
+    private String balanceUrl;
+
 
     @Autowired
     private MarketingMessageSendRecordMapper marketingMessageSendRecordMapper;
 
+
+    public NiuXinBalanceInfoBO getBalance(){
+        NiuXinBalanceInfoBO bo = new NiuXinBalanceInfoBO();
+        Map<String, String> map = new HashMap<>();
+        map.put("appkey", appkey);//必选             是	string	短信应用appkey
+        map.put("secretkey", secretkey);//必选       是	string	短信应用secretkey
+        //{"code":"0","balance":"4.72","credit_balance":"0.0"}
+        String sendRes = HttpUtils.postForm(balanceUrl, map,"UTF-8");
+        LOGGER.info("===> 牛信账户余额："  + sendRes);
+        if(StringUtils.isNotBlank(sendRes)){
+            JSONObject jsonObj = JSON.parseObject(sendRes);
+            bo = JSONObject.toJavaObject(jsonObj, NiuXinBalanceInfoBO.class);
+        }
+        return bo;
+    }
+
+    public static void main(String[] args) {
+        String sendRes = "{\"code\":\"0\",\"balance\":\"4.72\",\"credit_balance\":\"0.01\"}";
+        if(StringUtils.isNotBlank(sendRes)){
+            JSONObject jsonObj = JSON.parseObject(sendRes);
+            NiuXinBalanceInfoBO bo = JSONObject.toJavaObject(jsonObj, NiuXinBalanceInfoBO.class);
+            System.out.println("bo = " + bo);
+        }
+    }
 
     @Override
     public boolean sendInternationalMsg(ApplicationEnmu applicationEnmu, String phoneNumber, String msgText, Context context,Integer msgType) {

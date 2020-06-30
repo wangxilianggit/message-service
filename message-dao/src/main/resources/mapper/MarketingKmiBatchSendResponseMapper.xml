@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.message.MarketingKmiBatchSendResponseMapper">
+  <resultMap id="BaseResultMap" type="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="marketing_sms_task_record_primary_key" jdbcType="INTEGER" property="marketingSmsTaskRecordPrimaryKey" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    <result column="response_info" jdbcType="LONGVARCHAR" property="responseInfo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, marketing_sms_task_record_primary_key, create_time
+  </sql>
+  <sql id="Blob_Column_List">
+    response_info
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from marketing_kmi_batch_send_response
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from marketing_kmi_batch_send_response
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into marketing_kmi_batch_send_response (marketing_sms_task_record_primary_key, create_time, 
+      response_info)
+    values (#{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{responseInfo,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into marketing_kmi_batch_send_response
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        marketing_sms_task_record_primary_key,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="responseInfo != null">
+        response_info,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="responseInfo != null">
+        #{responseInfo,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    update marketing_kmi_batch_send_response
+    <set>
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        marketing_sms_task_record_primary_key = #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="responseInfo != null">
+        response_info = #{responseInfo,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    update marketing_kmi_batch_send_response
+    set marketing_sms_task_record_primary_key = #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      response_info = #{responseInfo,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.panshi.hujin2.message.dao.model.MarketingKmiBatchSendResponseDO">
+    update marketing_kmi_batch_send_response
+    set marketing_sms_task_record_primary_key = #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
