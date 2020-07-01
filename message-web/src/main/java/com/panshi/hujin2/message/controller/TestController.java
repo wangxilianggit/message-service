@@ -16,6 +16,7 @@ import com.panshi.hujin2.message.service.message.IMsgDBService;
 import com.panshi.hujin2.message.service.message.ISendMsgService;
 import com.panshi.hujin2.message.service.message.infobip.entity.InfobipParam2;
 import com.panshi.hujin2.message.service.message.infobip.impl.InfobipServiceImpl;
+import com.panshi.hujin2.message.service.message.kmi.KMIUtil;
 import com.panshi.hujin2.message.service.message.nx.NXMarketingServiceImpl;
 import com.panshi.hujin2.message.service.message.sms.bo.SMSSendBO;
 import com.panshi.hujin2.message.service.message.submail.sdk.utils.StringUtil;
@@ -144,10 +145,14 @@ public class TestController {
 //        System.out.println(Long.toHexString(x+y));
     }
 
+
+    @Autowired
+    private KMIUtil kmiUtil;
     //測試 牛信余额
-    @RequestMapping("/niuxinBalance")
+    @RequestMapping("/getbalance")
     public void niuxinBalance(){
-        nxMarketingService.getBalance();
+        //nxMarketingService.getBalance();
+        kmiUtil.getKMITokenAndBalanceIgnoreCache();
     }
 
 

@@ -44,7 +44,7 @@ public class KMIUtil {
         // 拼接KmiTokenUrl
         String pwdMD5 = MD5Util.MD5(pwd);
         String KmiTokenUrlTemp = KmiTokenUrl+"account="+account+"&password="+pwdMD5;
-
+        //{"data":{"token":"8859F58D08C57C42CFDA8B5F670FCD73EF286D39730F1D6DD9755034AE20D533","balance":"0.00","smsBalance":"1328550.00"},"result":{"code":0,"desc":"SUCCESS"}}
         LOGGER.info("map为空获取KMI 请求 [{}]",KmiTokenUrlTemp);
         String result = HttpUtil.get(KmiTokenUrlTemp);
         LOGGER.info("map为空获取KMI token [{}]",result);
@@ -77,6 +77,10 @@ public class KMIUtil {
                         bo.setToken(token);
                         if(StringUtils.isNotBlank(balance)){
                             bo.setBalance(Double.valueOf(balance));
+                        }
+                        String smsBalance = data.getString("smsBalance");
+                        if(StringUtils.isNotBlank(smsBalance)){
+                            bo.setSmsBalance(Double.valueOf(smsBalance));
                         }
                     }
                 }

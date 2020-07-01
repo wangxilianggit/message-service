@@ -18,9 +18,14 @@ public class KMITokenBalanceInfoBO {
     private String token;
 
     /**
-     *  余额
+     *  话务余额
      */
     private Double balance;
+
+    /**
+     *  短信余额
+     */
+    private Double smsBalance;
 
     /**
      *  响应 code
