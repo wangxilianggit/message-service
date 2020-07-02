@@ -1,11 +1,17 @@
-package com.panshi.hujin2.message.dao.model;
+package com.panshi.hujin2.message.domain.qo;
 
+import com.panshi.hujin2.base.domain.qo.BaseQO;
 import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author shenJianKang
+ * @date 2020/7/2 16:52
+ */
 @Data
-public class MarketingMessageSendRecordDO {
+public class MarketingMessageSendRecordQO extends BaseQO {
+
     /**
      *  id
      */
@@ -75,5 +81,4 @@ public class MarketingMessageSendRecordDO {
      *  消息类型
      */
     private Integer msgType;
-
 }

@@ -34,7 +34,7 @@ public class BatchSendSelfDefinedMsgBO {
 //    private Integer sendType;
 
     /**
-     *  任务表直接id  ； 暂时kmi批量发送 需要该字段入库
+     *  任务表主键id  ； 暂时kmi批量发送 需要该字段入库
      */
     private Integer MarketingSmsTaskRecordPrimaryKey;
 }

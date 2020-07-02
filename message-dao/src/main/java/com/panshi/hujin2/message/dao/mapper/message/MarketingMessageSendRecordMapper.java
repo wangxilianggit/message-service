@@ -1,6 +1,7 @@
 package com.panshi.hujin2.message.dao.mapper.message;
 
 import com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO;
+import com.panshi.hujin2.message.domain.qo.MarketingMessageSendRecordQO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,12 +21,17 @@ public interface MarketingMessageSendRecordMapper {
 
 
 
+
     /**
      *  以下是自定义方法
      * */
 
     //批量插入
     void batchInsert(@Param("list") List<MarketingMessageSendRecordDO> list);
+
+
+    Integer countByQO(MarketingMessageSendRecordQO qo);
+    List<MarketingMessageSendRecordDO> queryByQO(MarketingMessageSendRecordQO qo);
 
 
 }

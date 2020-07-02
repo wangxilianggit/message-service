@@ -27,4 +27,9 @@ public class NiuXinBalanceInfoBO {
      */
     private String code;
 
+    /**
+     *  接口返回的结果
+     */
+    private String resultStr;
+
 }

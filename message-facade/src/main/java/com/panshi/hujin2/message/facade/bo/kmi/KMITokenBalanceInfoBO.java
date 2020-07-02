@@ -36,4 +36,9 @@ public class KMITokenBalanceInfoBO {
      *  响应 描述
      */
     private String desc;
+
+    /**
+     *  接口返回的结果
+     */
+    private String resultStr;
 }

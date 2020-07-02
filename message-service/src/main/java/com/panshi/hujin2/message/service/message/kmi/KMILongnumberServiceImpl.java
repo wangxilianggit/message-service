@@ -15,7 +15,6 @@ import com.panshi.hujin2.message.domain.exception.MessageException;
 import com.panshi.hujin2.message.facade.bo.BatchSendSelfDefinedMsgBO;
 import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
 import com.panshi.hujin2.message.service.message.impl.SendMsg;
-import com.panshi.hujin2.message.service.message.submail.sdk.utils.StringUtil;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -278,6 +277,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
     public void batchSendSelfDefinedMsg(BatchSendSelfDefinedMsgBO bo,
                                         Context context)throws Exception{
         try {
+            Integer MarketingSmsTaskRecordPrimaryKey = bo.getMarketingSmsTaskRecordPrimaryKey();
             ApplicationEnmu applicationEnmu = bo.getApplicationEnmu();
             List<String> phoneNumberListParam = bo.getPhoneNumberList();
             String msgContent = bo.getMsgContent();
@@ -331,7 +331,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
             LOGGER.info("--------KMI 批量营销 发送结果,[{}],[{}]",msgContent,sendRes);
 
             MarketingKmiBatchSendResponseDO responseDO = new MarketingKmiBatchSendResponseDO();
-            responseDO.setMarketingSmsTaskRecordPrimaryKey(bo.getMarketingSmsTaskRecordPrimaryKey());
+            responseDO.setMarketingSmsTaskRecordPrimaryKey(MarketingSmsTaskRecordPrimaryKey);
             responseDO.setResponseInfo(sendRes);
             marketingKmiBatchSendResponseMapper.insertSelective(responseDO);
             //TODO: 2020/6/23 20:02 by ShenJianKang  批量短信的发送入库记录
@@ -369,6 +369,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
                             sendRecordDO.setReturnValue(sendRes);
                             //sendRecordDO.setReturnValue(trxdate);//这里存储 trxdate
                             sendRecordDO.setMsgType(null);
+                            sendRecordDO.setMarketingSmsTaskRecordPrimaryKey(MarketingSmsTaskRecordPrimaryKey);
                             marketingMessageSendRecordMapper.insertSelective(sendRecordDO);
                             throw new MessageException("KMI 营销短信批量发送 失败：["+sendRes+"]");
                         }else {
@@ -404,6 +405,7 @@ public class KMILongnumberServiceImpl extends SendMsg {
                                             sendRecordDO.setReturnValue(error);
                                         }
                                         sendRecordDO.setMsgType(null);
+                                        sendRecordDO.setMarketingSmsTaskRecordPrimaryKey(MarketingSmsTaskRecordPrimaryKey);
                                         insertDOS.add(sendRecordDO);
 
                                     }

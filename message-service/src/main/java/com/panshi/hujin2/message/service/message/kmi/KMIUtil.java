@@ -62,6 +62,7 @@ public class KMIUtil {
         KMITokenBalanceInfoBO bo = new KMITokenBalanceInfoBO();
         String result = requestKmiToken();
         if(StringUtils.isNotBlank(result)){
+            bo.setResultStr(result);
             //解析result
             //{"data":{"token":"440E8E87F36D52E60631F892689D62E14A19623FE9147EC2FC1947E2D4AF5285","balance":"0.00"},"result":{"code":0,"desc":"SUCCESS"}}
             JSONObject jsonObject = JSON.parseObject(result);

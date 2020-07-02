@@ -1,11 +1,9 @@
 package com.panshi.hujin2.message.service.message.nx;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.service.Context;
-import com.panshi.hujin2.message.common.utils.HttpUtil;
 import com.panshi.hujin2.message.dao.mapper.message.MarketingMessageSendRecordMapper;
 import com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO;
 import com.panshi.hujin2.message.domain.enums.ChannelEnum;
@@ -14,7 +12,6 @@ import com.panshi.hujin2.message.facade.bo.MessageSendRecordInputBO;
 import com.panshi.hujin2.message.facade.bo.niuXin.NiuXinBalanceInfoBO;
 import com.panshi.hujin2.message.service.message.impl.SendMsg;
 import com.panshi.hujin2.message.service.message.utils.HttpUtils;
-import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -75,6 +72,7 @@ public class NXMarketingServiceImpl extends SendMsg {
         if(StringUtils.isNotBlank(sendRes)){
             JSONObject jsonObj = JSON.parseObject(sendRes);
             bo = JSONObject.toJavaObject(jsonObj, NiuXinBalanceInfoBO.class);
+            bo.setResultStr(sendRes);
         }
         return bo;
     }
@@ -203,8 +201,9 @@ public class NXMarketingServiceImpl extends SendMsg {
 
                 sendRecordDO.setReturnValue(sendRes);
                 sendRecordDO.setMsgType(null);
+                sendRecordDO.setMarketingSmsTaskRecordPrimaryKey(bo.getMarketingSmsTaskRecordPrimaryKey());
                 insertDOS.add(sendRecordDO);
-                //TODO: 2020/6/24 17:15 by ShenJianKang  发送记录入库的表，贷超应用发送 和营销短信发送 入库表 不同
+                //发送记录，贷超应用发送 和营销短信发送 入库表 不同
             }
             if(insertDOS.size() > 0){
                 marketingMessageSendRecordMapper.batchInsert(insertDOS);

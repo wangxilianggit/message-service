@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.panshi.hujin2.message.dao.mapper.message.MsgBaseMapper">
+
+    <sql id="base_order_by">
+        <if test="orderObjects != null and orderObjects.size > 0">
+            <foreach collection="orderObjects" item="orderObject" open="order by" separator=",">
+                <if test="orderObject != null and orderObject.orderByColumn != null">
+                    ${orderObject.orderByColumn}
+                    <if test="orderObject.orderByDesc">DESC</if>
+                </if>
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="base_page">
+        <if test="page != null and page.isPaging">
+            LIMIT #{page.dbIndex}, #{page.dbNumber}
+        </if>
+    </sql>
+</mapper>

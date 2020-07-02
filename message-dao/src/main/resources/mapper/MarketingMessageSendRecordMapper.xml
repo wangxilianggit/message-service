@@ -3,6 +3,7 @@
 <mapper namespace="com.panshi.hujin2.message.dao.mapper.message.MarketingMessageSendRecordMapper">
   <resultMap id="BaseResultMap" type="com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="marketing_sms_task_record_primary_key" jdbcType="INTEGER" property="marketingSmsTaskRecordPrimaryKey" />
     <result column="app_id" jdbcType="INTEGER" property="appId" />
     <result column="country_id" jdbcType="INTEGER" property="countryId" />
     <result column="channel_id" jdbcType="INTEGER" property="channelId" />
@@ -17,8 +18,9 @@
     <result column="msg_type" jdbcType="INTEGER" property="msgType" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, app_id, country_id, channel_id, phone_number, msg_text, msg_id, res_code, res_explain, 
-    return_value, create_time, modify_time, msg_type
+    id, marketing_sms_task_record_primary_key, app_id, country_id, channel_id, phone_number, 
+    msg_text, msg_id, res_code, res_explain, return_value, create_time, modify_time, 
+    msg_type
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -34,16 +36,16 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into marketing_message_send_record (app_id, country_id, channel_id, 
-      phone_number, msg_text, msg_id, 
-      res_code, res_explain, return_value, 
-      create_time, modify_time, msg_type
-      )
-    values (#{appId,jdbcType=INTEGER}, #{countryId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, 
-      #{phoneNumber,jdbcType=VARCHAR}, #{msgText,jdbcType=VARCHAR}, #{msgId,jdbcType=VARCHAR}, 
-      #{resCode,jdbcType=INTEGER}, #{resExplain,jdbcType=VARCHAR}, #{returnValue,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{msgType,jdbcType=INTEGER}
-      )
+    insert into marketing_message_send_record (marketing_sms_task_record_primary_key, app_id, 
+      country_id, channel_id, phone_number, 
+      msg_text, msg_id, res_code, 
+      res_explain, return_value, create_time, 
+      modify_time, msg_type)
+    values (#{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER}, #{appId,jdbcType=INTEGER}, 
+      #{countryId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, #{phoneNumber,jdbcType=VARCHAR}, 
+      #{msgText,jdbcType=VARCHAR}, #{msgId,jdbcType=VARCHAR}, #{resCode,jdbcType=INTEGER}, 
+      #{resExplain,jdbcType=VARCHAR}, #{returnValue,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyTime,jdbcType=TIMESTAMP}, #{msgType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -51,6 +53,9 @@
     </selectKey>
     insert into marketing_message_send_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        marketing_sms_task_record_primary_key,
+      </if>
       <if test="appId != null">
         app_id,
       </if>
@@ -89,6 +94,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      </if>
       <if test="appId != null">
         #{appId,jdbcType=INTEGER},
       </if>
@@ -130,6 +138,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO">
     update marketing_message_send_record
     <set>
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        marketing_sms_task_record_primary_key = #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      </if>
       <if test="appId != null">
         app_id = #{appId,jdbcType=INTEGER},
       </if>
@@ -171,7 +182,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.panshi.hujin2.message.dao.model.MarketingMessageSendRecordDO">
     update marketing_message_send_record
-    set app_id = #{appId,jdbcType=INTEGER},
+    set marketing_sms_task_record_primary_key = #{marketingSmsTaskRecordPrimaryKey,jdbcType=INTEGER},
+      app_id = #{appId,jdbcType=INTEGER},
       country_id = #{countryId,jdbcType=INTEGER},
       channel_id = #{channelId,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=VARCHAR},
@@ -190,11 +202,18 @@
 
 
 
+
+
+
+
+
+
   <!--以下是自定义方法-->
   <!--批量插入-->
   <insert id="batchInsert" parameterType="java.util.List">
     insert into
     marketing_message_send_record(
+    marketing_sms_task_record_primary_key,
     app_id,
     country_id,
     channel_id,
@@ -207,7 +226,9 @@
     msg_type
     )
     <foreach collection="list" item="item" open="VALUES" close=";" separator=",">
-      (#{item.appId},
+      (
+      #{item.marketingSmsTaskRecordPrimaryKey},
+      #{item.appId},
       #{item.countryId},
       #{item.channelId},
       #{item.phoneNumber},
@@ -220,5 +241,43 @@
       )
     </foreach>
   </insert>
+
+
+  <select id="countByQO"
+          parameterType="com.panshi.hujin2.message.domain.qo.MarketingMessageSendRecordQO"
+          resultType="java.lang.Integer">
+    select
+        count(1)
+    from marketing_message_send_record
+    <include refid="base_where" />
+  </select>
+
+  <select id="queryByQO"
+          parameterType="com.panshi.hujin2.message.domain.qo.MarketingMessageSendRecordQO"
+          resultMap="BaseResultMap">
+    select
+    id,
+    marketing_sms_task_record_primary_key,
+    channel_id,
+    phone_number,
+    msg_id
+    from marketing_message_send_record
+    <include refid="base_where" />
+    <include refid="com.panshi.hujin2.message.dao.mapper.message.MsgBaseMapper.base_page"/>
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="marketingSmsTaskRecordPrimaryKey != null">
+        and marketing_sms_task_record_primary_key = #{marketingSmsTaskRecordPrimaryKey}
+      </if>
+
+      <if test="channelId != null">
+        and channel_id = #{channelId}
+      </if>
+    </where>
+  </sql>
+
+
 
 </mapper>
