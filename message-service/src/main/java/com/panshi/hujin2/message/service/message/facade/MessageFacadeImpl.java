@@ -31,6 +31,7 @@ import com.panshi.hujin2.message.service.message.kmi.KMIServiceImpl;
 import com.panshi.hujin2.message.service.message.kmi.KMIUtil;
 import com.panshi.hujin2.message.service.message.nx.NXMarketingServiceImpl;
 import com.panshi.hujin2.message.service.message.nx.NXServiceImpl;
+import com.panshi.hujin2.message.service.message.tianyihong.TainYiHongServiceImpl;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -423,8 +424,11 @@ public class MessageFacadeImpl implements IMessageFacade {
                 suMap.put(phoneNumber,ChannelEnum.NIU_XIN.getCode());
             }else if(sendMsgService instanceof KMILongnumberServiceImpl){
                 suMap.put(phoneNumber,ChannelEnum.KMI_LONGNUMBER.getCode());
+            }else if(sendMsgService instanceof TainYiHongServiceImpl){
+                suMap.put(phoneNumber,ChannelEnum.TIANYIHONG_OTP.getCode());
             }else {
-                suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+                //suMap.put(phoneNumber,ChannelEnum.KMI.getCode());
+                suMap.put(phoneNumber,ChannelEnum.TIANYIHONG_OTP.getCode());
             }
 
 
@@ -629,10 +633,15 @@ public class MessageFacadeImpl implements IMessageFacade {
             sendMsgService = nxService;
         }else if(ChannelEnum.KMI_LONGNUMBER.getText().equals(msgChannel)){
             sendMsgService = KMILongnumberService;
+        }else if(ChannelEnum.TIANYIHONG_OTP.getText().equals(msgChannel)){
+            sendMsgService = tianyihongService;
         }
+        //TODO: 2020/7/29 17:50 by ShenJianKang 新加的通道写在这里
 
         if(sendMsgService == null){
-            sendMsgService = KMIService;
+            //改为天一泓后，优先测试天一泓
+            //sendMsgService = KMIService;
+            sendMsgService = tianyihongService;
         }
         return sendMsgService;
     }

@@ -11,6 +11,7 @@ import com.panshi.hujin2.message.service.message.impl.SendMsg;
 import com.panshi.hujin2.message.service.message.utils.ExceptionMessageUtils;
 import com.panshi.hujin2.message.service.message.utils.MsgUtils;
 import com.panshi.hujin2.message.service.message.yimeiruantong.util.Md5;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,12 @@ public class TainYiHongServiceImpl extends SendMsg {
 
     @Value("${tianyihong.pwd}")
     private String pwd;
+
+    @Value("${tianyihong.otp.account}")
+    private String otpAccount;
+
+    @Value("${tianyihong.otp.pwd}")
+    private String otpPwd;
 
     private final String CONTENT_TYPE_JSON = "application/json";
 
@@ -83,6 +90,18 @@ public class TainYiHongServiceImpl extends SendMsg {
         ExceptionMessageUtils.verifyObjectIsNull(context, applicationEnmu);
         ExceptionMessageUtils.verifyStringIsBlank(context,phoneNumber,msgText);
 
+//        if(StringUtils.isNotBlank(phoneNumber)){
+//            if(phoneNumber.startsWith("620")){
+//                phoneNumber = phoneNumber.replace("620","62");
+//
+//            }else if(phoneNumber.startsWith("0")){
+//                if(0 == phoneNumber.indexOf("0")){
+//                    phoneNumber = phoneNumber.substring(1);
+//                    phoneNumber = "62" + phoneNumber;
+//                }
+//            }
+//        }
+
         String smsText =msgText;
         try {
             smsText = URLEncoder.encode(msgText,"UTF-8");
@@ -107,15 +126,15 @@ public class TainYiHongServiceImpl extends SendMsg {
             //来生成MD5的签名，生成的签名为
             //ec971c60092c2514826a3d64f53356e2
             StringBuilder sb = new StringBuilder();
-            sb.append(account);
-            sb.append(pwd);
+            sb.append(otpAccount);
+            sb.append(otpPwd);
             sb.append(currentDateStr);
             String signMd5 = Md5.md5(sb.toString().getBytes());
 
 
             Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put("account",account);
-            paramsMap.put("password",pwd);
+            paramsMap.put("account",otpAccount);
+            paramsMap.put("password",otpPwd);
             paramsMap.put("numbers",phoneNumber);
             paramsMap.put("content",smsText);
 
@@ -124,8 +143,11 @@ public class TainYiHongServiceImpl extends SendMsg {
 
             //非必填， 越南短信发送需要 这个参数
             //paramsMap.put("senderid","VietID");
-            paramsMap.put("senderid","VIETID.NET");
+            //paramsMap.put("senderid","VIETID.NET");
 
+            //{"status":-9,"success":0,"fail":1,"array":[],"reason":null}
+            //{"status":-1,"success":0,"fail":0,"array":null,"reason":"MD5验证不通过"}
+            //{"status":-13,"success":0,"fail":0,"array":null,"reason":"账户状态不可用,被锁定"}
             String sendRes = HttpUtil.get(sendUrl,paramsMap);
             //如果换成post请求,需要全都拼在url里
 //            String sendRes = HttpUtil.post(sendUrl+"?account="+account+"&password="+pwd+"&numbers="+phoneNumber+"&content="+smsText,paramsMap);
@@ -144,7 +166,7 @@ public class TainYiHongServiceImpl extends SendMsg {
             inputBO.setAppId(applicationEnmu.getCode());
             //国家编码
 //            inputBO.setCountryId();
-            inputBO.setChannelId(ChannelEnum.TIANYIHONG.getCode());
+            inputBO.setChannelId(ChannelEnum.TIANYIHONG_OTP.getCode());
             inputBO.setPhoneNumber(phoneNumber);
             inputBO.setMsgText(msgText);
             inputBO.setMsgType(msgType);

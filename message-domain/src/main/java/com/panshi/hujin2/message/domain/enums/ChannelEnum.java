@@ -12,7 +12,7 @@ public enum ChannelEnum {
     CHUANGLAN(1,"chuanglan"),
     SUBMAIL(2,"submail"),
     INFOBIP(3,"infobip"),
-    TIANYIHONG(4,"tianyihong"),
+    TIANYIHONG_OTP(4,"天一泓-otp"),
     PAASOO(5,"paasoo"),
     YIMEIRUANTONG(6,"yimeiruantong"),
     KMI(7,"KMI-opt"),
