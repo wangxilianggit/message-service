@@ -24,7 +24,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/tianyihong")
+//@RequestMapping("/tianyihong")
 public class TestTianYiHongController {
 
 

@@ -1,6 +1,9 @@
 package com.panshi.hujin2.message.service.message.tianyihong;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gexin.fastjson.JSON;
+import com.google.gson.JsonArray;
 import com.panshi.hujin2.base.common.enmu.ApplicationEnmu;
 import com.panshi.hujin2.base.common.util.DateUtils;
 import com.panshi.hujin2.base.service.Context;
@@ -20,10 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * create by shenjiankang on 2018/8/20 9:02
@@ -113,8 +113,12 @@ public class TainYiHongServiceImpl extends SendMsg {
         try {
             //天一泓新版本参数datetime
             Date currentDate = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(currentDate);
+            cal.add(Calendar.HOUR_OF_DAY,1);//时区问题，印尼晚一个小时，天一泓传参：调用信息里面的datetime需传GMT+8当前半小时内时间
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-            String currentDateStr = sdf.format(currentDate);
+            String currentDateStr = sdf.format(cal.getTime());
 
             //天一泓新版本参数sign
             //使用 账号+密码+时间 生成MD5字符串作为签名。MD5生成32位，且需要小写
@@ -145,6 +149,7 @@ public class TainYiHongServiceImpl extends SendMsg {
             //paramsMap.put("senderid","VietID");
             //paramsMap.put("senderid","VIETID.NET");
 
+            //{"status":0,"success":1,"fail":0,"array":[[6281285290562,2008031441171046099]],"reason":null}
             //{"status":-9,"success":0,"fail":1,"array":[],"reason":null}
             //{"status":-1,"success":0,"fail":0,"array":null,"reason":"MD5验证不通过"}
             //{"status":-13,"success":0,"fail":0,"array":null,"reason":"账户状态不可用,被锁定"}
@@ -157,10 +162,24 @@ public class TainYiHongServiceImpl extends SendMsg {
             JSONObject jsonObj = JSONObject.parseObject(sendRes);
             //{"status":0, "array":[[525574991875,964206]], "success":1, "fail":0}
             String status = "";
+            String msgid = null;
             if(jsonObj != null){
                 status = jsonObj.getString("status");
             }
-            
+
+            if("0".equals(status)){
+                JSONArray array = jsonObj.getJSONArray("array");
+                if(array != null  && array.size()>0){
+                    Object obj = array.get(0);
+                    if(obj != null){
+                        JSONArray array1 = (JSONArray)obj;
+                        if(array1!=null && array1.size()>0){
+                            msgid = String.valueOf(array1.get(1));
+                        }
+                    }
+                }
+            }
+
             // 数据入库
             MessageSendRecordInputBO inputBO = new MessageSendRecordInputBO();
             inputBO.setAppId(applicationEnmu.getCode());
@@ -170,7 +189,7 @@ public class TainYiHongServiceImpl extends SendMsg {
             inputBO.setPhoneNumber(phoneNumber);
             inputBO.setMsgText(msgText);
             inputBO.setMsgType(msgType);
-            //inputBO.setMsgId(msgid);
+            inputBO.setMsgId(msgid);
 //            inputBO.setResCode(Integer.valueOf(code));
 //            inputBO.setResExplain(error);
             inputBO.setReturnValue(sendRes);
@@ -210,4 +229,34 @@ public class TainYiHongServiceImpl extends SendMsg {
     public void batchMsg(List<String> phoneNumbers, String msgContent,Context context){
 
     }
+
+
+    public static void main(String[] args) {
+        String sendRes = "{\"status\":0,\"success\":1,\"fail\":0,\"array\":[[6281285290562,2008031441171046099]],\"reason\":null}";
+        JSONObject jsonObj = JSONObject.parseObject(sendRes);
+        //{"status":0, "array":[[525574991875,964206]], "success":1, "fail":0}
+        String status = "";
+        if(jsonObj != null){
+            status = jsonObj.getString("status");
+        }
+        System.out.println("status = " + status);
+
+        JSONArray array = jsonObj.getJSONArray("array");
+        Object obj = array.get(0);
+        //JsonArray array2 = JSON.parse(obj);
+
+        JSONArray array1 = (JSONArray)obj;
+        System.out.println("array1.get(1) = " + array1.get(1));
+
+        if(obj != null){
+            String res = String.valueOf(obj).split(",")[1];
+            System.out.println("res = " + res);
+        }
+
+
+
+
+        System.out.println("array = " + array.get(0));
+    }
+
 }
