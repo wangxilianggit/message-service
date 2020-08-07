@@ -757,7 +757,7 @@
 
   <select id="selectLastByPhoneNumber" resultMap="BaseResultMap">
     select * from message_send_record
-    where phone_number = #{phoneNumber} and msg_type = #{msgType} and channel_id IN (7,9,10,11)
+    where phone_number = #{phoneNumber} and msg_type = #{msgType} and channel_id IN (7,9,10,11,4)
     order by id desc limit 1
   </select>
 </mapper>
