@@ -303,6 +303,11 @@ public class MessageFacadeImpl implements IMessageFacade {
 //                    }
 //                }
 
+                if("en_IN".equals(i18n)){
+                    phoneNumber = 91 + phoneNumber;
+                }
+                LOGGER.info("sms phoneNumber:[{}]", phoneNumber);
+
                 //TODO: 2020/5/12 18:13 by ShenJianKang 切换短信通道
                 List<SmsChannelConfigDO>  configDOS = smsChannelConfigMapper.queryAllValid();
                 if(CollectionUtils.isEmpty(configDOS)){
