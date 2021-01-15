@@ -295,7 +295,7 @@ public class MessageFacadeImpl implements IMessageFacade {
                 sendMsgService = tianyihongService;
             }else {
                 //印尼
-                phoneNumber = 62 +phoneNumber;
+//                phoneNumber = 62 +phoneNumber;
 //                sendMsgService = KMIService;
 //                if(channelEnum != null){
 //                    if(ChannelEnum.NIU_XIN.equals(channelEnum)){
@@ -303,9 +303,11 @@ public class MessageFacadeImpl implements IMessageFacade {
 //                    }
 //                }
 
-                if("en_IN".equals(i18n)){
-                    phoneNumber = 91 + phoneNumber;
-                }
+//                if("en_IN".equals(i18n)){
+//                    phoneNumber = 91 + phoneNumber;
+//                }
+                //写死
+                phoneNumber = 91 + phoneNumber;
                 LOGGER.info("sms phoneNumber:[{}]", phoneNumber);
 
                 //TODO: 2020/5/12 18:13 by ShenJianKang 切换短信通道
